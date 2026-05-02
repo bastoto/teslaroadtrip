@@ -1,20 +1,30 @@
-# Tesla Road Trip · Poissy → Greece overland
+# Tesla Road Trips · Wild Europe in a Model Y
 
-A 30-day mobile-first single-page travel plan for an overland Europe loop in a Tesla Model Y, sleeping in the car every night.
+A small static site documenting overland European road trips done in a Tesla Model Y, sleeping in the car every night.
 
 **Live site:** auto-deployed to Vercel from this repository.
 
-## What's in the page
+## Trips
+
+| File | Trip | Days | km | Countries |
+|---|---|---|---|---|
+| [`index.html`](index.html) | Landing page · pick a trip | — | — | — |
+| [`greece.html`](greece.html) | Adriatic → Greece overland → Bosnia loop | 30 | ~8,400 | 8 |
+| [`iberia.html`](iberia.html) | Atlantic Iberian coast → Mediterranean back | 30 | ~6,800 | 3 |
+
+Each trip page is **fully self-contained**: same template, different content, different theme colors. Adding a new trip = duplicate one of the existing pages and rewrite the route.
+
+## What's in each trip page
 
 - **Interactive Leaflet map** with real driving routes from OpenStreetMap (OSRM)
-- **Toggle** between outbound (Poissy → Olympia, 23 days) and return (Olympia → Poissy, 7 days)
+- **Toggle** between outbound and return directions
 - **Hour-by-hour timeline** for each of the 30 days, color-coded by activity (charge, drive, visit, eat, sleep…)
 - **Tap-to-photo carousel** on every bolded place name, sourced from Wikipedia, Wikidata and Wikimedia Commons (no API key)
 - Full **field manual**: borders, sleeping legality, charging strategy, budget anchors
 
 ## Tech
 
-Pure static HTML — single file, no build step.
+Pure static HTML — single file per trip, no build step.
 
 - [Leaflet](https://leafletjs.com) for the map
 - [CARTO](https://carto.com) light basemap tiles
@@ -25,6 +35,15 @@ Pure static HTML — single file, no build step.
 
 Open `index.html` in any modern browser. No server required (though some APIs work better over `http://localhost` than `file://`).
 
+## Add a new trip
+
+1. Duplicate `iberia.html` → `<your-trip>.html`
+2. Replace the `route = [...]` array with your stops
+3. Replace the day cards (timelines)
+4. Update hero stats and theme colors
+5. Add a card for it in `index.html` (the landing page)
+6. `git add . && git commit -m "Add <your-trip>" && git push`
+
 ## Deploy
 
-Connected to Vercel — every push to `main` redeploys.
+Connected to Vercel — every push to `main` redeploys automatically.

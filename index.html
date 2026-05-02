@@ -3,17 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#1E5F74">
-<title>Tesla Model Y · Wild Europe Road Trip · 30 days</title>
+<meta name="theme-color" content="#1B4D66">
+<title>Tesla Road Trips · Wild Europe in a Model Y</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <style>
-  /* ====================== MOBILE-FIRST DESIGN ====================== */
   :root{
-    --bg:#F7F1E5;
+    --bg:#F4EFE3;
     --bg-card:#FFFCF5;
     --ink:#2A2520;
     --ink-soft:#5C5448;
@@ -21,1593 +18,276 @@
     --sea:#1E5F74;
     --sea-deep:#143C4A;
     --terra:#C75D38;
-    --olive:#5E6B3A;
     --gold:#B7873A;
     --plum:#5B3A57;
+    --olive:#5E6B3A;
     --shadow:0 1px 2px rgba(42,37,32,.06), 0 8px 24px rgba(42,37,32,.06);
-    --safe-l:env(safe-area-inset-left,0px);
-    --safe-r:env(safe-area-inset-right,0px);
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   html,body{margin:0;padding:0;overflow-x:hidden}
   body{
     font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
     background:var(--bg);color:var(--ink);line-height:1.55;font-weight:400;
-    -webkit-font-smoothing:antialiased;text-size-adjust:100%;
+    -webkit-font-smoothing:antialiased;
   }
   h1,h2,h3,h4{font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;letter-spacing:-.01em;margin:0}
-  h1{font-size:clamp(1.85rem,7vw,3.6rem);line-height:1.05}
-  h2{font-size:clamp(1.4rem,5vw,2.4rem);line-height:1.15;margin-bottom:.3em}
-  h3{font-size:1.25rem;line-height:1.2}
-  h4{font-size:1.05rem;font-weight:700}
+  h1{font-size:clamp(2.4rem,8vw,4.6rem);line-height:1}
+  h2{font-size:clamp(1.5rem,5vw,2.2rem);line-height:1.15}
   p{margin:.4em 0}
-  a{color:var(--sea);text-decoration:none;border-bottom:1px solid rgba(30,95,116,.25)}
-  a:hover{border-bottom-color:var(--sea)}
+  a{color:var(--sea);text-decoration:none}
 
-  /* ========= HERO ========= */
+  /* ===== HERO ===== */
   .hero{
-    position:relative;
-    padding:2.5rem 5vw 2rem;
+    padding:3.5rem 5vw 2.5rem;
     background:
-      radial-gradient(ellipse at 80% 0%, rgba(199,93,56,.12), transparent 55%),
-      radial-gradient(ellipse at 0% 100%, rgba(30,95,116,.10), transparent 50%),
-      linear-gradient(180deg,#FBF6EA 0%, #F7F1E5 100%);
+      radial-gradient(ellipse at 80% 0%, rgba(199,93,56,.16), transparent 55%),
+      radial-gradient(ellipse at 0% 100%, rgba(30,95,116,.16), transparent 55%),
+      linear-gradient(180deg,#FBF6EA 0%, #F4EFE3 100%);
     border-bottom:1px solid var(--line);
+    text-align:left;
   }
-  .hero-inner{position:relative;max-width:1280px;margin:0 auto}
+  .hero-inner{max-width:1280px;margin:0 auto}
   .kicker{
-    font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;
-    color:var(--terra);font-weight:700;margin-bottom:.9rem;
+    font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--terra);font-weight:700;margin-bottom:1.1rem;
   }
   .hero h1 em{font-style:italic;color:var(--sea-deep)}
-  .hero p.lede{margin-top:1rem;max-width:720px;font-size:1.02rem;color:var(--ink-soft)}
-  .hero-stats{
-    display:grid;grid-template-columns:repeat(2,1fr);
-    gap:.6rem;margin-top:1.5rem;
-  }
-  .stat{
-    background:var(--bg-card);border:1px solid var(--line);border-radius:12px;
-    padding:.75rem .85rem;box-shadow:var(--shadow);
-  }
-  .stat .num{font-family:'Cormorant Garamond',serif;font-size:1.55rem;font-weight:700;line-height:1;color:var(--sea-deep)}
-  .stat .lbl{font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);margin-top:.25rem}
-
-  @media (min-width:540px){
-    .hero{padding:4rem 6vw 3rem}
-    .hero-stats{grid-template-columns:repeat(3,1fr)}
+  .hero p.lede{
+    margin-top:1.1rem;max-width:680px;font-size:1.05rem;color:var(--ink-soft);
   }
   @media (min-width:780px){
-    .hero-stats{grid-template-columns:repeat(5,1fr)}
-  }
-  @media (min-width:900px){
     .hero{padding:5rem 6vw 3.5rem}
-    .hero p.lede{font-size:1.15rem}
-    .hero-stats{grid-template-columns:repeat(5,1fr);max-width:1100px}
+    .hero p.lede{font-size:1.18rem}
   }
 
-  /* ========= TRIP TOGGLE ========= */
-  .trip-toggle{
-    max-width:1280px;margin:0 auto;padding:1.4rem 5vw 0;
-    display:grid;grid-template-columns:1fr;gap:.55rem;
+  /* ===== TRIPS ===== */
+  .trips-section{padding:2.5rem 5vw 3.5rem;max-width:1280px;margin:0 auto}
+  .trips-section h2{margin-bottom:1.5rem}
+  .trips-grid{
+    display:grid;grid-template-columns:1fr;gap:1.2rem;
   }
-  .t-btn{
-    display:flex;align-items:center;gap:.85rem;
-    padding:.95rem 1rem;min-height:64px;
-    border:1.5px solid var(--line);border-radius:14px;
-    background:var(--bg-card);cursor:pointer;
-    font-family:inherit;text-align:left;color:var(--ink-soft);
-    transition:transform .15s ease, box-shadow .15s ease, background .2s, color .2s, border-color .2s;
-    -webkit-appearance:none;appearance:none;
-  }
-  .t-btn:active{transform:scale(.98)}
-  .t-btn.active[data-trip="out"]{
-    background:var(--sea);color:#fff;border-color:var(--sea);
-    box-shadow:0 4px 16px rgba(30,95,116,.25);
-  }
-  .t-btn.active[data-trip="back"]{
-    background:var(--gold);color:#fff;border-color:var(--gold);
-    box-shadow:0 4px 16px rgba(183,135,58,.3);
-  }
-  .t-num{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:700;line-height:.85;font-style:italic;flex-shrink:0}
-  .t-meta{display:flex;flex-direction:column;gap:.1rem;min-width:0}
-  .t-lbl{font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;font-weight:700;opacity:.85}
-  .t-sub{font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:600;line-height:1.15}
-
-  @media (min-width:540px){
-    .trip-toggle{grid-template-columns:1fr 1fr;padding:2rem 5vw 0;gap:.6rem}
-    .t-num{font-size:2.4rem}
-    .t-sub{font-size:1.1rem}
+  @media (min-width:780px){
+    .trips-section{padding:4rem 5vw 5rem}
+    .trips-grid{grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:1.6rem}
   }
 
-  /* ========= MAP ========= */
-  .map-section{padding:1.5rem 4vw .5rem;background:var(--bg)}
-  .map-wrap{
-    position:relative;max-width:1400px;margin:0 auto;
-    border-radius:14px;overflow:hidden;
-    box-shadow:0 1px 2px rgba(42,37,32,.06), 0 12px 32px rgba(42,37,32,.10);
-    border:1px solid var(--line);background:#dfeaf0;
+  .trip-card{
+    background:var(--bg-card);border:1px solid var(--line);border-radius:18px;
+    overflow:hidden;box-shadow:var(--shadow);
+    display:flex;flex-direction:column;
+    text-decoration:none;color:inherit;
+    transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+    position:relative;
   }
-  #map{height:55vh;min-height:340px;width:100%}
-  @media (min-width:900px){
-    .map-section{padding:3rem 4vw 1rem}
-    #map{height:min(72vh,720px)}
-  }
-
-  /* ========= PHASES ========= */
-  section.phases{padding:2rem 5vw 3rem;max-width:1280px;margin:0 auto}
-  .section-head{margin-bottom:1.5rem;max-width:780px}
-  .section-head .kicker{margin-bottom:.5rem}
-  .section-head p{font-size:.92rem;color:var(--ink-soft)}
-  @media (min-width:900px){
-    section.phases{padding:4rem 5vw 5rem}
-    .section-head{margin-bottom:2.5rem}
-    .section-head p{font-size:1rem}
+  .trip-card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 4px 8px rgba(42,37,32,.08),0 24px 48px rgba(42,37,32,.12);
+    border-color:#d6c9a6;
   }
 
-  .phase{margin:2.5rem 0 0;scroll-margin-top:1rem}
-  .phase-header{
-    display:flex;align-items:flex-end;gap:.8rem;flex-wrap:wrap;
-    padding-bottom:.7rem;margin-bottom:1rem;border-bottom:1px solid var(--line);
+  .trip-banner{
+    height:180px;position:relative;overflow:hidden;
+    display:flex;align-items:flex-end;padding:1.5rem;
   }
-  .phase-header .num{
-    font-family:'Cormorant Garamond',serif;font-size:2.4rem;font-weight:700;
-    line-height:.85;color:var(--terra);font-style:italic;
+  .trip-banner.greece{
+    background:
+      radial-gradient(ellipse at 30% 20%, rgba(255,255,255,.18) 0, transparent 50%),
+      linear-gradient(135deg, #1E5F74 0%, #143C4A 50%, #5B3A57 100%);
   }
-  .phase-header h2{flex:1;min-width:200px;font-size:clamp(1.3rem,4.5vw,2rem)}
-  .phase-header .meta{font-size:.78rem;color:var(--ink-soft);width:100%;margin-top:.3rem}
-  @media (min-width:540px){
-    .phase-header .meta{width:auto;text-align:right;margin-top:0}
+  .trip-banner.iberia{
+    background:
+      radial-gradient(ellipse at 30% 20%, rgba(255,255,255,.18) 0, transparent 50%),
+      linear-gradient(135deg, #2E7DA0 0%, #D9722C 100%);
   }
-  .phase-intro{color:var(--ink-soft);max-width:720px;margin-bottom:1.4rem;font-size:.94rem;line-height:1.55}
-  .phase[data-trip="out"]  .phase-header .num{color:#1E5F74}
-  .phase[data-trip="back"] .phase-header .num{color:#B7873A}
-  .phase[data-trip="back"] .day-num{background:#B7873A}
-  .phase[data-trip="back"]{display:none}
+  .trip-banner h3{
+    color:#fff;font-size:clamp(1.6rem,4vw,2.1rem);line-height:1.1;
+    text-shadow:0 2px 12px rgba(0,0,0,.25);
+  }
+  .trip-banner .tag{
+    position:absolute;top:1rem;right:1rem;
+    background:rgba(255,255,255,.18);backdrop-filter:blur(6px);
+    color:#fff;padding:.3rem .65rem;border-radius:99px;
+    font-size:.66rem;letter-spacing:.13em;text-transform:uppercase;font-weight:700;
+  }
+  .trip-banner .badge-decor{
+    position:absolute;font-family:'Cormorant Garamond',serif;
+    font-size:9rem;font-weight:700;color:rgba(255,255,255,.07);
+    line-height:.85;font-style:italic;
+    bottom:-1.5rem;right:1rem;letter-spacing:-.05em;pointer-events:none;
+  }
 
-  /* ========= DAY CARDS ========= */
-  .days{display:grid;grid-template-columns:1fr;gap:1rem}
-  @media (min-width:680px){
-    .days{grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:1.2rem}
+  .trip-body{padding:1.4rem 1.5rem 1.4rem;flex:1;display:flex;flex-direction:column;gap:.9rem}
+  .trip-tagline{
+    font-family:'Cormorant Garamond',serif;font-size:1.15rem;
+    color:var(--sea-deep);font-style:italic;line-height:1.3;
   }
+  .trip-desc{font-size:.92rem;color:var(--ink-soft);line-height:1.55}
+  .trip-stats{
+    display:grid;grid-template-columns:repeat(2,1fr);gap:.5rem;margin-top:auto;
+  }
+  .ts{
+    background:rgba(0,0,0,.025);border-radius:8px;padding:.55rem .7rem;
+  }
+  .ts .num{
+    font-family:'Cormorant Garamond',serif;font-weight:700;
+    font-size:1.15rem;color:var(--sea-deep);line-height:1;
+  }
+  .ts .lbl{
+    font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--ink-soft);margin-top:.2rem;
+  }
+  .trip-cta{
+    margin-top:.4rem;display:flex;align-items:center;gap:.45rem;
+    font-size:.78rem;letter-spacing:.13em;text-transform:uppercase;font-weight:700;
+    color:var(--terra);
+  }
+  .trip-cta::after{content:"→";font-size:1rem;letter-spacing:0;transition:transform .15s}
+  .trip-card:hover .trip-cta::after{transform:translateX(4px)}
 
-  .day{
+  /* placeholder card · "next trip" */
+  .trip-card.placeholder{
+    background:transparent;border:2px dashed var(--line);
+    align-items:center;justify-content:center;
+    min-height:380px;padding:1.5rem;text-align:center;
+    color:var(--ink-soft);
+  }
+  .trip-card.placeholder:hover{transform:none;border-color:var(--terra);color:var(--terra)}
+  .trip-card.placeholder .plus{
+    font-size:2.5rem;font-family:'Cormorant Garamond',serif;font-weight:600;
+    line-height:1;margin-bottom:.5rem;
+  }
+  .trip-card.placeholder p{font-size:.85rem;max-width:240px}
+
+  /* ===== ABOUT ===== */
+  .about{
+    background:linear-gradient(180deg, #EFE4CE 0%, #E7DAB6 100%);
+    padding:3rem 5vw;border-top:1px solid var(--line);
+  }
+  .about-inner{max-width:1280px;margin:0 auto}
+  .about h2{margin-bottom:1rem}
+  .about-grid{
+    display:grid;grid-template-columns:1fr;gap:1rem;margin-top:1.5rem;
+  }
+  @media (min-width:680px){.about-grid{grid-template-columns:repeat(3,1fr);gap:1.5rem}}
+  .about-card{
     background:var(--bg-card);border:1px solid var(--line);border-radius:14px;
-    padding:1.1rem 1.1rem 1rem;box-shadow:var(--shadow);
-    display:flex;flex-direction:column;gap:.5rem;
+    padding:1.2rem;
   }
-  .day-tag{
-    display:inline-block;font-size:.62rem;letter-spacing:.13em;text-transform:uppercase;
-    color:var(--olive);font-weight:700;
-  }
-  .day-tag.tag-rest  {color:var(--gold)}
-  .day-tag.tag-cross {color:var(--sea)}
-  .day-tag.tag-drive {color:var(--terra)}
-  .day-tag.tag-long  {color:var(--terra);background:rgba(199,93,56,.12);padding:.18rem .4rem;border-radius:4px;letter-spacing:.1em}
-
-  .day-top{display:flex;align-items:baseline;gap:.55rem;flex-wrap:wrap}
-  .day-num{
-    font-family:'Cormorant Garamond',serif;font-size:.95rem;font-weight:600;
-    color:#fff;background:var(--sea);
-    padding:.15rem .55rem;border-radius:6px;letter-spacing:.04em;flex-shrink:0;
-  }
-  .day h4{font-size:1.08rem;line-height:1.25;flex:1;min-width:0}
-  .day .km{font-size:.74rem;color:var(--ink-soft);font-variant-numeric:tabular-nums}
-
-  /* ========= HOUR-BY-HOUR TIMELINE ========= */
-  .timeline{list-style:none;margin:.5rem 0 0;padding:0}
-  .step{
-    display:grid;grid-template-columns:42px 64px 1fr;gap:.4rem;
-    padding:.45rem 0;align-items:baseline;
-    border-bottom:1px dashed var(--line);
-  }
-  .step:last-child{border-bottom:none}
-  .step .t{
-    font-variant-numeric:tabular-nums;font-weight:700;
-    color:var(--ink);font-size:.74rem;
-  }
-  .step .lbl{
-    font-size:.58rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
-    align-self:center;padding:.15rem 0;
-  }
-  .step .desc{color:var(--ink);font-size:.84rem;line-height:1.4}
-  .step .desc b{font-weight:600;color:var(--sea-deep)}
-  @media (min-width:540px){
-    .step{grid-template-columns:48px 76px 1fr;gap:.55rem}
-    .step .t{font-size:.78rem}
-    .step .lbl{font-size:.62rem;letter-spacing:.12em}
-    .step .desc{font-size:.88rem}
-  }
-
-  /* type colors · cool = logistical (charge/sleep), warm = movement, plum = visit */
-  .step-wake    .lbl{color:#9b6d2c}
-  .step-depart  .lbl{color:var(--terra)}
-  .step-drive   .lbl{color:var(--terra)}
-  .step-charge  .lbl{color:#1E5F74;background:rgba(30,95,116,.1);border-radius:4px;padding:.15rem .35rem}
-  .step-border  .lbl{color:#7c3a3a;background:rgba(124,58,58,.08);border-radius:4px;padding:.15rem .35rem}
-  .step-arrive  .lbl{color:var(--sea)}
-  .step-visit   .lbl{color:var(--plum)}
-  .step-hike    .lbl{color:var(--olive)}
-  .step-swim    .lbl{color:#2E7DA0}
-  .step-eat     .lbl{color:#7a5226}
-  .step-relax   .lbl{color:#9d8a52}
-  .step-sleep   .lbl{color:#fff;background:var(--sea-deep);border-radius:4px;padding:.18rem .4rem}
-
-  /* ========= TIPS / FIELD MANUAL ========= */
-  .tips{
-    background:linear-gradient(180deg,#F1E9D6 0%, #E9DFC8 100%);
-    border-top:1px solid var(--line);
-    padding:2.5rem 5vw;
-  }
-  @media (min-width:900px){.tips{padding:5rem 5vw}}
-  .tips-inner{max-width:1280px;margin:0 auto}
-  .tips-grid{
-    display:grid;grid-template-columns:1fr;gap:.9rem;margin-top:1.5rem;
-  }
-  @media (min-width:680px){.tips-grid{grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem}}
-  .tip{
-    background:var(--bg-card);border-radius:12px;padding:1.2rem 1.2rem;
-    border:1px solid var(--line);box-shadow:var(--shadow);
-  }
-  .tip h4{margin-bottom:.4rem;color:var(--sea-deep);font-size:1.05rem}
-  .tip ul{margin:.4rem 0 0;padding-left:1rem;font-size:.86rem;color:var(--ink)}
-  .tip ul li{margin:.25rem 0}
-  .tip .icon{
+  .about-card h4{font-size:1rem;color:var(--sea-deep);margin-bottom:.4rem}
+  .about-card p{font-size:.88rem;color:var(--ink-soft);margin:0}
+  .about-card .icon{
     display:inline-block;width:32px;height:32px;border-radius:50%;
     background:var(--sea);color:#fff;font-weight:700;text-align:center;line-height:32px;
-    margin-bottom:.5rem;font-size:.85rem;
+    margin-bottom:.6rem;font-size:.85rem;
   }
-  .tip:nth-child(2) .icon{background:var(--terra)}
-  .tip:nth-child(3) .icon{background:var(--olive)}
-  .tip:nth-child(4) .icon{background:var(--gold)}
-  .tip:nth-child(5) .icon{background:var(--plum)}
-  .tip:nth-child(6) .icon{background:var(--sea-deep)}
+  .about-card:nth-child(2) .icon{background:var(--terra)}
+  .about-card:nth-child(3) .icon{background:var(--olive)}
 
-  /* ========= FOOTER ========= */
+  /* ===== FOOTER ===== */
   footer{
     background:var(--sea-deep);color:#dfeaf0;
-    padding:2rem 5vw;text-align:center;font-size:.88rem;
+    padding:2rem 5vw;text-align:center;font-size:.86rem;
   }
-  footer h3{color:#fff;margin-bottom:.5rem;font-size:1.2rem}
-  footer p{max-width:680px;margin:.4rem auto;color:#bcd2da}
-  footer .sig{margin-top:1.2rem;font-style:italic;color:#90a8b1;font-size:.78rem}
-
-  /* ========= TOC ========= */
-  .toc{
-    display:flex;flex-wrap:wrap;gap:.4rem;font-size:.78rem;
-    padding:.8rem 0;color:var(--ink-soft);
-  }
-  .toc a{
-    color:var(--ink-soft);border:1px solid var(--line);
-    padding:.3rem .65rem;border-radius:99px;background:var(--bg-card);
-    font-size:.74rem;
-  }
-  .toc a:active{background:var(--line)}
-
-  /* ========= MAP MARKER ========= */
-  .num-marker{
-    background:#fff;border:3px solid var(--sea);color:var(--sea-deep);
-    border-radius:50%;width:30px!important;height:30px!important;
-    display:flex;align-items:center;justify-content:center;
-    font-weight:700;font-size:.74rem;font-family:'Inter',sans-serif;
-    box-shadow:0 2px 6px rgba(0,0,0,.25);
-    margin-left:-15px!important;margin-top:-15px!important;
-  }
-  .num-marker.wide{
-    width:54px!important;border-radius:18px;
-    font-size:.68rem;letter-spacing:-.01em;
-    margin-left:-27px!important;padding:0 .3rem;
-  }
-  .num-marker.cap{
-    font-family:'Inter',sans-serif;font-weight:700;
-    font-size:.62rem;letter-spacing:.06em;text-transform:uppercase;
-    background:var(--sea-deep);color:#fff!important;
-  }
-  .num-marker.c-out {border-color:#1E5F74;color:#143C4A}
-  .num-marker.c-back{border-color:#B7873A;color:#7A5C26}
-  .num-marker.c-back.cap{background:#7A5C26}
-
-  .leaflet-popup-content-wrapper{border-radius:10px}
-  .leaflet-popup-content{font-family:'Inter',sans-serif;font-size:.85rem;margin:.7rem .9rem;line-height:1.45}
-  .leaflet-popup-content b{font-family:'Cormorant Garamond',serif;font-weight:700;font-size:1rem;color:var(--sea-deep);display:block;margin-bottom:.1rem}
-  .popup-visit{display:block}
-  .popup-visit .popup-meta{display:block;font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--terra);font-weight:700;margin-bottom:.25rem}
-  .popup-visit .popup-note{display:block;color:var(--ink-soft);font-size:.82rem}
-  .popup-sep{border:none;border-top:1px solid var(--line);margin:.5rem 0}
-
-  /* ========= IMAGE POPOVER (carousel) — touch-friendly ========= */
-  .hoverable-place{
-    cursor:pointer;
-    border-bottom:1px dotted rgba(30,95,116,.45);
-    transition:border-color .15s, color .15s;
-  }
-  .hoverable-place:active{border-bottom-color:var(--terra);color:var(--terra)}
-
-  #img-popover{
-    position:fixed;left:50%;bottom:0;transform:translate(-50%,100%);
-    width:min(440px,calc(100vw - 16px));
-    background:#fff;border:1px solid var(--line);border-top-left-radius:18px;border-top-right-radius:18px;
-    box-shadow:0 -8px 32px rgba(0,0,0,.18);
-    z-index:9999;padding:.85rem .9rem .7rem;font-family:'Inter',sans-serif;
-    pointer-events:none;
-    transition:transform .25s ease;
-  }
-  #img-popover.show{transform:translate(-50%,0);pointer-events:auto}
-  @media (min-width:680px){
-    #img-popover{
-      position:absolute;bottom:auto;
-      border-radius:14px;
-      transform:translateY(8px);
-      box-shadow:0 12px 40px rgba(0,0,0,.18), 0 2px 8px rgba(0,0,0,.06);
-    }
-    #img-popover.show{transform:translateY(0)}
-  }
-
-  .ipop-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem;padding:0 .15rem;gap:.5rem}
-  .ipop-title{font-family:'Cormorant Garamond',serif;font-weight:700;font-size:1.1rem;color:var(--sea-deep);line-height:1.2;flex:1;min-width:0}
-  .ipop-counter{font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);font-weight:600;white-space:nowrap}
-  .ipop-close{
-    background:none;border:none;font-size:1.5rem;line-height:1;color:var(--ink-soft);
-    width:32px;height:32px;border-radius:50%;cursor:pointer;flex-shrink:0;padding:0;
-    display:flex;align-items:center;justify-content:center;
-  }
-  .ipop-close:active{background:var(--line)}
-  .ipop-body{display:flex;align-items:stretch;gap:.4rem}
-  .ipop-btn{
-    flex:0 0 38px;background:var(--bg);border:1px solid var(--line);border-radius:10px;
-    font-size:1.4rem;color:var(--sea-deep);cursor:pointer;font-family:inherit;
-    line-height:1;padding:0;
-  }
-  .ipop-btn:active{background:var(--line)}
-  .ipop-btn:disabled{opacity:.35}
-  .ipop-frame{
-    flex:1;position:relative;aspect-ratio:4/3;
-    background:linear-gradient(135deg,#EFE6CF 0%,#dfeaf0 100%);
-    border-radius:10px;overflow:hidden;
-  }
-  .ipop-img{width:100%;height:100%;object-fit:cover;display:block;transition:opacity .25s}
-  .ipop-loader{
-    position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
-    font-size:.82rem;color:var(--ink-soft);text-align:center;padding:1rem;
-  }
-  .ipop-attr{margin-top:.4rem;font-size:.62rem;text-align:right;color:var(--ink-soft);letter-spacing:.04em;padding:0 .2rem}
-  .ipop-attr a{color:var(--ink-soft);border-bottom:none}
-
-  /* ========= LOADING INDICATOR ========= */
-  .map-status{
-    position:absolute;top:10px;left:50%;transform:translateX(-50%);z-index:1000;
-    background:rgba(255,252,245,.96);border:1px solid #E5DCC8;border-radius:99px;
-    padding:.35rem .85rem;font-size:.72rem;color:#5C5448;
-    box-shadow:0 4px 12px rgba(0,0,0,.08);font-family:Inter,sans-serif;letter-spacing:.04em;
-    transition:opacity .8s;
-  }
-
-  /* ========= PRINT ========= */
-  @media print{
-    body{background:#fff}
-    .hero,.tips,footer{background:#fff;color:#000}
-    .map-section,.toc,.trip-toggle{display:none}
-    .day{break-inside:avoid;box-shadow:none}
-    .phase{break-inside:avoid-page}
-    .phase[data-trip="back"]{display:block}
-  }
+  footer h3{color:#fff;margin-bottom:.5rem;font-size:1.15rem}
+  footer p{max-width:600px;margin:.4rem auto;color:#bcd2da}
+  footer a{color:#dfeaf0;border-bottom:1px solid rgba(220,234,240,.3)}
+  footer .sig{margin-top:1rem;font-style:italic;color:#90a8b1;font-size:.78rem}
 </style>
 </head>
 <body>
 
 <header class="hero">
   <div class="hero-inner">
-    <div class="kicker">Wild Europe · Tesla Model Y · Sleeping in the car</div>
-    <h1>Down the <em>Adriatic</em>, into Greece, and back.</h1>
-    <p class="lede">A 30-day overland loop from Poissy through the Dolomites, Slovenia, Croatia, Montenegro and Albania, into Greece — then back up through Bosnia and the Slovenian Alps. No ferries. Every night sleeps in the car for free; every leg ends near a fast charger.</p>
-    <div class="hero-stats">
-      <div class="stat"><div class="num">30</div><div class="lbl">days</div></div>
-      <div class="stat"><div class="num">~8,400</div><div class="lbl">km</div></div>
-      <div class="stat"><div class="num">8</div><div class="lbl">countries</div></div>
-      <div class="stat"><div class="num">9</div><div class="lbl">national parks</div></div>
-      <div class="stat"><div class="num">~32</div><div class="lbl">charging stops</div></div>
-      <div class="stat"><div class="num">~5h</div><div class="lbl">driving / day avg</div></div>
-      <div class="stat"><div class="num">6</div><div class="lbl">rest days</div></div>
-      <div class="stat"><div class="num">6</div><div class="lbl">long-drive days</div></div>
-      <div class="stat"><div class="num">~€600</div><div class="lbl">charging</div></div>
-      <div class="stat"><div class="num">€0</div><div class="lbl">accommodation</div></div>
-    </div>
+    <div class="kicker">Wild Europe road trips · Tesla Model Y</div>
+    <h1>Free overnight spots, fast charging,<br><em>no hotels</em>.</h1>
+    <p class="lede">Two routes documented day-by-day. Built around real wake/sleep rhythms, real charging stops, and real free public sleep spots verified on Park4Night. Pick a trip below.</p>
   </div>
 </header>
 
-<div class="trip-toggle" role="tablist" aria-label="Trip direction">
-  <button class="t-btn active" data-trip="out" role="tab" aria-selected="true">
-    <span class="t-num">23</span>
-    <span class="t-meta">
-      <span class="t-lbl">Outbound</span>
-      <span class="t-sub">Poissy → Olympia · 5,300 km</span>
-    </span>
-  </button>
-  <button class="t-btn" data-trip="back" role="tab" aria-selected="false">
-    <span class="t-num">7</span>
-    <span class="t-meta">
-      <span class="t-lbl">Return</span>
-      <span class="t-sub">Olympia → Poissy · 3,100 km</span>
-    </span>
-  </button>
-</div>
+<section class="trips-section">
+  <h2>The trips</h2>
+  <div class="trips-grid">
 
-<section class="map-section">
-  <div class="map-wrap">
-    <div id="map"></div>
+    <a href="greece.html" class="trip-card">
+      <div class="trip-banner greece">
+        <span class="tag">Overland · 8 countries</span>
+        <span class="badge-decor">01</span>
+        <h3>Down the Adriatic, into Greece, and back</h3>
+      </div>
+      <div class="trip-body">
+        <div class="trip-tagline">From Poissy through the Dolomites, Slovenia, Croatia, Montenegro and Albania to the Greek mountains and the Peloponnese.</div>
+        <div class="trip-desc">No ferries. The slow way south, with rest days in Triglav, Theth, Vikos and Olympus, before looping back through Bosnia and the Slovenian Alps.</div>
+        <div class="trip-stats">
+          <div class="ts"><div class="num">30</div><div class="lbl">days</div></div>
+          <div class="ts"><div class="num">~8,400</div><div class="lbl">km</div></div>
+          <div class="ts"><div class="num">8</div><div class="lbl">countries</div></div>
+          <div class="ts"><div class="num">9</div><div class="lbl">national parks</div></div>
+          <div class="ts"><div class="num">~€600</div><div class="lbl">charging</div></div>
+          <div class="ts"><div class="num">€0</div><div class="lbl">accommodation</div></div>
+        </div>
+        <div class="trip-cta">Open trip plan</div>
+      </div>
+    </a>
+
+    <a href="iberia.html" class="trip-card">
+      <div class="trip-banner iberia">
+        <span class="tag">Coastal · Atlantic to Med</span>
+        <span class="badge-decor">02</span>
+        <h3>From the Atlantic to the Mediterranean, all coast</h3>
+      </div>
+      <div class="trip-body">
+        <div class="trip-tagline">Down France's Atlantic edge, around Spanish Cantabria and Galicia, through Portugal's cliffs to Sagres, then back along the Spanish Mediterranean.</div>
+        <div class="trip-desc">23 days hugging the Atlantic, 7 days back via the Mediterranean. Touches the four cardinal points of mainland Iberia: Cabo Ortegal (NW), Cabo de São Vicente (SW), Tarifa (S), Cap de Creus (E).</div>
+        <div class="trip-stats">
+          <div class="ts"><div class="num">30</div><div class="lbl">days</div></div>
+          <div class="ts"><div class="num">~6,800</div><div class="lbl">km</div></div>
+          <div class="ts"><div class="num">3</div><div class="lbl">countries</div></div>
+          <div class="ts"><div class="num">7</div><div class="lbl">national parks</div></div>
+          <div class="ts"><div class="num">~€500</div><div class="lbl">charging</div></div>
+          <div class="ts"><div class="num">€0</div><div class="lbl">accommodation</div></div>
+        </div>
+        <div class="trip-cta">Open trip plan</div>
+      </div>
+    </a>
+
+    <div class="trip-card placeholder">
+      <div class="plus">+</div>
+      <h4 style="margin-bottom:.4rem;color:var(--ink)">Next trip</h4>
+      <p>Scandinavia? The Atlas? Eastern Europe? Each new trip lives in its own page in this repo, in the same format.</p>
+    </div>
+
   </div>
 </section>
 
-<section class="phases">
-  <div class="section-head">
-    <div class="kicker">Day-by-day · realistic schedule</div>
-    <h2>Hour-by-hour, mobile-friendly.</h2>
-    <p>Built around a 9 am wake / 9 pm sleep rhythm, max 250 km between stops, every charging stop combined with a meal or coffee. Long-drive days start earlier and are flagged. Tap any bolded place for photos.</p>
-    <nav class="toc" id="toc"></nav>
-  </div>
-
-  <!-- ========================= PHASE 1 ========================= -->
-  <div class="phase" id="phase-1" data-trip="out">
-    <div class="phase-header">
-      <div class="num">01</div>
-      <h2>Poissy → Burgundy</h2>
-      <div class="meta">Day 1 · 430 km · France</div>
-    </div>
-    <p class="phase-intro">A single autoroute day to bank kilometres while you're still fresh, ending in Beaune for an easy first night.</p>
-    <div class="days">
-
-      <div class="day">
-        <div class="day-tag tag-drive">Drive day</div>
-        <div class="day-top"><span class="day-num">D 01</span><h4>Beaune (Burgundy)</h4></div>
-        <div class="km">From Poissy · 430 km · ~4h20</div>
-        <ol class="timeline">
-          <li class="step step-depart"><span class="t">10:00</span><span class="lbl">Depart</span><span class="desc">Leave <b>Poissy</b></span></li>
-          <li class="step step-charge"><span class="t">12:30</span><span class="lbl">Charge</span><span class="desc">SC <b>Auxerre Sud</b> · 45 min · grab lunch (after 250 km, ~2h30)</span></li>
-          <li class="step step-drive"><span class="t">13:15</span><span class="lbl">Drive</span><span class="desc">180 km to Beaune (~1h45)</span></li>
-          <li class="step step-arrive"><span class="t">15:00</span><span class="lbl">Arrive</span><span class="desc"><b>Beaune</b> · settle in at the aire</span></li>
-          <li class="step step-visit"><span class="t">15:30</span><span class="lbl">Visit</span><span class="desc"><b>Hospices de Beaune</b> + old town walk</span></li>
-          <li class="step step-visit"><span class="t">17:30</span><span class="lbl">Walk</span><span class="desc">Côte d'Or vineyard footpath at golden hour</span></li>
-          <li class="step step-eat"><span class="t">19:30</span><span class="lbl">Eat</span><span class="desc">Cook at the aire (or Caves Madeleine bistro)</span></li>
-          <li class="step step-sleep"><span class="t">21:00</span><span class="lbl">Sleep</span><span class="desc">Free aire on the <b>Canal de Bourgogne</b></span></li>
-        </ol>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- ========================= PHASE 2 ========================= -->
-  <div class="phase" id="phase-2" data-trip="out">
-    <div class="phase-header">
-      <div class="num">02</div>
-      <h2>Italian Lakes &amp; Dolomites</h2>
-      <div class="meta">Days 2–4 · 920 km</div>
-    </div>
-    <p class="phase-intro">A long cross-Alps day to Lake Garda via Mont Blanc, then up into the limestone fangs of the Dolomites for two nights at altitude.</p>
-    <div class="days">
-
-      <div class="day">
-        <div class="day-tag tag-long">Long drive · cross-Alps</div>
-        <div class="day-top"><span class="day-num">D 02</span><h4>Lake Garda · Punta San Vigilio</h4></div>
-        <div class="km">From Beaune · 660 km · ~7h driving + Mont Blanc tunnel (€51)</div>
-        <ol class="timeline">
-          <li class="step step-wake"><span class="t">07:00</span><span class="lbl">Wake</span><span class="desc">Early start for the long day</span></li>
-          <li class="step step-depart"><span class="t">08:00</span><span class="lbl">Depart</span><span class="desc">Leave Beaune</span></li>
-          <li class="step step-charge"><span class="t">10:30</span><span class="lbl">Charge</span><span class="desc">SC <b>Bourg-en-Bresse</b> · 45 min · breakfast (after 250 km)</span></li>
-          <li class="step step-drive"><span class="t">11:15</span><span class="lbl">Drive</span><span class="desc">200 km via Annemasse (~2h)</span></li>
-          <li class="step step-charge"><span class="t">13:15</span><span class="lbl">Charge</span><span class="desc">SC <b>Annemasse</b> · 30 min · lunch</span></li>
-          <li class="step step-drive"><span class="t">13:45</span><span class="lbl">Drive</span><span class="desc">Mont Blanc tunnel + Aosta valley (90 km, ~1h45)</span></li>
-          <li class="step step-charge"><span class="t">15:30</span><span class="lbl">Charge</span><span class="desc">SC <b>Aosta</b> · 30 min · coffee break</span></li>
-          <li class="step step-drive"><span class="t">16:00</span><span class="lbl">Drive</span><span class="desc">240 km to Lake Garda (~2h45)</span></li>
-          <li class="step step-arrive"><span class="t">18:45</span><span class="lbl">Arrive</span><span class="desc">Lake Garda east shore</span></li>
-          <li class="step step-visit"><span class="t">19:00</span><span class="lbl">Walk</span><span class="desc">To <b>Punta San Vigilio</b> chapel-headland</span></li>
-          <li class="step step-eat"><span class="t">20:00</span><span class="lbl">Eat</span><span class="desc">Quick dinner at the lay-by</span></li>
-          <li class="step step-sleep"><span class="t">21:00</span><span class="lbl">Sleep</span><span class="desc">Free lay-by on the <b>SR249</b> between Garda and Torri del Benaco</span></li>
-        </ol>
-      </div>
-
-      <div class="day">
-        <div class="day-tag tag-drive">Mountain pass day</div>
-        <div class="day-top"><span class="day-num">D 03</span><h4>Passo Pordoi (2,239 m)</h4></div>
-        <div class="km">From Garda · 200 km · ~3h on slow mountain roads</div>
-        <ol class="timeline">
-          <li class="step step-wake"><span class="t">09:00</span><span class="lbl">Wake</span><span class="desc">Slow morning by the lake</span></li>
-          <li class="step step-eat"><span class="t">09:30</span><span class="lbl">Eat</span><span class="desc">Breakfast lakeside</span></li>
-          <li class="step step-swim"><span class="t">10:30</span><span class="lbl">Swim</span><span class="desc">Quick swim in <b>Lake Garda</b></span></li>
-          <li class="step step-depart"><span class="t">11:30</span><span class="lbl">Depart</span><span class="desc">Toward the Dolomites</span></li>
-          <li class="step step-charge"><span class="t">13:00</span><span class="lbl">Charge</span><span class="desc">SC <b>Trento Sud</b> · 45 min · lunch (130 km)</span></li>
-          <li class="step step-drive"><span class="t">13:45</span><span class="lbl">Drive</span><span class="desc">70 km up Val di Fassa (~1h30, slow mountain road)</span></li>
-          <li class="step step-arrive"><span class="t">15:15</span><span class="lbl">Arrive</span><span class="desc"><b>Passo Pordoi</b> summit lot · 360°</span></li>
-          <li class="step step-visit"><span class="t">15:45</span><span class="lbl">Visit</span><span class="desc"><b>Pordoi cable car</b> to Sass Pordoi (2,950 m, optional, €18)</span></li>
-          <li class="step step-visit"><span class="t">18:00</span><span class="lbl">Walk</span><span class="desc">Alpine meadows around the pass</span></li>
-          <li class="step step-eat"><span class="t">19:30</span><span class="lbl">Eat</span><span class="desc">Cook at the cable-car lot</span></li>
-          <li class="step step-sleep"><span class="t">21:00</span><span class="lbl">Sleep</span><span class="desc">Pordoi summit (no facilities; epic at dawn)</span></li>
-        </ol>
-      </div>
-
-      <div class="day">
-        <div class="day-tag tag-drive">Dolomites · Tre Cime</div>
-        <div class="day-top"><span class="day-num">D 04</span><h4>Lago di Misurina · Tre Cime</h4></div>
-        <div class="km">From Pordoi · 60 km · ~2h scenic + Tre Cime hike</div>
-        <ol class="timeline">
-          <li class="step step-wake"><span class="t">08:00</span><span class="lbl">Wake</span><span class="desc">Sunrise on Pordoi</span></li>
-          <li class="step step-eat"><span class="t">08:30</span><span class="lbl">Eat</span><span class="desc">Breakfast watching the light hit the peaks</span></li>
-          <li class="step step-depart"><span class="t">09:30</span><span class="lbl">Depart</span><span class="desc">Down toward Misurina</span></li>
-          <li class="step step-arrive"><span class="t">10:30</span><span class="lbl">Arrive</span><span class="desc"><b>Lago di Misurina</b> (60 km scenic drive)</span></li>
-          <li class="step step-drive"><span class="t">10:45</span><span class="lbl">Drive</span><span class="desc">Up to Tre Cime parking (€30 toll)</span></li>
-          <li class="step step-hike"><span class="t">11:15</span><span class="lbl">Hike</span><span class="desc"><b>Tre Cime loop</b> (10 km, ~3h30, easy)</span></li>
-          <li class="step step-eat"><span class="t">14:45</span><span class="lbl">Eat</span><span class="desc">Late picnic at trailhead</span></li>
-          <li class="step step-drive"><span class="t">15:30</span><span class="lbl">Drive</span><span class="desc">Back down to Misurina</span></li>
-          <li class="step step-swim"><span class="t">16:00</span><span class="lbl">Swim</span><span class="desc">Refresh in Lago di Misurina (cold!)</span></li>
-          <li class="step step-relax"><span class="t">18:00</span><span class="lbl">Walk</span><span class="desc">Around the lake at dusk</span></li>
-          <li class="step step-eat"><span class="t">19:30</span><span class="lbl">Eat</span><span class="desc">Dinner at the lay-by</span></li>
-          <li class="step step-sleep"><span class="t">21:00</span><span class="lbl">Sleep</span><span class="desc">Free lay-by around <b>Lago di Misurina</b></span></li>
-        </ol>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- ========================= PHASE 3 ========================= -->
-  <div class="phase" id="phase-3" data-trip="out">
-    <div class="phase-header">
-      <div class="num">03</div>
-      <h2>Slovenia · Triglav National Park</h2>
-      <div class="meta">Days 5–6 · 320 km</div>
-    </div>
-    <p class="phase-intro">Cross at Tarvisio. Triglav is Slovenia's only national park — 880 km² of glacial valleys, beech forest and turquoise rivers. Two nights at Lake Bohinj, the quieter twin of Bled.</p>
-    <div class="days">
-
-      <div class="day">
-        <div class="day-tag tag-cross">Border day · Italy → Slovenia</div>
-        <div class="day-top"><span class="day-num">D 05</span><h4>Lake Bohinj · Triglav NP</h4></div>
-        <div class="km">From Misurina · 320 km · ~4h30</div>
-        <ol class="timeline">
-          <li class="step step-wake"><span class="t">09:00</span><span class="lbl">Wake</span></li>
-          <li class="step step-eat"><span class="t">09:30</span><span class="lbl">Eat</span><span class="desc">Breakfast + pack up</span></li>
-          <li class="step step-depart"><span class="t">10:30</span><span class="lbl">Depart</span><span class="desc">Misurina</span></li>
-          <li class="step step-charge"><span class="t">12:30</span><span class="lbl">Charge</span><span class="desc">SC <b>Tarvisio</b> · 45 min · lunch (Italian side, 180 km)</span></li>
-          <li class="step step-border"><span class="t">13:15</span><span class="lbl">Border</span><span class="desc">Cross into Slovenia at Rateče</span></li>
-          <li class="step step-drive"><span class="t">13:30</span><span class="lbl">Drive</span><span class="desc">140 km to Lake Bohinj (~2h winding road)</span></li>
-          <li class="step step-arrive"><span class="t">15:30</span><span class="lbl">Arrive</span><span class="desc"><b>Lake Bohinj</b> west end (Ukanc)</span></li>
-          <li class="step step-swim"><span class="t">16:00</span><span class="lbl">Swim</span><span class="desc">Lake swim · clear cold water</span></li>
-          <li class="step step-visit"><span class="t">18:00</span><span class="lbl">Walk</span><span class="desc">Ukanc trails through pine forest</span></li>
-          <li class="step step-eat"><span class="t">19:30</span><span class="lbl">Eat</span><span class="desc">Cook lakeside</span></li>
-          <li class="step step-sleep"><span class="t">21:00</span><span class="lbl">Sleep</span><span class="desc">Free parking at <b>Bohinj</b> west end</span></li>
-        </ol>
-      </div>
-
-      <div class="day">
-        <div class="day-tag tag-rest">Rest · trail day</div>
-        <div class="day-top"><span class="day-num">D 06</span><h4>Triglav · Mostnica gorge &amp; Savica falls</h4></div>
-        <div class="km">0 km driving</div>
-        <ol class="timeline">
-          <li class="step step-wake"><span class="t">09:00</span><span class="lbl">Wake</span></li>
-          <li class="step step-eat"><span class="t">09:30</span><span class="lbl">Eat</span><span class="desc">Hearty breakfast</span></li>
-          <li class="step step-hike"><span class="t">10:30</span><span class="lbl">Hike</span><span class="desc"><b>Mostnica gorge</b> (5 km easy, 2h, turquoise pools) OR <b>Slap Savica</b> (3h harder)</span></li>
-          <li class="step step-eat"><span class="t">13:00</span><span class="lbl">Eat</span><span class="desc">Lunch at the trailhead</span></li>
-          <li class="step step-swim"><span class="t">14:30</span><span class="lbl">Swim</span><span class="desc">Lake Bohinj afternoon swim</span></li>
-          <li class="step step-visit"><span class="t">16:30</span><span class="lbl">Walk</span><span class="desc">To <b>Stara Fužina</b> village</span></li>
-          <li class="step step-relax"><span class="t">18:00</span><span class="lbl">Relax</span><span class="desc">Read at the lake</span></li>
-          <li class="step step-eat"><span class="t">19:30</span><span class="lbl">Eat</span><span class="desc">Dinner</span></li>
-          <li class="step step-sleep"><span class="t">21:00</span><span class="lbl">Sleep</span><span class="desc">Same Bohinj spot</span></li>
-        </ol>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- ========================= PHASE 4 ========================= -->
-  <div class="phase" id="phase-4" data-trip="out">
-    <div class="phase-header">
-      <div class="num">04</div>
-      <h2>Croatia · Plitvice &amp; the Adriatic</h2>
-      <div class="meta">Days 7–8 · 640 km</div>
-    </div>
-    <p class="phase-intro">Drop south into Croatia for one of the world's most extravagant waterfall parks, then sleep on the white-pebble Dalmatian coast under pine trees.</p>
-    <div class="days">
-
-      <div class="day">
-        <div class="day-tag tag-cross">Border day · Slovenia → Croatia</div>
-        <div class="day-top"><span class="day-num">D 07</span><h4>Plitvice Lakes NP</h4></div>
-        <div class="km">From Bohinj · 370 km · ~4h30</div>
-        <ol class="timeline">
-          <li class="step step-wake"><span class="t">08:00</span><span class="lbl">Wake</span><span class="desc">Earlier start</span></li>
-          <li class="step step-eat"><span class="t">08:30</span><span class="lbl">Eat</span><span class="desc">Quick breakfast</span></li>
-          <li class="step step-depart"><span class="t">09:30</span><span class="lbl">Depart</span><span class="desc">Bohinj</span></li>
-          <li class="step step-charge"><span class="t">12:00</span><span class="lbl">Charge</span><span class="desc">SC <b>Ljubljana</b> · 45 min · lunch (140 km)</span></li>
-          <li class="step step-border"><span class="t">13:30</span><span class="lbl">Border</span><span class="desc">Cross into Croatia (Schengen since 2023)</span></li>
-          <li class="step step-drive"><span class="t">12:45</span><span class="lbl">Drive</span><span class="desc">230 km to Plitvice (~2h45)</span></li>
-          <li class="step step-arrive"><span class="t">15:30</span><span class="lbl">Arrive</span><span class="desc"><b>Mukinje</b> village (free spot near Plitvice south entrance)</span></li>
-          <li class="step step-relax"><span class="t">16:00</span><span class="lbl">Relax</span><span class="desc">Settle in for early start tomorrow</span></li>
-          <li class="step step-visit"><span class="t">17:00</span><span class="lbl">Walk</span><span class="desc">North entrance lookout (free)</span></li>
-          <li class="step step-eat"><span class="t">19:30</span><span class="lbl">Eat</span><span class="desc">Dinner cook</span></li>
-          <li class="step step-sleep"><span class="t">21:00</span><span class="lbl">Sleep</span><span class="desc">Free spot near <b>Mukinje</b></span></li>
-        </ol>
-      </div>
-
-      <div class="day">
-        <div class="day-tag tag-drive">Park morning + Adriatic drive</div>
-        <div class="day-top"><span class="day-num">D 08</span><h4>Omiš · Cetina canyon</h4></div>
-        <div class="km">From Plitvice · 270 km · ~3h30 + park visit</div>
-        <ol class="timeline">
-          <li class="step step-wake"><span class="t">06:30</span><span class="lbl">Wake</span><span class="desc">Pre-dawn for park opening</span></li>
-          <li class="step step-visit"><span class="t">07:00</span><span class="lbl">Enter</span><span class="desc"><b>Plitvice Lakes</b> · Entrance 2 opens 7am (€40 summer)</span></li>
-          <li class="step step-eat"><span class="t">11:30</span><span class="lbl">Eat</span><span class="desc">Brunch back at the parking</span></li>
-          <li class="step step-depart"><span class="t">12:30</span><span class="lbl">Depart</span></li>
-          <li class="step step-charge"><span class="t">14:30</span><span class="lbl">Charge</span><span class="desc">SC <b>Zadar</b> · 30 min coffee break (200 km)</span></li>
-          <li class="step step-drive"><span class="t">15:00</span><span class="lbl">Drive</span><span class="desc">70 km to Omiš (~1h)</span></li>
-          <li class="step step-arrive"><span class="t">16:00</span><span class="lbl">Arrive</span><span class="desc">Omiš area</span></li>
-          <li class="step step-visit"><span class="t">16:15</span><span class="lbl">Visit</span><span class="desc">Drive 10 km up the <b>Cetina canyon</b> + back</span></li>
-          <li class="step step-swim"><span class="t">18:00</span><span class="lbl">Swim</span><span class="desc"><b>Brela</b> white-pebble beach</span></li>
-          <li class="step step-eat"><span class="t">19:30</span><span class="lbl">Eat</span><span class="desc">Dinner at the lay-by</span></li>
-          <li class="step step-sleep"><span class="t">21:00</span><span class="lbl">Sleep</span><span class="desc">Free pine-shade parking · <b>Mali Rat</b> / Brela</span></li>
-        </ol>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- ========================= PHASE 5 ========================= -->
-  <div class="phase" id="phase-5" data-trip="out">
-    <div class="phase-header">
-      <div class="num">05</div>
-      <h2>Montenegro · Bay of Kotor &amp; Lovćen</h2>
-      <div class="meta">Days 9–10 · 280 km</div>
-    </div>
-    <p class="phase-intro">Cross via the Pelješac Bridge (no Bosnian transit needed since 2022), then into Montenegro for the deepest and most theatrical bay on the Mediterranean.</p>
-    <div class="days">
-
-      <div class="day">
-        <div class="day-tag tag-cross">Border day · Croatia → Montenegro</div>
-        <div class="day-top"><span class="day-num">D 09</span><h4>Bay of Kotor · Žanjic</h4></div>
-        <div class="km">From Omiš · 250 km · ~4h + border</div>
-        <ol class="timeline">
-          <li class="step step-wake"><span class="t">09:00</span><span class="lbl">Wake</span></li>
-          <li class="step step-eat"><span class="t">09:30</span><span class="lbl">Eat</span><span class="desc">Breakfast on the beach</span></li>
-          <li class="step step-depart"><span class="t">10:30</span><span class="lbl">Depart</span></li>
-          <li class="step step-charge"><span class="t">12:00</span><span class="lbl">Charge</span><span class="desc">SC <b>Dubrovnik</b> · 45 min · lunch (last EU SC, 180 km)</span></li>
-          <li class="step step-drive"><span class="t">12:45</span><span class="lbl">Drive</span><span class="desc">Cross Pelješac Bridge → Dubrovnik bypass</span></li>
-          <li class="step step-border"><span class="t">13:30</span><span class="lbl">Border</span><span class="desc">Cross into Montenegro (passport + Green Card)</span></li>
-          <li class="step step-arrive"><span class="t">15:00</span><span class="lbl">Arrive</span><span class="desc"><b>Bay of Kotor</b> · Žanjic peninsula</span></li>
-          <li class="step step-swim"><span class="t">15:15</span><span class="lbl">Swim</span><span class="desc">Bay swim</span></li>
-          <li class="step step-visit"><span class="t">17:00</span><span class="lbl">Visit</span><span class="desc">Drive Verige strait scenic loop</span></li>
-          <li class="step step-visit"><span class="t">18:30</span><span class="lbl">Walk</span><span class="desc">Old town <b>Perast</b></span></li>
-          <li class="step step-eat"><span class="t">19:30</span><span class="lbl">Eat</span><span class="desc">Dinner cook</span></li>
-          <li class="step step-sleep"><span class="t">21:00</span><span class="lbl">Sleep</span><span class="desc">Žanjic peninsula (clifftop)</span></li>
-        </ol>
-      </div>
-
-      <div class="day">
-        <div class="day-tag tag-rest">Mountain detour day</div>
-        <div class="day-top"><span class="day-num">D 10</span><h4>Lovćen NP &amp; the Ladder of Kotor</h4></div>
-        <div class="km">~50 km local switchbacks</div>
-        <ol class="timeline">
-          <li class="step step-wake"><span class="t">08:00</span><span class="lbl">Wake</span><span class="desc">Early to climb Lovćen before heat</span></li>
-          <li class="step step-eat"><span class="t">08:30</span><span class="lbl">Eat</span><span class="desc">Breakfast</span></li>
-          <li class="step step-drive"><span class="t">09:30</span><span class="lbl">Drive</span><span class="desc">Up the <b>Ladder of Kotor</b> (25 switchbacks, slow)</span></li>
-          <li class="step step-arrive"><span class="t">10:30</span><span class="lbl">Arrive</span><span class="desc"><b>Lovćen NP</b> entrance</span></li>
-          <li class="step step-hike"><span class="t">11:00</span><span class="lbl">Hike</span><span class="desc">To <b>Njegoš mausoleum</b> (1h)</span></li>
-          <li class="step step-eat"><span class="t">12:30</span><span class="lbl">Eat</span><span class="desc">Lunch at the pass</span></li>
-          <li class="step step-drive"><span class="t">13:30</span><span class="lbl">Drive</span><span class="desc">Back down via Cetinje (different route)</span></li>
-          <li class="step step-swim"><span class="t">15:00</span><span class="lbl">Swim</span><span class="desc">Bay swim at Žanjic</span></li>
-          <li class="step step-visit"><span class="t">17:00</span><span class="lbl">Visit</span><span class="desc">Boat to <b>Our Lady of the Rocks</b> (€5 from Perast, optional)</span></li>
-          <li class="step step-eat"><span class="t">19:00</span><span class="lbl">Eat</span><span class="desc">Dinner</span></li>
-          <li class="step step-sleep"><span class="t">21:00</span><span class="lbl">Sleep</span><span class="desc"><b>Lovćen NP</b> pine forest (1,400 m, cool)</span></li>
-        </ol>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- ========================= PHASE 6 ========================= -->
-  <div class="phase" id="phase-6" data-trip="out">
-    <div class="phase-header">
-      <div class="num">06</div>
-      <h2>Albania · the Alps &amp; the Riviera</h2>
-      <div class="meta">Days 11–13 · 550 km</div>
-    </div>
-    <p class="phase-intro">The least-visited part of the trip and the most surprising. The Albanian Alps are the southernmost glaciated peaks in Europe; the Albanian Riviera is what the Croatian coast was thirty years ago.</p>
-    <div class="days">
-
-      <div class="day">
-        <div class="day-tag tag-cross">Border day · Montenegro → Albania</div>
-        <div class="day-top"><span class="day-num">D 11</span><h4>Theth (Albanian Alps)</h4></div>
-        <div class="km">From Lovćen · 200 km · ~5h on slow mountain roads</div>
-        <ol class="timeline">
-          <li class="step step-wake"><span class="t">09:00</span><span class="lbl">Wake</span></li>
-          <li class="step step-eat"><span class="t">09:30</span><span class="lbl">Eat</span></li>
-          <li class="step step-depart"><span class="t">10:30</span><span class="lbl">Depart</span><span class="desc">Down to Tivat</span></li>
-          <li class="step step-charge"><span class="t">12:00</span><span class="lbl">Charge</span><span class="desc"><b>Shkodër</b> CCS · 45 min · lunch (90 km via border)</span></li>
-          <li class="step step-border"><span class="t">12:45</span><span class="lbl">Border</span><span class="desc">Cross into Albania at <b>Hani i Hotit</b></span></li>
-          <li class="step step-drive"><span class="t">13:15</span><span class="lbl">Drive</span><span class="desc">70 km to Theth (~3h on hairpin road over <b>Thore pass</b>)</span></li>
-          <li class="step step-arrive"><span class="t">16:30</span><span class="lbl">Arrive</span><span class="desc"><b>Theth</b> village trailhead (700 m)</span></li>
-          <li class="step step-visit"><span class="t">17:00</span><span class="lbl">Walk</span><span class="desc">To the stone <b>kullas</b> (defensive towers)</span></li>
-          <li class="step step-eat"><span class="t">18:30</span><span class="lbl">Eat</span><span class="desc">Dinner cook · cold mountain night</span></li>
-          <li class="step step-sleep"><span class="t">21:00</span><span class="lbl">Sleep</span><span class="desc">Theth trailhead</span></li>
-        </ol>
-      </div>
-
-      <div class="day">
-        <div class="day-tag tag-rest">Rest · big hike</div>
-        <div class="day-top"><span class="day-num">D 12</span><h4>Theth · Blue Eye &amp; Grunas falls</h4></div>
-        <div class="km">0 km driving</div>
-        <ol class="timeline">
-          <li class="step step-wake"><span class="t">07:30</span><span class="lbl">Wake</span><span class="desc">Early for the hike</span></li>
-          <li class="step step-eat"><span class="t">08:00</span><span class="lbl">Eat</span><span class="desc">Hearty breakfast</span></li>
-          <li class="step step-hike"><span class="t">09:00</span><span class="lbl">Hike</span><span class="desc"><b>Blue Eye + Grunas</b> falls loop (8 km easy, 4h)</span></li>
-          <li class="step step-eat"><span class="t">13:00</span><span class="lbl">Eat</span><span class="desc">Lunch at trailhead</span></li>
-          <li class="step step-swim"><span class="t">14:30</span><span class="lbl">Swim</span><span class="desc">Glacial river dip (cold!)</span></li>
-          <li class="step step-visit"><span class="t">16:30</span><span class="lbl">Visit</span><span class="desc">Theth church + village wander</span></li>
-          <li class="step step-relax"><span class="t">18:00</span><span class="lbl">Relax</span><span class="desc">Read in the meadow</span></li>
-          <li class="step step-eat"><span class="t">19:30</span><span class="lbl">Eat</span><span class="desc">Dinner</span></li>
-          <li class="step step-sleep"><span class="t">21:00</span><span class="lbl">Sleep</span><span class="desc">Same trailhead</span></li>
-        </ol>
-      </div>
-
-      <div class="day">
-        <div class="day-tag tag-long">Long drive · coast</div>
-        <div class="day-top"><span class="day-num">D 13</span><h4>Saranda · Albanian Riviera</h4></div>
-        <div class="km">From Theth · 350 km · ~6h via Tirana bypass</div>
-        <ol class="timeline">
-          <li class="step step-wake"><span class="t">07:00</span><span class="lbl">Wake</span></li>
-          <li class="step step-eat"><span class="t">07:30</span><span class="lbl">Eat</span></li>
-          <li class="step step-depart"><span class="t">08:30</span><span class="lbl">Depart</span><span class="desc">Down the Theth hairpins</span></li>
-          <li class="step step-charge"><span class="t">11:00</span><span class="lbl">Charge</span><span class="desc">Shkodër CCS · 30 min top-up</span></li>
-          <li class="step step-drive"><span class="t">11:30</span><span class="lbl">Drive</span><span class="desc">130 km via Tirana ring road (~2h)</span></li>
-          <li class="step step-charge"><span class="t">13:30</span><span class="lbl">Charge</span><span class="desc">SC <b>Tirana</b> · 45 min · lunch</span></li>
-          <li class="step step-drive"><span class="t">14:15</span><span class="lbl">Drive</span><span class="desc">220 km to Saranda (~3h30 via SH4)</span></li>
-          <li class="step step-arrive"><span class="t">17:45</span><span class="lbl">Arrive</span><span class="desc"><b>Saranda</b> area</span></li>
-          <li class="step step-visit"><span class="t">18:00</span><span class="lbl">Visit</span><span class="desc">Drive past <b>Ksamil islets</b> at sunset</span></li>
-          <li class="step step-eat"><span class="t">19:30</span><span class="lbl">Eat</span><span class="desc">Dinner at the cliff</span></li>
-          <li class="step step-sleep"><span class="t">21:00</span><span class="lbl">Sleep</span><span class="desc">Above <b>Ksamil</b> cliffs</span></li>
-        </ol>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- ========================= PHASE 7 ========================= -->
-  <div class="phase" id="phase-7" data-trip="out">
-    <div class="phase-header">
-      <div class="num">07</div>
-      <h2>North Greece · Vikos &amp; Meteora</h2>
-      <div class="meta">Days 14–16 · 420 km</div>
-    </div>
-    <p class="phase-intro">Cross at Kakavia. Two of Greece's biggest natural wonders sit just east of the border: the deepest gorge in the world and the rock monasteries of Meteora.</p>
-    <div class="days">
-
-      <div class="day">
-        <div class="day-tag tag-cross">Border day · Albania → Greece</div>
-        <div class="day-top"><span class="day-num">D 14</span><h4>Vikos gorge · Zagori</h4></div>
-        <div class="km">From Saranda · 220 km · ~4h via Kakavia</div>
-        <ol class="timeline">
-          <li class="step step-wake"><span class="t">09:00</span><span class="lbl">Wake</span></li>
-          <li class="step step-eat"><span class="t">09:30</span><span class="lbl">Eat</span></li>
-          <li class="step step-depart"><span class="t">10:30</span><span class="lbl">Depart</span></li>
-          <li class="step step-border"><span class="t">11:00</span><span class="lbl">Border</span><span class="desc">Cross at <b>Kakavia</b> (~1h queue typical)</span></li>
-          <li class="step step-charge"><span class="t">12:30</span><span class="lbl">Charge</span><span class="desc">SC <b>Ioannina</b> · 45 min · lunch (90 km)</span></li>
-          <li class="step step-drive"><span class="t">13:15</span><span class="lbl">Drive</span><span class="desc">80 km up to Zagori (~1h30 winding)</span></li>
-          <li class="step step-arrive"><span class="t">14:45</span><span class="lbl">Arrive</span><span class="desc"><b>Vikos</b> rim · Oxia viewpoint</span></li>
-          <li class="step step-visit"><span class="t">15:00</span><span class="lbl">Visit</span><span class="desc">Drive between gorge viewpoints</span></li>
-          <li class="step step-visit"><span class="t">17:30</span><span class="lbl">Walk</span><span class="desc">To <b>Beloi viewpoint</b></span></li>
-          <li class="step step-eat"><span class="t">19:00</span><span class="lbl">Eat</span><span class="desc">Dinner at the rim</span></li>
-          <li class="step step-sleep"><span class="t">21:00</span><span class="lbl">Sleep</span><span class="desc"><b>Oxia</b> clearing (1,100 m, cool)</span></li>
-        </ol>
-      </div>
-
-      <div class="day">
-        <div class="day-tag tag-rest">Rest · hike day</div>
-        <div class="day-top"><span class="day-num">D 15</span><h4>Zagori · Drakolimni or stone bridges</h4></div>
-        <div class="km">~50 km local</div>
-        <ol class="timeline">
-          <li class="step step-wake"><span class="t">08:30</span><span class="lbl">Wake</span></li>
-          <li class="step step-eat"><span class="t">09:00</span><span class="lbl">Eat</span></li>
-          <li class="step step-hike"><span class="t">10:00</span><span class="lbl">Hike</span><span class="desc"><b>Drakolimni</b> (Dragon Lake, 6h round trip, 2,050 m) OR easier <b>stone bridges</b> loop (3h)</span></li>
-          <li class="step step-eat"><span class="t">14:00</span><span class="lbl">Eat</span><span class="desc">Lunch in <b>Papingo</b> village (taverna)</span></li>
-          <li class="step step-swim"><span class="t">15:30</span><span class="lbl">Swim</span><span class="desc"><b>Voïdomatis</b> natural pools</span></li>
-          <li class="step step-visit"><span class="t">17:30</span><span class="lbl">Walk</span><span class="desc">Wander Papingo's stone houses</span></li>
-          <li class="step step-eat"><span class="t">19:00</span><span class="lbl">Eat</span><span class="desc">Cook</span></li>
-          <li class="step step-sleep"><span class="t">21:00</span><span class="lbl">Sleep</span><span class="desc">Same Oxia clearing or near Papingo</span></li>
-        </ol>
-      </div>
-
-      <div class="day">
-        <div class="day-tag tag-drive">Drive · monoliths</div>
-        <div class="day-top"><span class="day-num">D 16</span><h4>Meteora</h4></div>
-        <div class="km">From Zagori · 200 km · ~3h</div>
-        <ol class="timeline">
-          <li class="step step-wake"><span class="t">09:00</span><span class="lbl">Wake</span></li>
-          <li class="step step-eat"><span class="t">09:30</span><span class="lbl">Eat</span></li>
-          <li class="step step-depart"><span class="t">10:30</span><span class="lbl">Depart</span></li>
-          <li class="step step-charge"><span class="t">12:30</span><span class="lbl">Charge</span><span class="desc">SC <b>Trikala</b> · 45 min · lunch (170 km)</span></li>
-          <li class="step step-drive"><span class="t">13:15</span><span class="lbl">Drive</span><span class="desc">25 km up to the rock plateau</span></li>
-          <li class="step step-arrive"><span class="t">13:45</span><span class="lbl">Arrive</span><span class="desc"><b>Meteora</b> rock plateau</span></li>
-          <li class="step step-visit"><span class="t">14:00</span><span class="lbl">Visit</span><span class="desc">Drive the 6-monastery loop</span></li>
-          <li class="step step-visit"><span class="t">17:00</span><span class="lbl">Walk</span><span class="desc">Reach sunset viewpoint early</span></li>
-          <li class="step step-visit"><span class="t">19:30</span><span class="lbl">Sunset</span><span class="desc">Watch monasteries glow from the panoramic point</span></li>
-          <li class="step step-eat"><span class="t">20:00</span><span class="lbl">Eat</span><span class="desc">Dinner at the lay-by</span></li>
-          <li class="step step-sleep"><span class="t">21:00</span><span class="lbl">Sleep</span><span class="desc">Sunset viewpoint on the plateau</span></li>
-        </ol>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- ========================= PHASE 8 ========================= -->
-  <div class="phase" id="phase-8" data-trip="out">
-    <div class="phase-header">
-      <div class="num">08</div>
-      <h2>Mt Olympus &amp; Pelion</h2>
-      <div class="meta">Days 17–19 · 620 km</div>
-    </div>
-    <p class="phase-intro">Two nights at the trailhead of the highest mountain in Greece, then over to the green peninsula of Pelion — chestnut forests dropping straight into the Aegean.</p>
-    <div class="days">
-
-      <div class="day">
-        <div class="day-tag tag-drive">Drive · mountain</div>
-        <div class="day-top"><span class="day-num">D 17</span><h4>Mt Olympus · Prionia trailhead</h4></div>
-        <div class="km">From Meteora · 200 km · ~2h45</div>
-        <ol class="timeline">
-          <li class="step step-wake"><span class="t">06:00</span><span class="lbl">Wake</span><span class="desc">Sunrise on the rocks</span></li>
-          <li class="step step-visit"><span class="t">06:30</span><span class="lbl">Sunrise</span><span class="desc">Watch from the plateau</span></li>
-          <li class="step step-eat"><span class="t">07:30</span><span class="lbl">Eat</span><span class="desc">Breakfast at sunrise spot</span></li>
-          <li class="step step-visit"><span class="t">09:00</span><span class="lbl">Visit</span><span class="desc">One last monastery (<b>Great Meteoron</b> opens 9 am)</span></li>
-          <li class="step step-depart"><span class="t">10:30</span><span class="lbl">Depart</span></li>
-          <li class="step step-charge"><span class="t">12:30</span><span class="lbl">Charge</span><span class="desc">SC <b>Larissa</b> · 45 min · lunch (110 km)</span></li>
-          <li class="step step-drive"><span class="t">13:15</span><span class="lbl">Drive</span><span class="desc">90 km to Litochoro / Prionia (~1h30, last 18 km steep forest road)</span></li>
-          <li class="step step-arrive"><span class="t">14:45</span><span class="lbl">Arrive</span><span class="desc"><b>Prionia</b> trailhead (1,100 m)</span></li>
-          <li class="step step-visit"><span class="t">15:00</span><span class="lbl">Walk</span><span class="desc">Light walk in the <b>Enipeas gorge</b></span></li>
-          <li class="step step-relax"><span class="t">17:30</span><span class="lbl">Relax</span><span class="desc">Cool mountain air</span></li>
-          <li class="step step-eat"><span class="t">19:00</span><span class="lbl">Eat</span><span class="desc">Dinner</span></li>
-          <li class="step step-sleep"><span class="t">21:00</span><span class="lbl">Sleep</span><span class="desc">Prionia trailhead</span></li>
-        </ol>
-      </div>
-
-      <div class="day">
-        <div class="day-tag tag-rest">Rest · big hike</div>
-        <div class="day-top"><span class="day-num">D 18</span><h4>Olympus · Refuge A or Enipeas</h4></div>
-        <div class="km">0 km · 10–14 km on foot</div>
-        <ol class="timeline">
-          <li class="step step-wake"><span class="t">06:30</span><span class="lbl">Wake</span><span class="desc">Pre-dawn for big hike</span></li>
-          <li class="step step-eat"><span class="t">07:00</span><span class="lbl">Eat</span><span class="desc">Hearty breakfast</span></li>
-          <li class="step step-hike"><span class="t">08:00</span><span class="lbl">Hike</span><span class="desc"><b>Refuge A</b> (2,100 m, 6h round trip) OR <b>Enipeas waterfalls</b> (4h easier)</span></li>
-          <li class="step step-eat"><span class="t">14:00</span><span class="lbl">Eat</span><span class="desc">Late lunch at trailhead</span></li>
-          <li class="step step-relax"><span class="t">16:00</span><span class="lbl">Relax</span><span class="desc">Read in the forest</span></li>
-          <li class="step step-swim"><span class="t">18:00</span><span class="lbl">Swim</span><span class="desc">Cold river dip</span></li>
-          <li class="step step-eat"><span class="t">19:30</span><span class="lbl">Eat</span><span class="desc">Dinner</span></li>
-          <li class="step step-sleep"><span class="t">21:00</span><span class="lbl">Sleep</span><span class="desc">Same Prionia</span></li>
-        </ol>
-      </div>
-
-      <div class="day">
-        <div class="day-tag tag-drive">Drive · forest peninsula</div>
-        <div class="day-top"><span class="day-num">D 19</span><h4>Pelion · Mylopotamos</h4></div>
-        <div class="km">From Olympus · 220 km · ~3h15</div>
-        <ol class="timeline">
-          <li class="step step-wake"><span class="t">09:00</span><span class="lbl">Wake</span></li>
-          <li class="step step-eat"><span class="t">09:30</span><span class="lbl">Eat</span></li>
-          <li class="step step-depart"><span class="t">10:30</span><span class="lbl">Depart</span></li>
-          <li class="step step-charge"><span class="t">12:30</span><span class="lbl">Charge</span><span class="desc">SC <b>Volos</b> · 45 min · lunch (170 km)</span></li>
-          <li class="step step-drive"><span class="t">13:15</span><span class="lbl">Drive</span><span class="desc">50 km up Pelion ridge (~1h30 winding)</span></li>
-          <li class="step step-arrive"><span class="t">14:45</span><span class="lbl">Arrive</span><span class="desc"><b>Mylopotamos</b> area</span></li>
-          <li class="step step-swim"><span class="t">15:00</span><span class="lbl">Swim</span><span class="desc"><b>Mylopotamos beach</b> (twin coves)</span></li>
-          <li class="step step-visit"><span class="t">17:30</span><span class="lbl">Walk</span><span class="desc">Down to <b>Damouchari</b></span></li>
-          <li class="step step-eat"><span class="t">19:30</span><span class="lbl">Eat</span><span class="desc">Taverna under the trees</span></li>
-          <li class="step step-sleep"><span class="t">21:00</span><span class="lbl">Sleep</span><span class="desc">Mylopotamos lay-by</span></li>
-        </ol>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- ========================= PHASE 9 ========================= -->
-  <div class="phase" id="phase-9" data-trip="out">
-    <div class="phase-header">
-      <div class="num">09</div>
-      <h2>Peloponnese · the wild heart</h2>
-      <div class="meta">Days 20–23 · 880 km</div>
-    </div>
-    <p class="phase-intro">A loop around the southern peninsula — rugged Mani for stone towers and empty coves, Messinia for the most beautiful beach in Greece, Olympia for sacred plane trees and silence.</p>
-    <div class="days">
-
-      <div class="day">
-        <div class="day-tag tag-long">Long drive · skip Athens</div>
-        <div class="day-top"><span class="day-num">D 20</span><h4>Nafplio · Karathona beach</h4></div>
-        <div class="km">From Pelion · 430 km · ~5h30 via Athens autoroute</div>
-        <ol class="timeline">
-          <li class="step step-wake"><span class="t">07:00</span><span class="lbl">Wake</span></li>
-          <li class="step step-eat"><span class="t">07:30</span><span class="lbl">Eat</span></li>
-          <li class="step step-depart"><span class="t">08:30</span><span class="lbl">Depart</span></li>
-          <li class="step step-charge"><span class="t">10:30</span><span class="lbl">Charge</span><span class="desc">SC <b>Lamia</b> · 30 min coffee (180 km)</span></li>
-          <li class="step step-drive"><span class="t">11:00</span><span class="lbl">Drive</span><span class="desc">220 km via Athens autoroute (~2h)</span></li>
-          <li class="step step-charge"><span class="t">13:00</span><span class="lbl">Charge</span><span class="desc">SC <b>Korinthos</b> · 45 min · lunch</span></li>
-          <li class="step step-visit"><span class="t">13:45</span><span class="lbl">Visit</span><span class="desc"><b>Corinth canal</b> viewpoint (15 min stop)</span></li>
-          <li class="step step-drive"><span class="t">14:00</span><span class="lbl">Drive</span><span class="desc">90 km to Nafplio (~1h)</span></li>
-          <li class="step step-arrive"><span class="t">15:00</span><span class="lbl">Arrive</span><span class="desc"><b>Karathona</b> beach (back-bay of Nafplio)</span></li>
-          <li class="step step-swim"><span class="t">15:30</span><span class="lbl">Swim</span><span class="desc">Karathona beach (pine trees, calm)</span></li>
-          <li class="step step-visit"><span class="t">18:00</span><span class="lbl">Visit</span><span class="desc">Walk into Nafplio old town</span></li>
-          <li class="step step-eat"><span class="t">19:30</span><span class="lbl">Eat</span><span class="desc">Seafood dinner at the harbor</span></li>
-          <li class="step step-sleep"><span class="t">21:00</span><span class="lbl">Sleep</span><span class="desc">Karathona pine parking</span></li>
-        </ol>
-      </div>
-
-      <div class="day">
-        <div class="day-tag tag-drive">Drive · Mani</div>
-        <div class="day-top"><span class="day-num">D 21</span><h4>Mani peninsula · Limeni</h4></div>
-        <div class="km">From Nafplio · 230 km · ~3h30</div>
-        <ol class="timeline">
-          <li class="step step-wake"><span class="t">09:00</span><span class="lbl">Wake</span></li>
-          <li class="step step-eat"><span class="t">09:30</span><span class="lbl">Eat</span></li>
-          <li class="step step-depart"><span class="t">10:30</span><span class="lbl">Depart</span></li>
-          <li class="step step-visit"><span class="t">11:00</span><span class="lbl">Visit</span><span class="desc"><b>Mycenae</b> ruins (45 min stop, on the way)</span></li>
-          <li class="step step-drive"><span class="t">11:45</span><span class="lbl">Drive</span><span class="desc">Toward Tripoli</span></li>
-          <li class="step step-charge"><span class="t">13:00</span><span class="lbl">Charge</span><span class="desc">SC <b>Tripoli</b> · 45 min · lunch (110 km)</span></li>
-          <li class="step step-drive"><span class="t">13:45</span><span class="lbl">Drive</span><span class="desc">110 km to Mani (~2h on slow road)</span></li>
-          <li class="step step-arrive"><span class="t">15:45</span><span class="lbl">Arrive</span><span class="desc"><b>Limeni</b> cliff parking</span></li>
-          <li class="step step-swim"><span class="t">16:00</span><span class="lbl">Swim</span><span class="desc">Crystal water at Limeni cove</span></li>
-          <li class="step step-visit"><span class="t">18:00</span><span class="lbl">Walk</span><span class="desc">Up to old stone tower-houses</span></li>
-          <li class="step step-eat"><span class="t">19:30</span><span class="lbl">Eat</span><span class="desc">Dinner cook</span></li>
-          <li class="step step-sleep"><span class="t">21:00</span><span class="lbl">Sleep</span><span class="desc">Limeni clifftop</span></li>
-        </ol>
-      </div>
-
-      <div class="day">
-        <div class="day-tag tag-rest">Mani exploration</div>
-        <div class="day-top"><span class="day-num">D 22</span><h4>Cape Tenaro &amp; Diros caves</h4></div>
-        <div class="km">~90 km local on slow stone roads</div>
-        <ol class="timeline">
-          <li class="step step-wake"><span class="t">09:00</span><span class="lbl">Wake</span></li>
-          <li class="step step-eat"><span class="t">09:30</span><span class="lbl">Eat</span></li>
-          <li class="step step-drive"><span class="t">10:30</span><span class="lbl">Drive</span><span class="desc">40 km to <b>Diros caves</b> (~1h)</span></li>
-          <li class="step step-visit"><span class="t">11:30</span><span class="lbl">Visit</span><span class="desc">Diros caves boat tour (1h, €15, underground river)</span></li>
-          <li class="step step-eat"><span class="t">12:30</span><span class="lbl">Eat</span><span class="desc">Lunch at Pyrgos Diros</span></li>
-          <li class="step step-drive"><span class="t">13:30</span><span class="lbl">Drive</span><span class="desc">50 km to <b>Cape Tenaro</b> (~1h30 on rough road)</span></li>
-          <li class="step step-hike"><span class="t">15:00</span><span class="lbl">Hike</span><span class="desc">Walk to Cape Tenaro lighthouse (45 min)</span></li>
-          <li class="step step-swim"><span class="t">16:30</span><span class="lbl">Swim</span><span class="desc">Hidden cove at the cape</span></li>
-          <li class="step step-drive"><span class="t">18:30</span><span class="lbl">Drive</span><span class="desc">Back toward Limeni</span></li>
-          <li class="step step-eat"><span class="t">19:30</span><span class="lbl">Eat</span><span class="desc">Dinner</span></li>
-          <li class="step step-sleep"><span class="t">21:00</span><span class="lbl">Sleep</span><span class="desc">Near <b>Cape Tenaro</b> or back at Limeni</span></li>
-        </ol>
-      </div>
-
-      <div class="day">
-        <div class="day-tag tag-drive">Drive · Messinia</div>
-        <div class="day-top"><span class="day-num">D 23</span><h4>Olympia · sacred grove</h4></div>
-        <div class="km">From Mani · 250 km · ~4h via Voidokilia</div>
-        <ol class="timeline">
-          <li class="step step-wake"><span class="t">09:00</span><span class="lbl">Wake</span></li>
-          <li class="step step-eat"><span class="t">09:30</span><span class="lbl">Eat</span></li>
-          <li class="step step-depart"><span class="t">10:30</span><span class="lbl">Depart</span></li>
-          <li class="step step-charge"><span class="t">12:00</span><span class="lbl">Charge</span><span class="desc">SC <b>Kalamata</b> · 45 min · lunch (110 km)</span></li>
-          <li class="step step-drive"><span class="t">12:45</span><span class="lbl">Drive</span><span class="desc">90 km to Voidokilia (~1h30)</span></li>
-          <li class="step step-arrive"><span class="t">14:15</span><span class="lbl">Arrive</span><span class="desc"><b>Voidokilia beach</b></span></li>
-          <li class="step step-swim"><span class="t">14:30</span><span class="lbl">Swim</span><span class="desc">Most perfect beach in Greece</span></li>
-          <li class="step step-hike"><span class="t">16:30</span><span class="lbl">Hike</span><span class="desc">Up to <b>Palaiokastro</b> for the omega-shape view</span></li>
-          <li class="step step-drive"><span class="t">17:30</span><span class="lbl">Drive</span><span class="desc">50 km to Olympia (~1h)</span></li>
-          <li class="step step-arrive"><span class="t">18:30</span><span class="lbl">Arrive</span><span class="desc"><b>Olympia</b> archaeological lot</span></li>
-          <li class="step step-eat"><span class="t">19:00</span><span class="lbl">Eat</span><span class="desc">Dinner</span></li>
-          <li class="step step-sleep"><span class="t">21:00</span><span class="lbl">Sleep</span><span class="desc">Olympia overflow lot (pine trees, river)</span></li>
-        </ol>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- ========================= PHASE 10 (RETURN) ========================= -->
-  <div class="phase" id="phase-10" data-trip="back">
-    <div class="phase-header">
-      <div class="num">10</div>
-      <h2>Return · Albania, Bosnia, Slovenia</h2>
-      <div class="meta">Days 24–30 · 3,100 km</div>
-    </div>
-    <p class="phase-intro">Trace the Adriatic back up by road, picking different overnight stops than the outbound (Himara instead of Saranda, Mostar instead of Plitvice, Bled instead of Bohinj).</p>
-    <div class="days">
-
-      <div class="day">
-        <div class="day-tag tag-long">Long drive · 3 borders</div>
-        <div class="day-top"><span class="day-num">D 24</span><h4>Himara · Albanian Riviera</h4></div>
-        <div class="km">From Olympia · 470 km · ~7h via Patras &amp; Kakavia</div>
-        <ol class="timeline">
-          <li class="step step-wake"><span class="t">06:30</span><span class="lbl">Wake</span><span class="desc">Pre-dawn</span></li>
-          <li class="step step-eat"><span class="t">07:00</span><span class="lbl">Eat</span></li>
-          <li class="step step-visit"><span class="t">08:00</span><span class="lbl">Visit</span><span class="desc"><b>Olympia ruins</b> at opening (1h walk, almost empty)</span></li>
-          <li class="step step-depart"><span class="t">09:00</span><span class="lbl">Depart</span></li>
-          <li class="step step-charge"><span class="t">11:00</span><span class="lbl">Charge</span><span class="desc">SC <b>Patras</b> · 30 min (130 km)</span></li>
-          <li class="step step-drive"><span class="t">11:30</span><span class="lbl">Drive</span><span class="desc">Cross Rio-Antirrio bridge, north (170 km, ~2h)</span></li>
-          <li class="step step-charge"><span class="t">13:30</span><span class="lbl">Charge</span><span class="desc">SC <b>Ioannina</b> · 45 min · lunch</span></li>
-          <li class="step step-drive"><span class="t">14:15</span><span class="lbl">Drive</span><span class="desc">80 km to Kakavia border</span></li>
-          <li class="step step-border"><span class="t">15:30</span><span class="lbl">Border</span><span class="desc">Cross into Albania (~30 min)</span></li>
-          <li class="step step-drive"><span class="t">16:00</span><span class="lbl">Drive</span><span class="desc">50 km to Saranda (~1h)</span></li>
-          <li class="step step-charge"><span class="t">17:00</span><span class="lbl">Charge</span><span class="desc">Saranda CCS · 20 min top-up</span></li>
-          <li class="step step-drive"><span class="t">17:20</span><span class="lbl">Drive</span><span class="desc">50 km up coast to <b>Himara</b> (~1h)</span></li>
-          <li class="step step-arrive"><span class="t">18:30</span><span class="lbl">Arrive</span><span class="desc">Himara cliff</span></li>
-          <li class="step step-eat"><span class="t">19:00</span><span class="lbl">Eat</span><span class="desc">Late dinner</span></li>
-          <li class="step step-sleep"><span class="t">21:00</span><span class="lbl">Sleep</span><span class="desc">Himara cliff</span></li>
-        </ol>
-      </div>
-
-      <div class="day">
-        <div class="day-tag tag-cross">Border day · Albania → Montenegro</div>
-        <div class="day-top"><span class="day-num">D 25</span><h4>Bay of Kotor · Tivat side</h4></div>
-        <div class="km">From Himara · 300 km · ~5h30</div>
-        <ol class="timeline">
-          <li class="step step-wake"><span class="t">09:00</span><span class="lbl">Wake</span></li>
-          <li class="step step-eat"><span class="t">09:30</span><span class="lbl">Eat</span></li>
-          <li class="step step-depart"><span class="t">10:30</span><span class="lbl">Depart</span></li>
-          <li class="step step-charge"><span class="t">12:00</span><span class="lbl">Charge</span><span class="desc">SC <b>Tirana</b> · 45 min · lunch (170 km)</span></li>
-          <li class="step step-drive"><span class="t">12:45</span><span class="lbl">Drive</span><span class="desc">90 km to border</span></li>
-          <li class="step step-border"><span class="t">14:15</span><span class="lbl">Border</span><span class="desc">Cross at <b>Hani i Hotit</b></span></li>
-          <li class="step step-drive"><span class="t">14:45</span><span class="lbl">Drive</span><span class="desc">80 km along Lake Skadar to Tivat (~1h45)</span></li>
-          <li class="step step-arrive"><span class="t">16:30</span><span class="lbl">Arrive</span><span class="desc"><b>Tivat</b> side of Bay of Kotor</span></li>
-          <li class="step step-swim"><span class="t">17:00</span><span class="lbl">Swim</span><span class="desc">Bay swim</span></li>
-          <li class="step step-visit"><span class="t">18:30</span><span class="lbl">Walk</span><span class="desc">Tivat seafront</span></li>
-          <li class="step step-eat"><span class="t">19:30</span><span class="lbl">Eat</span><span class="desc">Dinner</span></li>
-          <li class="step step-sleep"><span class="t">21:00</span><span class="lbl">Sleep</span><span class="desc">Tivat side</span></li>
-        </ol>
-      </div>
-
-      <div class="day">
-        <div class="day-tag tag-cross">Border day · Montenegro → Bosnia</div>
-        <div class="day-top"><span class="day-num">D 26</span><h4>Blagaj &amp; Mostar (Bosnia)</h4></div>
-        <div class="km">From Kotor · 210 km · ~4h via Trebinje</div>
-        <ol class="timeline">
-          <li class="step step-wake"><span class="t">09:00</span><span class="lbl">Wake</span></li>
-          <li class="step step-eat"><span class="t">09:30</span><span class="lbl">Eat</span></li>
-          <li class="step step-depart"><span class="t">10:30</span><span class="lbl">Depart</span></li>
-          <li class="step step-border"><span class="t">12:00</span><span class="lbl">Border</span><span class="desc">Cross into Bosnia at <b>Trebinje</b></span></li>
-          <li class="step step-drive"><span class="t">12:30</span><span class="lbl">Drive</span><span class="desc">130 km via karst plateau to Blagaj (~2h30)</span></li>
-          <li class="step step-eat"><span class="t">14:00</span><span class="lbl">Eat</span><span class="desc">Snack lunch en route</span></li>
-          <li class="step step-arrive"><span class="t">15:00</span><span class="lbl">Arrive</span><span class="desc"><b>Blagaj</b> Sufi monastery</span></li>
-          <li class="step step-visit"><span class="t">15:15</span><span class="lbl">Visit</span><span class="desc">Tekija dervish house at the cave spring</span></li>
-          <li class="step step-drive"><span class="t">16:30</span><span class="lbl">Drive</span><span class="desc">12 km to Mostar</span></li>
-          <li class="step step-visit"><span class="t">17:00</span><span class="lbl">Visit</span><span class="desc"><b>Stari Most</b> bridge + old bazaar</span></li>
-          <li class="step step-charge"><span class="t">18:30</span><span class="lbl">Charge</span><span class="desc">Mostar CCS · 30 min top-up (no Tesla SC in Bosnia)</span></li>
-          <li class="step step-eat"><span class="t">19:30</span><span class="lbl">Eat</span><span class="desc">Bosnian dinner (<b>ćevapi</b> in the bazaar)</span></li>
-          <li class="step step-sleep"><span class="t">21:00</span><span class="lbl">Sleep</span><span class="desc">Blagaj or Mostar parking</span></li>
-        </ol>
-      </div>
-
-      <div class="day">
-        <div class="day-tag tag-long">Long drive · 2 borders</div>
-        <div class="day-top"><span class="day-num">D 27</span><h4>Lake Bled · Pokljuka plateau</h4></div>
-        <div class="km">From Mostar · 600 km · ~7h on autoroutes</div>
-        <ol class="timeline">
-          <li class="step step-wake"><span class="t">06:30</span><span class="lbl">Wake</span><span class="desc">Pre-dawn for big drive</span></li>
-          <li class="step step-eat"><span class="t">07:00</span><span class="lbl">Eat</span></li>
-          <li class="step step-depart"><span class="t">08:00</span><span class="lbl">Depart</span></li>
-          <li class="step step-border"><span class="t">10:00</span><span class="lbl">Border</span><span class="desc">Bosnia → Croatia (back in EU)</span></li>
-          <li class="step step-charge"><span class="t">12:30</span><span class="lbl">Charge</span><span class="desc">SC <b>Sveti Rok</b> · 45 min · lunch (200 km)</span></li>
-          <li class="step step-drive"><span class="t">13:15</span><span class="lbl">Drive</span><span class="desc">250 km to Zagreb (~2h30)</span></li>
-          <li class="step step-charge"><span class="t">15:45</span><span class="lbl">Charge</span><span class="desc">SC <b>Zagreb</b> · 30 min</span></li>
-          <li class="step step-drive"><span class="t">16:15</span><span class="lbl">Drive</span><span class="desc">200 km to Bled (~2h30)</span></li>
-          <li class="step step-arrive"><span class="t">18:45</span><span class="lbl">Arrive</span><span class="desc"><b>Lake Bled</b></span></li>
-          <li class="step step-visit"><span class="t">19:00</span><span class="lbl">Sunset</span><span class="desc">Bled island church viewpoint</span></li>
-          <li class="step step-eat"><span class="t">20:00</span><span class="lbl">Eat</span><span class="desc">Late dinner</span></li>
-          <li class="step step-sleep"><span class="t">21:00</span><span class="lbl">Sleep</span><span class="desc"><b>Pokljuka</b> plateau above Bled (1,300 m)</span></li>
-        </ol>
-      </div>
-
-      <div class="day">
-        <div class="day-tag tag-drive">Drive · Italian lakes</div>
-        <div class="day-top"><span class="day-num">D 28</span><h4>Lake Como (north end)</h4></div>
-        <div class="km">From Bled · 440 km · ~5h</div>
-        <ol class="timeline">
-          <li class="step step-wake"><span class="t">09:00</span><span class="lbl">Wake</span><span class="desc">Sunrise on Bled</span></li>
-          <li class="step step-eat"><span class="t">09:30</span><span class="lbl">Eat</span></li>
-          <li class="step step-depart"><span class="t">10:30</span><span class="lbl">Depart</span></li>
-          <li class="step step-charge"><span class="t">12:00</span><span class="lbl">Charge</span><span class="desc">SC <b>Trieste</b> · 45 min · lunch (Italian border, 180 km)</span></li>
-          <li class="step step-drive"><span class="t">12:45</span><span class="lbl">Drive</span><span class="desc">130 km to Brescia (~1h30)</span></li>
-          <li class="step step-charge"><span class="t">14:15</span><span class="lbl">Charge</span><span class="desc">SC <b>Brescia Ovest</b> · 30 min</span></li>
-          <li class="step step-drive"><span class="t">14:45</span><span class="lbl">Drive</span><span class="desc">130 km to north Lake Como (~2h)</span></li>
-          <li class="step step-arrive"><span class="t">16:45</span><span class="lbl">Arrive</span><span class="desc"><b>Lake Como</b> (Bellano area)</span></li>
-          <li class="step step-swim"><span class="t">17:00</span><span class="lbl">Swim</span><span class="desc"><b>Pian di Spagna</b> nature reserve at the lake's north tip</span></li>
-          <li class="step step-eat"><span class="t">19:00</span><span class="lbl">Eat</span><span class="desc">Dinner</span></li>
-          <li class="step step-sleep"><span class="t">21:00</span><span class="lbl">Sleep</span><span class="desc">SS36 lay-by north of Lecco</span></li>
-        </ol>
-      </div>
-
-      <div class="day">
-        <div class="day-tag tag-long">Long drive · cross-Alps</div>
-        <div class="day-top"><span class="day-num">D 29</span><h4>Beaune (return)</h4></div>
-        <div class="km">From Como · 530 km · ~5h45 + Mont Blanc tunnel</div>
-        <ol class="timeline">
-          <li class="step step-wake"><span class="t">07:00</span><span class="lbl">Wake</span></li>
-          <li class="step step-eat"><span class="t">07:30</span><span class="lbl">Eat</span></li>
-          <li class="step step-depart"><span class="t">08:30</span><span class="lbl">Depart</span></li>
-          <li class="step step-charge"><span class="t">10:30</span><span class="lbl">Charge</span><span class="desc">SC <b>Aosta</b> · 30 min (175 km)</span></li>
-          <li class="step step-drive"><span class="t">11:00</span><span class="lbl">Drive</span><span class="desc">Mont Blanc tunnel + French Alps (240 km, ~3h)</span></li>
-          <li class="step step-charge"><span class="t">14:00</span><span class="lbl">Charge</span><span class="desc">SC <b>Chambéry</b> · 45 min · lunch</span></li>
-          <li class="step step-drive"><span class="t">14:45</span><span class="lbl">Drive</span><span class="desc">220 km to Beaune (~2h30)</span></li>
-          <li class="step step-arrive"><span class="t">17:15</span><span class="lbl">Arrive</span><span class="desc"><b>Beaune</b> · same aire as D1</span></li>
-          <li class="step step-visit"><span class="t">17:45</span><span class="lbl">Walk</span><span class="desc">Old town one more time</span></li>
-          <li class="step step-eat"><span class="t">19:30</span><span class="lbl">Eat</span><span class="desc">Dinner cook</span></li>
-          <li class="step step-sleep"><span class="t">21:00</span><span class="lbl">Sleep</span><span class="desc">Canal de Bourgogne aire</span></li>
-        </ol>
-      </div>
-
-      <div class="day">
-        <div class="day-tag tag-drive">Last day</div>
-        <div class="day-top"><span class="day-num">D 30</span><h4>Poissy · home</h4></div>
-        <div class="km">From Beaune · 430 km · ~4h20</div>
-        <ol class="timeline">
-          <li class="step step-wake"><span class="t">09:00</span><span class="lbl">Wake</span></li>
-          <li class="step step-eat"><span class="t">09:30</span><span class="lbl">Eat</span><span class="desc">Last vineyard breakfast</span></li>
-          <li class="step step-depart"><span class="t">10:30</span><span class="lbl">Depart</span></li>
-          <li class="step step-charge"><span class="t">13:00</span><span class="lbl">Charge</span><span class="desc">SC <b>Auxerre Sud</b> · 45 min · lunch (250 km)</span></li>
-          <li class="step step-drive"><span class="t">13:45</span><span class="lbl">Drive</span><span class="desc">180 km to Poissy (~1h45)</span></li>
-          <li class="step step-arrive"><span class="t">15:30</span><span class="lbl">Arrive</span><span class="desc"><b>Poissy · home</b> · 30 days, 8,400 km, no ferries</span></li>
-        </ol>
-      </div>
-
-    </div>
-  </div>
-
-</section>
-
-<!-- ========================= TIPS ========================= -->
-<section class="tips">
-  <div class="tips-inner">
-    <div class="kicker" style="color:var(--terra)">Field manual</div>
-    <h2>What you actually need to know.</h2>
-    <div class="tips-grid">
-
-      <div class="tip">
+<section class="about">
+  <div class="about-inner">
+    <h2>Why this site exists</h2>
+    <p style="max-width:680px;color:var(--ink-soft)">Tesla Model Y · car-camping · the kind of trip where you wake up at altitude, drive 300 km to the sea, swim before dinner and sleep on a cliff. Free, repeatable, no logistical nightmare.</p>
+    <div class="about-grid">
+      <div class="about-card">
         <div class="icon">01</div>
-        <h4>Border &amp; paperwork</h4>
-        <ul>
-          <li><b>Schengen:</b> France → Italy → Slovenia → Croatia. Passport checks rare.</li>
-          <li><b>Non-Schengen:</b> Montenegro, Albania, Bosnia. Passport at every border.</li>
-          <li><b>Green Card insurance:</b> request it free from your French insurer for Montenegro, Albania, Bosnia.</li>
-          <li>Vignettes: Slovenia (digital, ~€16/week), Croatia (toll motorways).</li>
-        </ul>
+        <h4>Real schedules</h4>
+        <p>Every day is a timeline: 09:00 wake, 12:30 charge + lunch, 14:00 swim, 19:00 sunset, 21:00 sleep. Built around the constraint of 250 km between stops and a 9–9 awake window.</p>
       </div>
-
-      <div class="tip">
+      <div class="about-card">
         <div class="icon">02</div>
-        <h4>Sleeping legality</h4>
-        <ul>
-          <li><b>Italy / Montenegro / Albania / Bosnia:</b> very tolerant. Discretion = no issues.</li>
-          <li><b>Slovenia / Croatia:</b> officially restricted to campsites, but tolerated outside tourist zones if discreet.</li>
-          <li><b>Greece:</b> wild camping is technically illegal but tolerated outside NPs and signposted beaches.</li>
-        </ul>
+        <h4>€0 accommodation</h4>
+        <p>Every overnight is a verified free public spot — aires, lay-bys, pine-forest parking, clifftop pull-offs. Documented on Park4Night and iOverlander.</p>
       </div>
-
-      <div class="tip">
+      <div class="about-card">
         <div class="icon">03</div>
-        <h4>Apps to install</h4>
-        <ul>
-          <li><b>Park4Night</b> (paid tier) — main app</li>
-          <li><b>iOverlander</b> — secondary, especially in the Balkans</li>
-          <li><b>ABRP</b> — better than Tesla nav for cross-network charging</li>
-          <li><b>PlugShare</b> — essential CCS app for Bosnia &amp; Albania</li>
-          <li><b>maps.me</b> — offline maps for patchy data zones</li>
-        </ul>
+        <h4>Real driving routes</h4>
+        <p>Maps draw actual road geometry from OpenStreetMap (OSRM) — not straight lines. Tap any bolded place name for live photos from Wikipedia and Wikimedia Commons.</p>
       </div>
-
-      <div class="tip">
-        <div class="icon">04</div>
-        <h4>Charging strategy</h4>
-        <ul>
-          <li>End every day with ≥40% if you use Camp Mode (5–10% per night)</li>
-          <li>+20% range buffer in Dolomites, Albanian Alps, Lovćen</li>
-          <li>Albania: only 1 Tesla SC (Tirana) + CCS in Shkodër &amp; Saranda</li>
-          <li>Bosnia: zero Tesla SC. CCS in Mostar &amp; Sarajevo. Always cross at 90%+.</li>
-        </ul>
-      </div>
-
-      <div class="tip">
-        <div class="icon">05</div>
-        <h4>Sleeping setup</h4>
-        <ul>
-          <li>Fold Y rear seats flat — bed area ~1.95 m × 1.10 m</li>
-          <li>5 cm foam topper over the seat-back gap</li>
-          <li>Full window covers including glass roof (Tesmanian/Basenor)</li>
-          <li>Magnetic bug nets, two windows cracked 1 cm</li>
-          <li>Sentry mode <b>off</b> at night, "Dashcam only" on</li>
-        </ul>
-      </div>
-
-      <div class="tip">
-        <div class="icon">06</div>
-        <h4>Budget anchors (per person)</h4>
-        <ul>
-          <li><b>Charging: ~€600.</b> 8,400 km ÷ 225 km per 20–80% × €16 ≈ €608</li>
-          <li>Tolls (Italian autostrade): €180</li>
-          <li>Tunnels (Mont Blanc both ways): €100</li>
-          <li>Vignettes (Slovenia ~€16/week): €30</li>
-          <li>Food (cook + occasional taverna): €400–500</li>
-          <li><b>Total ~€1,300–1,500 per person, 30 days</b></li>
-        </ul>
-      </div>
-
     </div>
   </div>
 </section>
 
 <footer>
-  <h3>Take it slow, leave it cleaner than you found it.</h3>
-  <p>The cheat code of car-camping in Europe is to be invisible. Roll in late, roll out early, take your trash with you. Do that, and the continent is yours for free.</p>
-  <p class="sig">Plan generated for Poissy → Greece overland · 30 days · Tesla Model Y</p>
+  <h3>Built for one driver, shared with everyone.</h3>
+  <p>Open source on <a href="https://github.com/bastoto/teslaroadtrip" target="_blank" rel="noopener">GitHub</a> · auto-deployed via Vercel.</p>
+  <p class="sig">No affiliation with Tesla.</p>
 </footer>
-
-<!-- ========================= MAP DATA &amp; SCRIPT ========================= -->
-<script>
-const route = [
-  // [lat, lng, dayLabel, title, color, notes]
-  [48.9296,  2.0487, "Start",  "Poissy · départ",                 "france",  "Trip start · Day 1 morning"],
-  [47.0240,  4.8400, "D1",     "Beaune (Burgundy)",               "france",  "Vineyards · Canal de Bourgogne"],
-  [45.5897, 10.7196, "D2",     "Lake Garda · Punta San Vigilio",  "dolo",    "Cross-Alps day · limestone over water"],
-  [46.4870, 11.8133, "D3",     "Passo Pordoi (2,239 m)",          "dolo",    "Sleep on the pass · 360° at dawn"],
-  [46.5810, 12.2920, "D4",     "Lago di Misurina · Tre Cime",     "dolo",    "Three vertical limestone fangs"],
-  [46.2766, 13.8800, "D5-6",   "Lake Bohinj · Triglav NP",        "alps",    "Glacial cirque under Mt Triglav"],
-  [44.8654, 15.5820, "D7",     "Plitvice Lakes NP",               "lakes",   "16 turquoise lakes · waterfalls"],
-  [43.4456, 16.6877, "D8",     "Omiš · Cetina canyon",            "lakes",   "White-pebble Adriatic · cliff river"],
-  [42.4243, 18.7686, "D9",     "Bay of Kotor · Žanjic",           "monte",   "Deepest natural inlet on the Med"],
-  [42.4032, 18.8377, "D10",    "Lovćen NP",                       "monte",   "Limestone amphitheater · Njegoš mausoleum"],
-  [42.4047, 19.7783, "D11-12", "Theth (Albanian Alps)",           "south",   "Glacial valley · Blue Eye spring"],
-  [39.8750, 20.0058, "D13",    "Saranda · Albanian Riviera",      "south",   "Ksamil islets · Butrint ruins"],
-  [39.8810, 20.7480, "D14-15", "Vikos gorge · Zagori",            "greecen", "Deepest gorge by depth-to-width"],
-  [39.7160, 21.6300, "D16",    "Meteora",                         "greecen", "Monasteries on stone monoliths"],
-  [40.1010, 22.5040, "D17-18", "Mt Olympus (Prionia)",            "greecen", "Home of the gods · 2,917 m"],
-  [39.3340, 23.1810, "D19",    "Pelion · Mylopotamos",            "greecen", "Chestnut forest into Aegean"],
-  [37.5500, 22.8330, "D20",    "Nafplio · Karathona beach",       "pelo",    "Bay of pines and cliffs"],
-  [36.7100, 22.3870, "D21",    "Mani peninsula · Limeni",         "pelo",    "Stone tower-houses · turquoise coves"],
-  [36.3870, 22.4880, "D22",    "Cape Tenaro",                     "pelo",    "Southernmost mainland Europe"],
-  [37.6380, 21.6300, "D23",    "Olympia · sacred grove",          "pelo",    "Stop at Voidokilia en route"],
-  [40.1014, 19.7444, "D24",    "Himara · Albanian Riviera",       "return",  "Different stop on the way back"],
-  [42.4346, 18.7080, "D25",    "Bay of Kotor · Tivat side",       "return",  "Sunset over the bay"],
-  [43.2566, 17.5836, "D26",    "Blagaj &amp; Mostar (Bosnia)",    "return",  "Sufi monastery · Stari Most bridge"],
-  [46.3683, 14.1147, "D27",    "Lake Bled · Pokljuka plateau",    "return",  "Iconic island church"],
-  [46.0107,  9.2855, "D28",    "Lake Como (north end)",           "return",  "Last Italian night"],
-  [47.0240,  4.8400, "D29",    "Beaune (return)",                 "return",  "Burgundy bookend"],
-  [48.9296,  2.0487, "End",    "Poissy · home",                   "return",  "Trip end · Day 30 evening"]
-];
-
-const map = L.map('map', { zoomControl:true, scrollWheelZoom:false }).setView([42.5, 16], 5);
-
-L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>',
-  subdomains: 'abcd',
-  maxZoom: 19
-}).addTo(map);
-
-// Trip definitions
-const TRIPS = {
-  out:  { color: '#1E5F74', start: 0,  end: 19, layers: [] },
-  back: { color: '#B7873A', start: 19, end: 26, layers: [] }
-};
-const locKey = r => `${r[0].toFixed(4)},${r[1].toFixed(4)}`;
-
-// Loading indicator
-const statusEl = document.createElement('div');
-statusEl.className = 'map-status';
-statusEl.textContent = 'Loading driving routes…';
-document.querySelector('.map-wrap').appendChild(statusEl);
-
-async function fetchOSRM(coords) {
-  const path = coords.map(c => `${c[1]},${c[0]}`).join(';');
-  const url = `https://router.project-osrm.org/route/v1/driving/${path}?overview=full&geometries=geojson&continue_straight=false`;
-  const r = await fetch(url);
-  if (!r.ok) throw new Error('OSRM ' + r.status);
-  const data = await r.json();
-  if (data.code !== 'Ok' || !data.routes.length) throw new Error('OSRM no route');
-  return data.routes[0].geometry.coordinates.map(c => [c[1], c[0]]);
-}
-
-async function buildTrip(name) {
-  const t = TRIPS[name];
-  const subset = route.slice(t.start, t.end + 1);
-  const pts = subset.map(r => [r[0], r[1]]);
-
-  let polyline;
-  try {
-    const geom = await fetchOSRM(pts);
-    polyline = L.polyline(geom, { color: t.color, weight: 4, opacity: .9, lineJoin: 'round' });
-  } catch (e) {
-    polyline = L.polyline(pts, { color: t.color, weight: 3, opacity: .55, dashArray: '4,4' });
-  }
-  t.layers.push(polyline);
-
-  const groups = new Map();
-  for (let i = 0; i < subset.length; i++) {
-    const globalIdx = t.start + i;
-    const k = locKey(subset[i]);
-    if (!groups.has(k)) groups.set(k, []);
-    groups.get(k).push(globalIdx);
-  }
-
-  groups.forEach((indices) => {
-    const first = route[indices[0]];
-    const dayLabel = (idx) => {
-      const raw = route[idx][2];
-      if (raw === 'Start' || raw === 'End') return raw;
-      return raw.replace(/^D/, '');
-    };
-    const labelText = indices.map(dayLabel).join('·');
-    const wide = labelText.length > 2;
-    const isCap = labelText === 'Start' || labelText === 'End';
-    const colorClass = name === 'out' ? 'c-out' : 'c-back';
-    const icon = L.divIcon({
-      className: 'num-marker ' + colorClass + (wide ? ' wide' : '') + (isCap ? ' cap' : ''),
-      html: labelText,
-      iconSize: wide ? [54, 30] : [30, 30]
-    });
-    const marker = L.marker([first[0], first[1]], { icon: icon });
-    const popupHtml = indices.map(i => {
-      const r = route[i];
-      const meta = r[2] === 'Start' ? 'Trip start' :
-                   r[2] === 'End'   ? 'Trip end'   :
-                   'Day ' + r[2].replace(/^D/, '');
-      return `<div class="popup-visit"><b>${r[3]}</b><span class="popup-meta">${meta}</span><span class="popup-note">${r[5]}</span></div>`;
-    }).join('<hr class="popup-sep">');
-    marker.bindPopup(popupHtml, { maxWidth: 280 });
-    t.layers.push(marker);
-  });
-}
-
-let currentTrip = 'out';
-
-function showTrip(name) {
-  Object.values(TRIPS).forEach(t => t.layers.forEach(l => { if (map.hasLayer(l)) map.removeLayer(l); }));
-  TRIPS[name].layers.forEach(l => l.addTo(map));
-
-  const t = TRIPS[name];
-  const subset = route.slice(t.start, t.end + 1);
-  const pts = subset.map(r => [r[0], r[1]]);
-  if (pts.length) map.fitBounds(L.latLngBounds(pts).pad(0.08));
-
-  document.querySelectorAll('.phase').forEach(p => {
-    p.style.display = p.dataset.trip === name ? '' : 'none';
-  });
-
-  document.querySelectorAll('.t-btn').forEach(b => {
-    const on = b.dataset.trip === name;
-    b.classList.toggle('active', on);
-    b.setAttribute('aria-selected', on ? 'true' : 'false');
-  });
-
-  const toc = document.getElementById('toc');
-  if (toc) {
-    toc.innerHTML = '';
-    document.querySelectorAll('.phase').forEach((p) => {
-      if (p.dataset.trip !== name) return;
-      const num = (p.querySelector('.phase-header .num') || {}).textContent || '';
-      const title = p.querySelector('h2').textContent.trim();
-      const a = document.createElement('a');
-      a.href = '#' + p.id;
-      a.textContent = num.trim() + '  ·  ' + title;
-      toc.appendChild(a);
-    });
-  }
-
-  currentTrip = name;
-}
-
-(async () => {
-  await Promise.all([buildTrip('out'), buildTrip('back')]);
-  showTrip('out');
-  statusEl.textContent = 'Real driving routes from OpenStreetMap';
-  setTimeout(() => { statusEl.style.opacity = '0'; }, 3000);
-  setTimeout(() => { statusEl.remove(); }, 4500);
-})();
-
-document.querySelectorAll('.t-btn').forEach(btn => {
-  btn.addEventListener('click', () => showTrip(btn.dataset.trip));
-});
-
-map.on('click', () => map.scrollWheelZoom.enable());
-
-// ============================================================
-//  Tap/hover image carousel for bolded place names
-//  Sources: Wikipedia article images, Wikidata→Commons category, Commons file search
-// ============================================================
-(function(){
-  const popover = document.createElement('div');
-  popover.id = 'img-popover';
-  popover.innerHTML = `
-    <div class="ipop-head">
-      <span class="ipop-title"></span>
-      <span class="ipop-counter"></span>
-      <button class="ipop-close" aria-label="Close">&times;</button>
-    </div>
-    <div class="ipop-body">
-      <button class="ipop-btn ipop-prev" aria-label="Previous">‹</button>
-      <div class="ipop-frame">
-        <img class="ipop-img" alt="" />
-        <div class="ipop-loader">Loading…</div>
-      </div>
-      <button class="ipop-btn ipop-next" aria-label="Next">›</button>
-    </div>
-    <div class="ipop-attr">Images via <a href="https://commons.wikimedia.org" target="_blank" rel="noopener">Wikimedia Commons</a></div>
-  `;
-  document.body.appendChild(popover);
-
-  const elTitle = popover.querySelector('.ipop-title');
-  const elCounter = popover.querySelector('.ipop-counter');
-  const elImg = popover.querySelector('.ipop-img');
-  const elLoader = popover.querySelector('.ipop-loader');
-  const btnPrev = popover.querySelector('.ipop-prev');
-  const btnNext = popover.querySelector('.ipop-next');
-  const btnClose = popover.querySelector('.ipop-close');
-
-  const cache = new Map();
-  let images = [];
-  let idx = 0;
-  let currentTarget = null;
-
-  btnPrev.onclick = (e) => { e.stopPropagation(); show(idx - 1); };
-  btnNext.onclick = (e) => { e.stopPropagation(); show(idx + 1); };
-  btnClose.onclick = (e) => { e.stopPropagation(); close(); };
-
-  let brokenAttempts = 0;
-  function show(i){
-    if (!images.length) return;
-    idx = ((i % images.length) + images.length) % images.length;
-    elLoader.style.display = 'none';
-    elImg.style.opacity = '0';
-    elImg.onload = () => { elImg.style.opacity = '1'; brokenAttempts = 0; };
-    elImg.onerror = () => {
-      brokenAttempts++;
-      if (brokenAttempts > images.length) { brokenAttempts = 0; return; }
-      show(idx + 1);
-    };
-    elImg.src = images[idx];
-    elCounter.textContent = `${idx + 1} / ${images.length}`;
-    btnPrev.disabled = images.length < 2;
-    btnNext.disabled = images.length < 2;
-  }
-
-  function close(){
-    popover.classList.remove('show');
-    currentTarget = null;
-  }
-
-  // Close on outside tap (mobile-friendly)
-  document.addEventListener('click', (e) => {
-    if (!popover.classList.contains('show')) return;
-    if (popover.contains(e.target)) return;
-    if (e.target.classList.contains('hoverable-place')) return;
-    close();
-  });
-
-  const NOISE = /(\.svg|commons-logo|wiktionary-logo|wikiquote-logo|wikinews-logo|wikipedia-logo|wikibooks-logo|disambig|edit-clear|red[\s_-]*pog\.|gnome-icon|info-icon|increase|decrease)/i;
-
-  function pagesToImageUrls(pages){
-    if (!pages) return [];
-    return Object.values(pages)
-      .map(p => p && p.imageinfo && p.imageinfo[0])
-      .filter(Boolean)
-      .filter(i => {
-        const mime = (i.mime || '').toLowerCase();
-        if (mime.includes('svg')) return false;
-        if (mime && !/image\/(jpeg|jpg|png|webp|tiff|gif)/.test(mime)) return false;
-        return true;
-      })
-      .filter(i => !NOISE.test((i.url || '').toLowerCase()))
-      .map(i => i.thumburl || i.url)
-      .filter(Boolean);
-  }
-
-  async function jget(url){
-    const r = await fetch(url);
-    if (!r.ok) throw new Error('HTTP ' + r.status);
-    return r.json();
-  }
-
-  async function fetchWikiArticleImages(title){
-    const url = `https://en.wikipedia.org/w/api.php?action=query&format=json&origin=*&redirects=1&titles=${encodeURIComponent(title)}&generator=images&gimlimit=25&prop=imageinfo&iiprop=url|mime&iiurlwidth=720`;
-    const j = await jget(url);
-    return pagesToImageUrls(j && j.query && j.query.pages);
-  }
-
-  async function fetchWikiSearchImages(query){
-    const surl = `https://en.wikipedia.org/w/api.php?action=query&format=json&origin=*&list=search&srlimit=1&srsearch=${encodeURIComponent(query)}`;
-    const sj = await jget(surl);
-    const title = sj && sj.query && sj.query.search && sj.query.search[0] && sj.query.search[0].title;
-    if (!title) return [];
-    return fetchWikiArticleImages(title);
-  }
-
-  async function fetchCommonsFileSearch(query){
-    const url = `https://commons.wikimedia.org/w/api.php?action=query&format=json&origin=*&generator=search&gsrsearch=${encodeURIComponent(query)}&gsrnamespace=6&gsrlimit=20&prop=imageinfo&iiprop=url|mime&iiurlwidth=720`;
-    const j = await jget(url);
-    return pagesToImageUrls(j && j.query && j.query.pages);
-  }
-
-  async function fetchWikidataCommonsCategory(query){
-    const sUrl = `https://www.wikidata.org/w/api.php?action=wbsearchentities&format=json&origin=*&language=en&limit=1&search=${encodeURIComponent(query)}`;
-    const sj = await jget(sUrl);
-    const entityId = sj && sj.search && sj.search[0] && sj.search[0].id;
-    if (!entityId) return [];
-
-    const cUrl = `https://www.wikidata.org/w/api.php?action=wbgetclaims&format=json&origin=*&entity=${entityId}&property=P373`;
-    const cj = await jget(cUrl);
-    const claims = (cj && cj.claims && cj.claims.P373) || [];
-    if (!claims.length) return [];
-    const cat = claims[0] && claims[0].mainsnak && claims[0].mainsnak.datavalue && claims[0].mainsnak.datavalue.value;
-    if (!cat) return [];
-
-    const fUrl = `https://commons.wikimedia.org/w/api.php?action=query&format=json&origin=*&generator=categorymembers&gcmtitle=${encodeURIComponent('Category:' + cat)}&gcmtype=file&gcmlimit=25&prop=imageinfo&iiprop=url|mime&iiurlwidth=720`;
-    const fj = await jget(fUrl);
-    return pagesToImageUrls(fj && fj.query && fj.query.pages);
-  }
-
-  async function getImages(query, onProgress){
-    if (cache.has(query)) return cache.get(query);
-
-    const sources = [
-      { name: 'Wikipedia',    fn: () => fetchWikiArticleImages(query) },
-      { name: 'Wikidata',     fn: () => fetchWikidataCommonsCategory(query) },
-      { name: 'Commons',      fn: () => fetchCommonsFileSearch(query) },
-      { name: 'Wiki search',  fn: () => fetchWikiSearchImages(query) }
-    ];
-
-    const settled = await Promise.allSettled(sources.map(s => s.fn()));
-    const stats = sources.map((s, i) => ({
-      name: s.name,
-      ok: settled[i].status === 'fulfilled',
-      count: settled[i].status === 'fulfilled' ? (settled[i].value || []).length : 0
-    }));
-    if (onProgress) onProgress(stats);
-
-    const all = settled.flatMap(r => r.status === 'fulfilled' && Array.isArray(r.value) ? r.value : []);
-    const unique = Array.from(new Set(all));
-    cache.set(query, unique);
-    return unique;
-  }
-
-  async function open(target){
-    const text = target.textContent.trim();
-    if (text.length < 3 || /[:#]$/.test(text)) return;
-
-    currentTarget = target;
-    elTitle.textContent = text;
-    elCounter.textContent = '';
-    elImg.removeAttribute('src');
-    elImg.style.opacity = '0';
-    elLoader.style.display = 'flex';
-    elLoader.textContent = 'Searching photos…';
-    images = []; idx = 0;
-    btnPrev.disabled = btnNext.disabled = true;
-
-    popover.classList.add('show');
-
-    let imgs = [];
-    let stats = null;
-    try {
-      imgs = await getImages(text, s => { stats = s; });
-    } catch(e) {
-      console.error('Image search failed', e);
-    }
-
-    if (currentTarget !== target) return;
-    if (!imgs.length) {
-      const breakdown = stats
-        ? stats.map(s => `${s.name}: ${s.ok ? s.count : 'err'}`).join(' · ')
-        : 'all sources failed';
-      elLoader.innerHTML = `<div>No photos found<br><small style="opacity:.7;font-size:.7rem;letter-spacing:.04em">${breakdown}</small></div>`;
-      return;
-    }
-    images = imgs;
-    elLoader.style.display = 'none';
-    show(0);
-  }
-
-  // Tap = open. (Hover on desktop also opens via the same handler.)
-  document.querySelectorAll('.day b').forEach(b => {
-    const text = b.textContent.trim();
-    if (text.length < 3 || /[:#]$/.test(text)) return;
-    b.classList.add('hoverable-place');
-    b.addEventListener('click', (e) => {
-      e.stopPropagation();
-      if (currentTarget === b && popover.classList.contains('show')) {
-        close();
-      } else {
-        open(b);
-      }
-    });
-  });
-})();
-</script>
 
 </body>
 </html>
