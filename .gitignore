@@ -1,0 +1,16 @@
+# OS noise
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor noise
+.vscode/
+.idea/
+*.swp
+*~
+
+# Logs
+*.log
+
+# Vercel
+.vercel/
