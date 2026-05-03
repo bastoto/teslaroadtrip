@@ -5,20 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#2A7F7F">
 <!-- ====================================================================== -->
-<!--  PHOTO SOURCES · pick one or more (each falls back to the next)        -->
-<!--                                                                        -->
-<!--  1. Google Custom Search (real Google Images · 100/day free)           -->
-<!--     - API key:  https://console.cloud.google.com/apis/credentials      -->
-<!--     - CSE ID:   https://programmablesearchengine.google.com/           -->
-<!--       (CSE must have "Search the entire web" + "Image search" ON)      -->
-<!--                                                                        -->
-<!--  2. Pexels (curated stock photos · free key, no card)                  -->
-<!--     https://www.pexels.com/api/new/                                    -->
-<!--                                                                        -->
-<!--  Without any key set: falls back to Wikipedia/Wikimedia Commons.       -->
+<!--  PHOTO SOURCES                                                         -->
+<!--  - Google Custom Search: proxied through /api/images (Vercel function) -->
+<!--    Set GOOGLE_API_KEY + GOOGLE_CSE_ID as Vercel env vars.              -->
+<!--  - Pexels: optional client-side fallback. Get a free key:              -->
+<!--    https://www.pexels.com/api/new/                                     -->
+<!--  - Without either: falls back to Wikipedia/Wikimedia Commons.          -->
 <!-- ====================================================================== -->
-<meta name="gcse-key" content="YOUR_GOOGLE_API_KEY">
-<meta name="gcse-cx"  content="9b3a015546c1c6b3b">
 <meta name="pexels-key" content="YOUR_PEXELS_API_KEY">
 <title>Tesla Model Y · French Lakes &amp; Nature · 10 days · no motorways</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -776,16 +769,11 @@ map.on('click', () => map.scrollWheelZoom.enable());
     return pagesToImageUrls((await jget(fUrl))?.query?.pages);
   }
 
-  // Source 1 · Google Custom Search (real Google Images · 100/day free)
+  // Source 1 · Google Custom Search via /api/images Vercel proxy
+  // (Server-side keeps GOOGLE_API_KEY out of the browser. 503 if env not set.)
   async function fetchGoogleCSE(query){
-    const km = document.querySelector('meta[name="gcse-key"]');
-    const cm = document.querySelector('meta[name="gcse-cx"]');
-    const key = km && km.content;
-    const cx  = cm && cm.content;
-    if (!key || !cx || key === 'YOUR_GOOGLE_API_KEY' || cx === 'YOUR_GOOGLE_CSE_ID') return [];
     try {
-      const url = `https://www.googleapis.com/customsearch/v1?key=${encodeURIComponent(key)}&cx=${encodeURIComponent(cx)}&q=${encodeURIComponent(query)}&searchType=image&num=10&safe=active&imgSize=large`;
-      const r = await fetch(url);
+      const r = await fetch(`/api/images?q=${encodeURIComponent(query)}`);
       if (!r.ok) return [];
       const data = await r.json();
       return (data.items || []).map(it => it.link).filter(Boolean);
