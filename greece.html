@@ -337,10 +337,10 @@
     background:#fff;border:1px solid var(--line);border-top-left-radius:18px;border-top-right-radius:18px;
     box-shadow:0 -8px 32px rgba(0,0,0,.18);
     z-index:9999;padding:.85rem .9rem .7rem;font-family:'Inter',sans-serif;
-    pointer-events:none;
-    transition:transform .25s ease;
+    pointer-events:none;opacity:0;visibility:hidden;
+    transition:transform .25s ease, opacity .2s ease, visibility 0s linear .25s;
   }
-  #img-popover.show{transform:translate(-50%,0);pointer-events:auto}
+  #img-popover.show{transform:translate(-50%,0);pointer-events:auto;opacity:1;visibility:visible;transition:transform .25s ease, opacity .2s ease, visibility 0s}
   @media (min-width:680px){
     #img-popover{
       position:absolute;bottom:auto;
@@ -1473,7 +1473,7 @@ map.on('click', () => map.scrollWheelZoom.enable());
       </div>
       <button class="ipop-btn ipop-next" aria-label="Next">›</button>
     </div>
-    <div class="ipop-attr">Images via Google Custom Search</div>
+    <div class="ipop-attr">Photos via Pexels &amp; Wikimedia</div>
   `;
   document.body.appendChild(popover);
 
