@@ -1484,7 +1484,7 @@ map.on('click', () => map.scrollWheelZoom.enable());
   });
 
   // ONE source: Google Custom Search via /api/images (Vercel proxy)
-  async function fetchGoogleImages(query){
+  async function fetchPhotos(query){
     if (cache.has(query)) return cache.get(query);
     let result;
     try {
@@ -1496,7 +1496,7 @@ map.on('click', () => map.scrollWheelZoom.enable());
         result = { urls: [], error: data.error, hint: data.hint || null };
       } else {
         const urls = (data.items || []).map(it => it.link).filter(Boolean);
-        result = { urls, error: urls.length ? null : 'No results returned by Google' };
+        result = { urls, error: urls.length ? null : (data.error || 'No photos found'), source: data.source || null };
       }
     } catch(e) {
       result = { urls: [], error: 'Network: ' + e.message };
@@ -1533,7 +1533,7 @@ map.on('click', () => map.scrollWheelZoom.enable());
 
     popover.classList.add('show');
 
-    const result = await fetchGoogleImages(text);
+    const result = await fetchPhotos(text);
     if (currentTarget !== target) return;
     if (!result.urls.length) {
       showError(elLoader, result.error, result.hint);
@@ -1568,7 +1568,7 @@ map.on('click', () => map.scrollWheelZoom.enable());
         const query = img.dataset.query;
         if (!query) continue;
         const loader = img.parentElement.querySelector('.popup-img-loader');
-        const result = await fetchGoogleImages(query);
+        const result = await fetchPhotos(query);
         if (result.urls.length) {
           img.onload = () => {
             img.style.opacity = '1';

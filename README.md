@@ -33,36 +33,26 @@ Pure static HTML — single file per trip, no build step.
 - [Pexels API](https://www.pexels.com/api/) for high-quality place photos (primary)
 - [Wikimedia Commons](https://commons.wikimedia.org) as photo fallback
 
-## Setting up photo sources
+## Setting up photos · Pexels
 
-The map popups and place-name carousels can pull photos from three sources in priority order. Set whichever you have keys for; without any, falls back to Wikipedia/Commons.
+Photos are served by a Vercel serverless function (`api/images.js`) that proxies Pexels server-side. Pexels has a free tier with no credit card required.
 
-### Option 1 · Google Custom Search (real Google Images, recommended)
+1. Sign up at [pexels.com/api/new](https://www.pexels.com/api/new/) → copy your API key
+2. Vercel dashboard → your project → **Settings → Environment Variables** → add:
+   - **Key:** `PEXELS_API_KEY`
+   - **Value:** your key
+   - **Environment:** Production, Preview, Development (all three)
+3. Redeploy (Deployments → ⋯ → Redeploy)
+4. Verify by visiting `/api/images?diag=1` — should show `hasPexelsKey: true`
 
-100 image queries per day free. Takes ~5 min to set up. Key stays server-side via a Vercel serverless function (`api/images.js`) — never appears in the browser.
+### Without a key
 
-1. Create a **Custom Search Engine** at [programmablesearchengine.google.com](https://programmablesearchengine.google.com/). Pick **"Search the entire web"**. Then in **Setup → Search features**, turn on **Image search**. Copy the **Search engine ID** (cx).
-2. Get an **API key** at [console.cloud.google.com/apis/credentials](https://console.cloud.google.com/apis/credentials). Enable the **"Custom Search API"** for the project.
-3. **In Vercel dashboard** → your project → **Settings → Environment Variables**, add two variables (apply to **Production**, **Preview** and **Development**):
-   - `GOOGLE_API_KEY` = your API key (the `AIzaSy...` value)
-   - `GOOGLE_CSE_ID` = your CSE ID
-4. Redeploy (Vercel auto-deploys on push, or trigger manually under Deployments).
+The function still works without `PEXELS_API_KEY` — it falls back automatically to:
+1. Wikipedia summary endpoint (single curated main image)
+2. Wikimedia Commons file search (multiple photos)
+3. Wikidata → Commons category (final fallback for obscure places)
 
-The serverless function reads these env vars on every request and proxies the call to Google. Browser only sees `/api/images?q=...` — never the key.
-
-### Option 2 · Pexels (curated stock photos)
-
-Generous free tier, no card required.
-
-1. Sign up at [pexels.com/api/new](https://www.pexels.com/api/new/)
-2. Replace in each trip HTML:
-   ```html
-   <meta name="pexels-key" content="YOUR_PEXELS_API_KEY">
-   ```
-
-### Fallback (no setup)
-
-Without any key, photos load from Wikipedia summary endpoint (fast, single curated image) and Wikimedia Commons (slower, multiple images). Quality varies.
+Quality varies but it's truly zero-config.
 
 ## Local
 
