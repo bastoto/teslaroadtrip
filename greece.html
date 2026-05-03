@@ -1353,7 +1353,7 @@ async function buildTrip(name) {
                    r[2] === 'End'   ? 'Trip end'   :
                    'Day ' + r[2].replace(/^D/, '');
       const q = cleanQuery(r[3]);
-      const p4n = `https://park4night.com/en/lieu/search?coordinates_lat=${r[0]}&coordinates_lng=${r[1]}`;
+      const p4n = `https://park4night.com/en/search?lat=${r[0]}&lng=${r[1]}&z=12`;
       return `<div class="popup-visit">
         <div class="popup-img-wrap"><img class="popup-img" data-query="${q.replace(/"/g,'&quot;')}" alt="" /><div class="popup-img-loader">Loading photo…</div></div>
         <b>${r[3]}</b><span class="popup-meta">${meta}</span><span class="popup-note">${r[5]}</span>
@@ -1440,7 +1440,7 @@ map.on('click', () => map.scrollWheelZoom.enable());
     if (!coords) return;
     const sleepStep = day.querySelector('.step-sleep .desc');
     if (!sleepStep) return;
-    const url = `https://park4night.com/en/lieu/search?coordinates_lat=${coords[0]}&coordinates_lng=${coords[1]}`;
+    const url = `https://park4night.com/en/search?lat=${coords[0]}&lng=${coords[1]}&z=12`;
     const a = document.createElement('a');
     a.href = url;
     a.target = '_blank';
