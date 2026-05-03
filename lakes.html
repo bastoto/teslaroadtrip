@@ -4,15 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#2A7F7F">
-<!-- ====================================================================== -->
-<!--  PHOTO SOURCES                                                         -->
-<!--  - Google Custom Search: proxied through /api/images (Vercel function) -->
-<!--    Set GOOGLE_API_KEY + GOOGLE_CSE_ID as Vercel env vars.              -->
-<!--  - Pexels: optional client-side fallback. Get a free key:              -->
-<!--    https://www.pexels.com/api/new/                                     -->
-<!--  - Without either: falls back to Wikipedia/Wikimedia Commons.          -->
-<!-- ====================================================================== -->
-<meta name="pexels-key" content="YOUR_PEXELS_API_KEY">
+<!-- Photos come exclusively from Google Custom Search via /api/images
+     (Vercel function, GOOGLE_API_KEY + GOOGLE_CSE_ID env vars). No fallbacks. -->
 <title>Tesla Model Y · French Lakes &amp; Nature · 10 days · no motorways</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -642,7 +635,7 @@ document.querySelectorAll('.phase').forEach((p) => {
 
 map.on('click', () => map.scrollWheelZoom.enable());
 
-// Image popover (same as other trips)
+// Image popover · Google Custom Search ONLY (via /api/images proxy · no fallbacks)
 (function(){
   const popover = document.createElement('div');
   popover.id = 'img-popover';
@@ -660,7 +653,7 @@ map.on('click', () => map.scrollWheelZoom.enable());
       </div>
       <button class="ipop-btn ipop-next" aria-label="Next">›</button>
     </div>
-    <div class="ipop-attr">Images via <a href="https://commons.wikimedia.org" target="_blank" rel="noopener">Wikimedia Commons</a></div>
+    <div class="ipop-attr">Images via Google Custom Search</div>
   `;
   document.body.appendChild(popover);
 
@@ -695,17 +688,13 @@ map.on('click', () => map.scrollWheelZoom.enable());
   function close(){ popover.classList.remove('show'); currentTarget = null; }
 
   function position(target){
-    // On mobile (<680px) the popover is fixed-bottom (CSS), no JS positioning needed.
     if (window.innerWidth < 680) return;
     const rect = target.getBoundingClientRect();
     const popH = popover.offsetHeight || 360;
     const popW = Math.min(440, window.innerWidth - 24);
     let top = rect.top + window.scrollY - popH - 14;
     let below = false;
-    if (rect.top - popH - 20 < 0) {
-      top = rect.bottom + window.scrollY + 14;
-      below = true;
-    }
+    if (rect.top - popH - 20 < 0) { top = rect.bottom + window.scrollY + 14; below = true; }
     let left = rect.left + window.scrollX + rect.width/2 - popW/2;
     left = Math.max(window.scrollX + 12, Math.min(left, window.scrollX + window.innerWidth - popW - 12));
     popover.style.top = top + 'px';
@@ -720,130 +709,37 @@ map.on('click', () => map.scrollWheelZoom.enable());
     close();
   });
 
-  const NOISE = /(\.svg|commons-logo|wiktionary-logo|wikiquote-logo|wikinews-logo|wikipedia-logo|wikibooks-logo|disambig|edit-clear|red[\s_-]*pog\.|gnome-icon|info-icon|increase|decrease)/i;
-
-  function pagesToImageUrls(pages){
-    if (!pages) return [];
-    return Object.values(pages)
-      .map(p => p && p.imageinfo && p.imageinfo[0])
-      .filter(Boolean)
-      .filter(i => {
-        const mime = (i.mime || '').toLowerCase();
-        if (mime.includes('svg')) return false;
-        if (mime && !/image\/(jpeg|jpg|png|webp|tiff|gif)/.test(mime)) return false;
-        return true;
-      })
-      .filter(i => !NOISE.test((i.url || '').toLowerCase()))
-      .map(i => i.thumburl || i.url)
-      .filter(Boolean);
-  }
-
-  async function jget(url){ const r = await fetch(url); if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }
-  async function fetchWikiArticleImages(title){
-    const url = `https://en.wikipedia.org/w/api.php?action=query&format=json&origin=*&redirects=1&titles=${encodeURIComponent(title)}&generator=images&gimlimit=25&prop=imageinfo&iiprop=url|mime&iiurlwidth=720`;
-    return pagesToImageUrls((await jget(url))?.query?.pages);
-  }
-  async function fetchWikiSearchImages(query){
-    const surl = `https://en.wikipedia.org/w/api.php?action=query&format=json&origin=*&list=search&srlimit=1&srsearch=${encodeURIComponent(query)}`;
-    const sj = await jget(surl);
-    const title = sj?.query?.search?.[0]?.title;
-    if (!title) return [];
-    return fetchWikiArticleImages(title);
-  }
-  async function fetchCommonsFileSearch(query){
-    const url = `https://commons.wikimedia.org/w/api.php?action=query&format=json&origin=*&generator=search&gsrsearch=${encodeURIComponent(query)}&gsrnamespace=6&gsrlimit=20&prop=imageinfo&iiprop=url|mime&iiurlwidth=720`;
-    return pagesToImageUrls((await jget(url))?.query?.pages);
-  }
-  async function fetchWikidataCommonsCategory(query){
-    const sUrl = `https://www.wikidata.org/w/api.php?action=wbsearchentities&format=json&origin=*&language=en&limit=1&search=${encodeURIComponent(query)}`;
-    const sj = await jget(sUrl);
-    const entityId = sj?.search?.[0]?.id;
-    if (!entityId) return [];
-    const cUrl = `https://www.wikidata.org/w/api.php?action=wbgetclaims&format=json&origin=*&entity=${entityId}&property=P373`;
-    const cj = await jget(cUrl);
-    const claims = cj?.claims?.P373 || [];
-    if (!claims.length) return [];
-    const cat = claims[0]?.mainsnak?.datavalue?.value;
-    if (!cat) return [];
-    const fUrl = `https://commons.wikimedia.org/w/api.php?action=query&format=json&origin=*&generator=categorymembers&gcmtitle=${encodeURIComponent('Category:' + cat)}&gcmtype=file&gcmlimit=25&prop=imageinfo&iiprop=url|mime&iiurlwidth=720`;
-    return pagesToImageUrls((await jget(fUrl))?.query?.pages);
-  }
-
-  // Source 1 · Google Custom Search via /api/images Vercel proxy
-  // (Server-side keeps GOOGLE_API_KEY out of the browser. 503 if env not set.)
-  async function fetchGoogleCSE(query){
+  // ONE source: Google Custom Search via /api/images (Vercel proxy)
+  // Returns { urls: [...], error: null } or { urls: [], error: 'message', hint: '...' }
+  async function fetchGoogleImages(query){
+    if (cache.has(query)) return cache.get(query);
+    let result;
     try {
       const r = await fetch(`/api/images?q=${encodeURIComponent(query)}`);
-      if (!r.ok) return [];
-      const data = await r.json();
-      return (data.items || []).map(it => it.link).filter(Boolean);
-    } catch(e) { return []; }
-  }
-
-  // Source 2 · Pexels (curated stock photos · free key, no card)
-  async function fetchPexels(query){
-    const meta = document.querySelector('meta[name="pexels-key"]');
-    const key = meta && meta.content;
-    if (!key || key === 'YOUR_PEXELS_API_KEY') return [];
-    try {
-      const r = await fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(query)}&per_page=12&orientation=landscape`, {
-        headers: { Authorization: key }
-      });
-      if (!r.ok) return [];
-      const data = await r.json();
-      return (data.photos || []).map(p => p.src.large2x || p.src.large || p.src.original).filter(Boolean);
-    } catch(e) { return []; }
-  }
-
-  // Source 2 · Wikipedia article summary (fast, single curated "main image")
-  async function fetchWikipediaSummary(title){
-    try {
-      const r = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}?redirect=true`);
-      if (!r.ok) return null;
-      const j = await r.json();
-      return j.originalimage && j.originalimage.source
-        || j.thumbnail && j.thumbnail.source
-        || null;
-    } catch(e) { return null; }
-  }
-
-  async function getImages(query){
-    if (cache.has(query)) return cache.get(query);
-
-    // Fast path 1 · Google Custom Search (only if key+cx set)
-    const google = await fetchGoogleCSE(query);
-    if (google.length >= 3) {
-      cache.set(query, google);
-      return google;
+      const data = await r.json().catch(() => ({}));
+      if (!r.ok) {
+        result = { urls: [], error: data.error || ('HTTP ' + r.status), hint: data.hint || null, google: data.google || null };
+      } else if (data.error) {
+        result = { urls: [], error: data.error, hint: data.hint || null };
+      } else {
+        const urls = (data.items || []).map(it => it.link).filter(Boolean);
+        result = { urls, error: urls.length ? null : 'No results returned by Google' };
+      }
+    } catch(e) {
+      result = { urls: [], error: 'Network: ' + e.message };
     }
+    cache.set(query, result);
+    return result;
+  }
 
-    // Fast path 2 · Pexels (only if key set)
-    const pexels = await fetchPexels(query);
-    if (pexels.length >= 3) {
-      const combined = [...google, ...pexels];
-      cache.set(query, combined);
-      return combined;
-    }
-
-    // Fast path 3 · Wikipedia article main image (~300ms)
-    const summary = await fetchWikipediaSummary(query);
-
-    // Fallback · slower but more thorough Wikimedia chain
-    const settled = await Promise.allSettled([
-      fetchWikiArticleImages(query),
-      fetchWikidataCommonsCategory(query),
-      fetchCommonsFileSearch(query),
-      fetchWikiSearchImages(query)
-    ]);
-    const all = settled.flatMap(r => r.status === 'fulfilled' && Array.isArray(r.value) ? r.value : []);
-    const unique = Array.from(new Set([
-      ...google,
-      ...pexels,
-      ...(summary ? [summary] : []),
-      ...all
-    ]));
-    cache.set(query, unique);
-    return unique;
+  function showError(loader, error, hint){
+    if (!loader) return;
+    loader.style.display = 'flex';
+    loader.innerHTML = `<div style="font-size:.72rem;line-height:1.4">
+      <b style="display:block;color:#a85518;margin-bottom:.3rem">${error || 'No photo'}</b>
+      ${hint ? `<small style="opacity:.75;font-size:.65rem">${hint}</small>` : ''}
+      <small style="display:block;opacity:.6;font-size:.6rem;margin-top:.3rem">Visit /api/images?diag=1 for details</small>
+    </div>`;
   }
 
   async function open(target){
@@ -855,20 +751,19 @@ map.on('click', () => map.scrollWheelZoom.enable());
     elImg.removeAttribute('src');
     elImg.style.opacity = '0';
     elLoader.style.display = 'flex';
-    elLoader.textContent = 'Searching photos…';
+    elLoader.textContent = 'Searching Google…';
     images = []; idx = 0;
     btnPrev.disabled = btnNext.disabled = true;
     popover.classList.add('show');
     position(target);
-    let imgs = [];
-    try { imgs = await getImages(text); } catch(e) { console.error(e); }
+    const result = await fetchGoogleImages(text);
     if (currentTarget !== target) return;
-    if (!imgs.length) {
-      elLoader.innerHTML = '<div>No photos found</div>';
+    if (!result.urls.length) {
+      showError(elLoader, result.error, result.hint);
       requestAnimationFrame(() => position(target));
       return;
     }
-    images = imgs;
+    images = result.urls;
     elLoader.style.display = 'none';
     show(0);
     requestAnimationFrame(() => position(target));
@@ -884,20 +779,7 @@ map.on('click', () => map.scrollWheelZoom.enable());
     });
   });
 
-  // Lazy-load a photo into each map popup when it opens
-  // Races fast sources in parallel: whichever returns first wins (typ. 300–800 ms).
-  // Falls back to the slower full Wikimedia chain if all fast sources are empty.
-  const raceFirst = (promises) => new Promise(resolve => {
-    let remaining = promises.length;
-    if (!remaining) return resolve(null);
-    promises.forEach(p => {
-      Promise.resolve(p).then(v => {
-        if (v) resolve(v);
-        else if (--remaining === 0) resolve(null);
-      }).catch(() => { if (--remaining === 0) resolve(null); });
-    });
-  });
-
+  // Map popup photos · Google only
   if (typeof map !== 'undefined') {
     map.on('popupopen', async (e) => {
       const node = e.popup.getElement();
@@ -908,34 +790,18 @@ map.on('click', () => map.scrollWheelZoom.enable());
         const query = img.dataset.query;
         if (!query) continue;
         const loader = img.parentElement.querySelector('.popup-img-loader');
-
-        const showImage = (url) => {
+        const result = await fetchGoogleImages(query);
+        if (result.urls.length) {
           img.onload = () => {
             img.style.opacity = '1';
             if (loader) loader.style.display = 'none';
             try { e.popup.update(); } catch(_){}
           };
-          img.onerror = () => { if (loader) loader.textContent = 'Photo failed to load'; };
-          img.src = url;
-        };
-
-        // Race fast sources
-        const fastUrl = await raceFirst([
-          fetchGoogleCSE(query).then(a => (a && a[0]) || null),
-          fetchPexels(query).then(a => (a && a[0]) || null),
-          fetchWikipediaSummary(query)
-        ]);
-
-        if (fastUrl) {
-          showImage(fastUrl);
+          img.onerror = () => { if (loader) loader.textContent = 'Image URL failed'; };
+          img.src = result.urls[0];
         } else {
-          try {
-            const urls = await getImages(query);
-            if (urls.length) showImage(urls[0]);
-            else if (loader) loader.textContent = 'No photo found';
-          } catch(_) {
-            if (loader) loader.textContent = 'No photo found';
-          }
+          showError(loader, result.error, result.hint);
+          try { e.popup.update(); } catch(_){}
         }
       }
     });
