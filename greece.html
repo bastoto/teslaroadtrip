@@ -313,6 +313,9 @@
   .popup-visit .popup-meta{display:block;font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--terra);font-weight:700;margin-bottom:.25rem}
   .popup-visit .popup-note{display:block;color:var(--ink-soft);font-size:.82rem}
   .popup-sep{border:none;border-top:1px solid var(--line);margin:.5rem 0}
+  .popup-img-wrap{width:100%;aspect-ratio:4/3;background:linear-gradient(135deg,#EFE6CF 0%,#dfeaf0 100%);border-radius:8px;overflow:hidden;position:relative;margin-bottom:.5rem}
+  .popup-img{width:100%;height:100%;object-fit:cover;display:block;opacity:0;transition:opacity .25s}
+  .popup-img-loader{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:.7rem;color:var(--ink-soft);text-align:center;padding:.5rem;letter-spacing:.04em}
 
   /* ========= IMAGE POPOVER (carousel) — touch-friendly ========= */
   .hoverable-place{
@@ -1337,12 +1340,17 @@ async function buildTrip(name) {
       iconSize: wide ? [54, 30] : [30, 30]
     });
     const marker = L.marker([first[0], first[1]], { icon: icon });
+    const cleanQuery = (s) => s.replace(/\s*[·(].*$/, '').trim();
     const popupHtml = indices.map(i => {
       const r = route[i];
       const meta = r[2] === 'Start' ? 'Trip start' :
                    r[2] === 'End'   ? 'Trip end'   :
                    'Day ' + r[2].replace(/^D/, '');
-      return `<div class="popup-visit"><b>${r[3]}</b><span class="popup-meta">${meta}</span><span class="popup-note">${r[5]}</span></div>`;
+      const q = cleanQuery(r[3]);
+      return `<div class="popup-visit">
+        <div class="popup-img-wrap"><img class="popup-img" data-query="${q.replace(/"/g,'&quot;')}" alt="" /><div class="popup-img-loader">Loading photo…</div></div>
+        <b>${r[3]}</b><span class="popup-meta">${meta}</span><span class="popup-note">${r[5]}</span>
+      </div>`;
     }).join('<hr class="popup-sep">');
     marker.bindPopup(popupHtml, { maxWidth: 280 });
     t.layers.push(marker);
@@ -1611,6 +1619,39 @@ map.on('click', () => map.scrollWheelZoom.enable());
       }
     });
   });
+
+  if (typeof map !== 'undefined') {
+    map.on('popupopen', async (e) => {
+      const node = e.popup.getElement();
+      if (!node) return;
+      const imgs = node.querySelectorAll('.popup-img[data-query]');
+      for (const img of imgs) {
+        if (img.src) continue;
+        const query = img.dataset.query;
+        if (!query) continue;
+        const loader = img.parentElement.querySelector('.popup-img-loader');
+        try {
+          const urls = await getImages(query);
+          if (!urls.length) { if (loader) loader.textContent = 'No photo found'; continue; }
+          let i = 0;
+          const tryNext = () => {
+            if (i >= urls.length) { if (loader) loader.textContent = 'No photo found'; return; }
+            img.src = urls[i++];
+          };
+          img.onload = () => {
+            img.style.opacity = '1';
+            if (loader) loader.style.display = 'none';
+            try { e.popup.update(); } catch(_){}
+          };
+          img.onerror = () => tryNext();
+          tryNext();
+        } catch(err) {
+          if (loader) loader.textContent = 'Photo load failed';
+          console.error(err);
+        }
+      }
+    });
+  }
 })();
 </script>
 
