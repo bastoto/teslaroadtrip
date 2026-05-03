@@ -23,10 +23,19 @@ export default async function handler(req, res) {
     const out = {
       hasKey: !!key,
       hasCx: !!cx,
-      keyPrefix: key ? key.slice(0, 6) + '…' : null,
+      // Show first 10 + last 4 so we can identify the key without leaking it
+      keyFingerprint: key
+        ? key.slice(0, 10) + '…' + key.slice(-4)
+        : null,
       keyLength: key.length,
+      keyHasWhitespace: /\s/.test(key),
       cxValue: cx,
+      cxHasWhitespace: /\s/.test(cx),
       nodeVersion: process.version,
+      vercelEnv: process.env.VERCEL_ENV || null,
+      deployedAt: process.env.VERCEL_GIT_COMMIT_SHA
+        ? process.env.VERCEL_GIT_COMMIT_SHA.slice(0, 7)
+        : null,
     };
     if (key && cx) {
       try {
