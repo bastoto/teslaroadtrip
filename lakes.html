@@ -676,6 +676,25 @@ map.on('click', () => map.scrollWheelZoom.enable());
 
   function close(){ popover.classList.remove('show'); currentTarget = null; }
 
+  function position(target){
+    // On mobile (<680px) the popover is fixed-bottom (CSS), no JS positioning needed.
+    if (window.innerWidth < 680) return;
+    const rect = target.getBoundingClientRect();
+    const popH = popover.offsetHeight || 360;
+    const popW = Math.min(440, window.innerWidth - 24);
+    let top = rect.top + window.scrollY - popH - 14;
+    let below = false;
+    if (rect.top - popH - 20 < 0) {
+      top = rect.bottom + window.scrollY + 14;
+      below = true;
+    }
+    let left = rect.left + window.scrollX + rect.width/2 - popW/2;
+    left = Math.max(window.scrollX + 12, Math.min(left, window.scrollX + window.innerWidth - popW - 12));
+    popover.style.top = top + 'px';
+    popover.style.left = left + 'px';
+    popover.classList.toggle('below', below);
+  }
+
   document.addEventListener('click', (e) => {
     if (!popover.classList.contains('show')) return;
     if (popover.contains(e.target)) return;
@@ -759,13 +778,19 @@ map.on('click', () => map.scrollWheelZoom.enable());
     images = []; idx = 0;
     btnPrev.disabled = btnNext.disabled = true;
     popover.classList.add('show');
+    position(target);
     let imgs = [];
     try { imgs = await getImages(text); } catch(e) { console.error(e); }
     if (currentTarget !== target) return;
-    if (!imgs.length) { elLoader.innerHTML = '<div>No photos found</div>'; return; }
+    if (!imgs.length) {
+      elLoader.innerHTML = '<div>No photos found</div>';
+      requestAnimationFrame(() => position(target));
+      return;
+    }
     images = imgs;
     elLoader.style.display = 'none';
     show(0);
+    requestAnimationFrame(() => position(target));
   }
 
   document.querySelectorAll('.day b').forEach(b => {
