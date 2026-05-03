@@ -30,7 +30,23 @@ Pure static HTML — single file per trip, no build step.
 - [Leaflet](https://leafletjs.com) for the map
 - [CARTO](https://carto.com) light basemap tiles
 - [OSRM](http://project-osrm.org) public routing API
-- [Wikimedia Commons](https://commons.wikimedia.org) for place photos
+- [Pexels API](https://www.pexels.com/api/) for high-quality place photos (primary)
+- [Wikimedia Commons](https://commons.wikimedia.org) as photo fallback
+
+## Setting up Pexels for better photos
+
+The map popups and place-name carousels can pull photos from Pexels (Google-Images-like quality) instead of falling back to Wikipedia/Commons. To enable:
+
+1. Sign up free at [pexels.com/api/new](https://www.pexels.com/api/new/) (no card required, 2 min)
+2. Copy your API key
+3. In each trip HTML file (`greece.html`, `iberia.html`, `lakes.html`), find the line:
+   ```html
+   <meta name="pexels-key" content="YOUR_PEXELS_API_KEY">
+   ```
+   and replace `YOUR_PEXELS_API_KEY` with your actual key.
+4. Commit and push — Vercel redeploys.
+
+Without a key, photos still load from Wikipedia/Commons but slower and often less aesthetic.
 
 ## Local
 

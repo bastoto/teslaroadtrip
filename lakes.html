@@ -4,6 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#2A7F7F">
+<!-- ====================================================================== -->
+<!--  PHOTO SOURCE · paste a free Pexels API key for high-quality photos    -->
+<!--  Get a key (no card, 2 min): https://www.pexels.com/api/new/           -->
+<!--  Without a key, falls back to Wikipedia/Wikimedia Commons (slower &    -->
+<!--  often less aesthetic).                                                -->
+<!-- ====================================================================== -->
+<meta name="pexels-key" content="YOUR_PEXELS_API_KEY">
 <title>Tesla Model Y · French Lakes &amp; Nature · 10 days · no motorways</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -760,8 +767,47 @@ map.on('click', () => map.scrollWheelZoom.enable());
     return pagesToImageUrls((await jget(fUrl))?.query?.pages);
   }
 
+  // Source 1 · Pexels (high-quality, free, requires user-supplied key)
+  async function fetchPexels(query){
+    const meta = document.querySelector('meta[name="pexels-key"]');
+    const key = meta && meta.content;
+    if (!key || key === 'YOUR_PEXELS_API_KEY') return [];
+    try {
+      const r = await fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(query)}&per_page=12&orientation=landscape`, {
+        headers: { Authorization: key }
+      });
+      if (!r.ok) return [];
+      const data = await r.json();
+      return (data.photos || []).map(p => p.src.large2x || p.src.large || p.src.original).filter(Boolean);
+    } catch(e) { return []; }
+  }
+
+  // Source 2 · Wikipedia article summary (fast, single curated "main image")
+  async function fetchWikipediaSummary(title){
+    try {
+      const r = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}?redirect=true`);
+      if (!r.ok) return null;
+      const j = await r.json();
+      return j.originalimage && j.originalimage.source
+        || j.thumbnail && j.thumbnail.source
+        || null;
+    } catch(e) { return null; }
+  }
+
   async function getImages(query){
     if (cache.has(query)) return cache.get(query);
+
+    // Fast path 1 · Pexels (only if key set)
+    const pexels = await fetchPexels(query);
+    if (pexels.length >= 3) {
+      cache.set(query, pexels);
+      return pexels;
+    }
+
+    // Fast path 2 · Wikipedia article main image (~300ms)
+    const summary = await fetchWikipediaSummary(query);
+
+    // Fallback · slower but more thorough Wikimedia chain
     const settled = await Promise.allSettled([
       fetchWikiArticleImages(query),
       fetchWikidataCommonsCategory(query),
@@ -769,7 +815,11 @@ map.on('click', () => map.scrollWheelZoom.enable());
       fetchWikiSearchImages(query)
     ]);
     const all = settled.flatMap(r => r.status === 'fulfilled' && Array.isArray(r.value) ? r.value : []);
-    const unique = Array.from(new Set(all));
+    const unique = Array.from(new Set([
+      ...pexels,
+      ...(summary ? [summary] : []),
+      ...all
+    ]));
     cache.set(query, unique);
     return unique;
   }
