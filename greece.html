@@ -1672,6 +1672,17 @@ map.on('click', () => map.scrollWheelZoom.enable());
     });
   });
 
+  const raceFirst = (promises) => new Promise(resolve => {
+    let remaining = promises.length;
+    if (!remaining) return resolve(null);
+    promises.forEach(p => {
+      Promise.resolve(p).then(v => {
+        if (v) resolve(v);
+        else if (--remaining === 0) resolve(null);
+      }).catch(() => { if (--remaining === 0) resolve(null); });
+    });
+  });
+
   if (typeof map !== 'undefined') {
     map.on('popupopen', async (e) => {
       const node = e.popup.getElement();
@@ -1682,24 +1693,30 @@ map.on('click', () => map.scrollWheelZoom.enable());
         const query = img.dataset.query;
         if (!query) continue;
         const loader = img.parentElement.querySelector('.popup-img-loader');
-        try {
-          const urls = await getImages(query);
-          if (!urls.length) { if (loader) loader.textContent = 'No photo found'; continue; }
-          let i = 0;
-          const tryNext = () => {
-            if (i >= urls.length) { if (loader) loader.textContent = 'No photo found'; return; }
-            img.src = urls[i++];
-          };
+        const showImage = (url) => {
           img.onload = () => {
             img.style.opacity = '1';
             if (loader) loader.style.display = 'none';
             try { e.popup.update(); } catch(_){}
           };
-          img.onerror = () => tryNext();
-          tryNext();
-        } catch(err) {
-          if (loader) loader.textContent = 'Photo load failed';
-          console.error(err);
+          img.onerror = () => { if (loader) loader.textContent = 'Photo failed to load'; };
+          img.src = url;
+        };
+        const fastUrl = await raceFirst([
+          fetchGoogleCSE(query).then(a => (a && a[0]) || null),
+          fetchPexels(query).then(a => (a && a[0]) || null),
+          fetchWikipediaSummary(query)
+        ]);
+        if (fastUrl) {
+          showImage(fastUrl);
+        } else {
+          try {
+            const urls = await getImages(query);
+            if (urls.length) showImage(urls[0]);
+            else if (loader) loader.textContent = 'No photo found';
+          } catch(_) {
+            if (loader) loader.textContent = 'No photo found';
+          }
         }
       }
     });
