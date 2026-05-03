@@ -11,6 +11,7 @@ A small static site documenting overland European road trips done in a Tesla Mod
 | [`index.html`](index.html) | Landing page · pick a trip | — | — | — |
 | [`greece.html`](greece.html) | Adriatic → Greece overland → Bosnia loop | 30 | ~8,400 | 8 |
 | [`iberia.html`](iberia.html) | Atlantic Iberian coast → Mediterranean back | 30 | ~6,800 | 3 |
+| [`lakes.html`](lakes.html) | French lakes loop (no motorway) | 10 | ~2,300 | 1 |
 
 Each trip page is **fully self-contained**: same template, different content, different theme colors. Adding a new trip = duplicate one of the existing pages and rewrite the route.
 
