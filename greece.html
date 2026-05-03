@@ -317,6 +317,11 @@
   .popup-img-wrap{width:100%;aspect-ratio:4/3;background:linear-gradient(135deg,#EFE6CF 0%,#dfeaf0 100%);border-radius:8px;overflow:hidden;position:relative;margin-bottom:.5rem}
   .popup-img{width:100%;height:100%;object-fit:cover;display:block;opacity:0;transition:opacity .25s}
   .popup-img-loader{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:.7rem;color:var(--ink-soft);text-align:center;padding:.5rem;letter-spacing:.04em}
+  .p4n-btn{display:inline-flex;align-items:center;gap:.3rem;padding:.22rem .6rem;background:rgba(214,155,58,.14);border:1px solid rgba(214,155,58,.4);border-radius:99px;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:#8a5a14;text-decoration:none;margin-top:.4rem;white-space:nowrap;font-family:'Inter',sans-serif}
+  .p4n-btn:hover,.p4n-btn:active{background:rgba(214,155,58,.28)}
+  .p4n-btn::after{content:"↗";font-size:.72rem;letter-spacing:0}
+  .step-sleep .desc .p4n-btn{margin-top:.5rem}
+  .leaflet-popup-content .p4n-btn{margin-top:.35rem;width:100%;justify-content:center}
 
   /* ========= IMAGE POPOVER (carousel) — touch-friendly ========= */
   .hoverable-place{
@@ -1348,9 +1353,11 @@ async function buildTrip(name) {
                    r[2] === 'End'   ? 'Trip end'   :
                    'Day ' + r[2].replace(/^D/, '');
       const q = cleanQuery(r[3]);
+      const p4n = `https://park4night.com/en/lieu/search?coordinates_lat=${r[0]}&coordinates_lng=${r[1]}`;
       return `<div class="popup-visit">
         <div class="popup-img-wrap"><img class="popup-img" data-query="${q.replace(/"/g,'&quot;')}" alt="" /><div class="popup-img-loader">Loading photo…</div></div>
         <b>${r[3]}</b><span class="popup-meta">${meta}</span><span class="popup-note">${r[5]}</span>
+        <a class="p4n-btn" href="${p4n}" target="_blank" rel="noopener">Open in Park4Night</a>
       </div>`;
     }).join('<hr class="popup-sep">');
     marker.bindPopup(popupHtml, { maxWidth: 280 });
@@ -1409,6 +1416,41 @@ document.querySelectorAll('.t-btn').forEach(btn => {
 });
 
 map.on('click', () => map.scrollWheelZoom.enable());
+
+// Inject Park4Night deep links into each day's SLEEP step
+(function(){
+  function getCoordsForDayLabel(dayNumStr){
+    const clean = dayNumStr.replace(/\s/g, '').replace(/^D0(\d)/, 'D$1');
+    for (const r of route) {
+      const label = (r[2] || '').replace(/\s/g, '');
+      if (label === clean) return [r[0], r[1]];
+      const range = label.match(/^D(\d+)-(\d+)/);
+      if (range) {
+        const start = parseInt(range[1], 10);
+        const end = parseInt(range[2], 10);
+        const target = parseInt(clean.replace('D', ''), 10);
+        if (target >= start && target <= end) return [r[0], r[1]];
+      }
+    }
+    return null;
+  }
+  document.querySelectorAll('.day').forEach(day => {
+    const dayNum = (day.querySelector('.day-num') || {}).textContent || '';
+    const coords = getCoordsForDayLabel(dayNum);
+    if (!coords) return;
+    const sleepStep = day.querySelector('.step-sleep .desc');
+    if (!sleepStep) return;
+    const url = `https://park4night.com/en/lieu/search?coordinates_lat=${coords[0]}&coordinates_lng=${coords[1]}`;
+    const a = document.createElement('a');
+    a.href = url;
+    a.target = '_blank';
+    a.rel = 'noopener';
+    a.className = 'p4n-btn';
+    a.textContent = 'Open in Park4Night';
+    sleepStep.appendChild(document.createElement('br'));
+    sleepStep.appendChild(a);
+  });
+})();
 
 // ============================================================
 //  Tap/hover image carousel for bolded place names
