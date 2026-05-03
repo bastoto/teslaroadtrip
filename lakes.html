@@ -5,11 +5,20 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#2A7F7F">
 <!-- ====================================================================== -->
-<!--  PHOTO SOURCE · paste a free Pexels API key for high-quality photos    -->
-<!--  Get a key (no card, 2 min): https://www.pexels.com/api/new/           -->
-<!--  Without a key, falls back to Wikipedia/Wikimedia Commons (slower &    -->
-<!--  often less aesthetic).                                                -->
+<!--  PHOTO SOURCES · pick one or more (each falls back to the next)        -->
+<!--                                                                        -->
+<!--  1. Google Custom Search (real Google Images · 100/day free)           -->
+<!--     - API key:  https://console.cloud.google.com/apis/credentials      -->
+<!--     - CSE ID:   https://programmablesearchengine.google.com/           -->
+<!--       (CSE must have "Search the entire web" + "Image search" ON)      -->
+<!--                                                                        -->
+<!--  2. Pexels (curated stock photos · free key, no card)                  -->
+<!--     https://www.pexels.com/api/new/                                    -->
+<!--                                                                        -->
+<!--  Without any key set: falls back to Wikipedia/Wikimedia Commons.       -->
 <!-- ====================================================================== -->
+<meta name="gcse-key" content="YOUR_GOOGLE_API_KEY">
+<meta name="gcse-cx"  content="YOUR_GOOGLE_CSE_ID">
 <meta name="pexels-key" content="YOUR_PEXELS_API_KEY">
 <title>Tesla Model Y · French Lakes &amp; Nature · 10 days · no motorways</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -767,7 +776,23 @@ map.on('click', () => map.scrollWheelZoom.enable());
     return pagesToImageUrls((await jget(fUrl))?.query?.pages);
   }
 
-  // Source 1 · Pexels (high-quality, free, requires user-supplied key)
+  // Source 1 · Google Custom Search (real Google Images · 100/day free)
+  async function fetchGoogleCSE(query){
+    const km = document.querySelector('meta[name="gcse-key"]');
+    const cm = document.querySelector('meta[name="gcse-cx"]');
+    const key = km && km.content;
+    const cx  = cm && cm.content;
+    if (!key || !cx || key === 'YOUR_GOOGLE_API_KEY' || cx === 'YOUR_GOOGLE_CSE_ID') return [];
+    try {
+      const url = `https://www.googleapis.com/customsearch/v1?key=${encodeURIComponent(key)}&cx=${encodeURIComponent(cx)}&q=${encodeURIComponent(query)}&searchType=image&num=10&safe=active&imgSize=large`;
+      const r = await fetch(url);
+      if (!r.ok) return [];
+      const data = await r.json();
+      return (data.items || []).map(it => it.link).filter(Boolean);
+    } catch(e) { return []; }
+  }
+
+  // Source 2 · Pexels (curated stock photos · free key, no card)
   async function fetchPexels(query){
     const meta = document.querySelector('meta[name="pexels-key"]');
     const key = meta && meta.content;
@@ -797,14 +822,22 @@ map.on('click', () => map.scrollWheelZoom.enable());
   async function getImages(query){
     if (cache.has(query)) return cache.get(query);
 
-    // Fast path 1 · Pexels (only if key set)
-    const pexels = await fetchPexels(query);
-    if (pexels.length >= 3) {
-      cache.set(query, pexels);
-      return pexels;
+    // Fast path 1 · Google Custom Search (only if key+cx set)
+    const google = await fetchGoogleCSE(query);
+    if (google.length >= 3) {
+      cache.set(query, google);
+      return google;
     }
 
-    // Fast path 2 · Wikipedia article main image (~300ms)
+    // Fast path 2 · Pexels (only if key set)
+    const pexels = await fetchPexels(query);
+    if (pexels.length >= 3) {
+      const combined = [...google, ...pexels];
+      cache.set(query, combined);
+      return combined;
+    }
+
+    // Fast path 3 · Wikipedia article main image (~300ms)
     const summary = await fetchWikipediaSummary(query);
 
     // Fallback · slower but more thorough Wikimedia chain
@@ -816,6 +849,7 @@ map.on('click', () => map.scrollWheelZoom.enable());
     ]);
     const all = settled.flatMap(r => r.status === 'fulfilled' && Array.isArray(r.value) ? r.value : []);
     const unique = Array.from(new Set([
+      ...google,
       ...pexels,
       ...(summary ? [summary] : []),
       ...all

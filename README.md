@@ -33,20 +33,35 @@ Pure static HTML — single file per trip, no build step.
 - [Pexels API](https://www.pexels.com/api/) for high-quality place photos (primary)
 - [Wikimedia Commons](https://commons.wikimedia.org) as photo fallback
 
-## Setting up Pexels for better photos
+## Setting up photo sources
 
-The map popups and place-name carousels can pull photos from Pexels (Google-Images-like quality) instead of falling back to Wikipedia/Commons. To enable:
+The map popups and place-name carousels can pull photos from three sources in priority order. Set whichever you have keys for; without any, falls back to Wikipedia/Commons.
 
-1. Sign up free at [pexels.com/api/new](https://www.pexels.com/api/new/) (no card required, 2 min)
-2. Copy your API key
-3. In each trip HTML file (`greece.html`, `iberia.html`, `lakes.html`), find the line:
+### Option 1 · Google Custom Search (real Google Images, recommended)
+
+100 image queries per day free. Takes ~5 min to set up.
+
+1. Create a **Custom Search Engine** at [programmablesearchengine.google.com](https://programmablesearchengine.google.com/). When asked what to search, pick **"Search the entire web"**. After creating, go to **Setup → Search features** and turn on **Image search**. Copy the **Search engine ID** (looks like `a1b2c3d4e5f6g7h8i`).
+2. Get an **API key** at [console.cloud.google.com/apis/credentials](https://console.cloud.google.com/apis/credentials). Enable the **"Custom Search API"** in the same project. (Optional but recommended: restrict the API key to your Vercel domain referrer for safety.)
+3. In each trip HTML file find these lines and paste your values:
+   ```html
+   <meta name="gcse-key" content="YOUR_GOOGLE_API_KEY">
+   <meta name="gcse-cx"  content="YOUR_GOOGLE_CSE_ID">
+   ```
+
+### Option 2 · Pexels (curated stock photos)
+
+Generous free tier, no card required.
+
+1. Sign up at [pexels.com/api/new](https://www.pexels.com/api/new/)
+2. Replace in each trip HTML:
    ```html
    <meta name="pexels-key" content="YOUR_PEXELS_API_KEY">
    ```
-   and replace `YOUR_PEXELS_API_KEY` with your actual key.
-4. Commit and push — Vercel redeploys.
 
-Without a key, photos still load from Wikipedia/Commons but slower and often less aesthetic.
+### Fallback (no setup)
+
+Without any key, photos load from Wikipedia summary endpoint (fast, single curated image) and Wikimedia Commons (slower, multiple images). Quality varies.
 
 ## Local
 
