@@ -61,27 +61,52 @@
   .hl .lbl{font-size:.62rem;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-soft);font-weight:700}
   .hl .name{font-family:'Cormorant Garamond',serif;font-size:1.08rem;color:var(--sea-deep);font-weight:600;line-height:1.2}
 
-  .map-section{padding:1.5rem 4vw .5rem;background:var(--bg)}
-  .map-wrap{position:relative;max-width:1400px;margin:0 auto;border-radius:14px;overflow:hidden;box-shadow:0 1px 2px rgba(42,37,32,.06),0 12px 32px rgba(42,37,32,.10);border:1px solid var(--line);background:#dfeaf0}
+  /* TRIP GRID — desktop side-by-side, mobile stacked */
+  .trip-section{padding:1.5rem 4vw 3rem;max-width:1400px;margin:0 auto}
+  .trip-grid{display:grid;grid-template-columns:1fr;gap:1.5rem}
+  .trip-map-col{position:relative}
+  .map-wrap{position:relative;border-radius:14px;overflow:hidden;box-shadow:0 1px 2px rgba(42,37,32,.06),0 12px 32px rgba(42,37,32,.10);border:1px solid var(--line);background:#dfeaf0}
   #map{height:55vh;min-height:340px;width:100%}
-  @media (min-width:900px){.map-section{padding:3rem 4vw 1rem}#map{height:min(72vh,720px)}}
+  @media (min-width:1024px){
+    .trip-section{padding:2rem 4vw 4rem;max-width:1500px}
+    .trip-grid{grid-template-columns:minmax(0,1.05fr) minmax(420px,.95fr);gap:2rem;align-items:start}
+    .trip-cards-col{order:1;min-width:0}
+    .trip-map-col{order:2;position:sticky;top:1rem;height:calc(100vh - 2rem);max-height:900px}
+    .trip-map-col .map-wrap{height:100%}
+    .trip-map-col #map{height:100% !important;min-height:0}
+  }
 
-  section.phases{padding:2rem 5vw 3rem;max-width:1280px;margin:0 auto}
   .section-head{margin-bottom:1.5rem;max-width:780px}
   .section-head .kicker{margin-bottom:.5rem}
   .section-head p{font-size:.92rem;color:var(--ink-soft)}
-  @media (min-width:900px){section.phases{padding:4rem 5vw 5rem}.section-head p{font-size:1rem}}
+
+  .day-filter{display:flex;align-items:center;gap:.5rem;margin-bottom:1rem;font-size:.78rem;color:var(--ink-soft);flex-wrap:wrap}
+  .day-filter .reset-btn{padding:.35rem .75rem;border:1px solid var(--line);background:var(--bg-card);border-radius:99px;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--ink-soft);cursor:pointer;font-family:inherit}
+  .day-filter .reset-btn:disabled{opacity:.4;cursor:default}
+  .day-filter .reset-btn:hover:not(:disabled){background:var(--line);color:var(--sea-deep)}
+  .day-filter .hint{font-style:italic}
+
   .phase{margin:2.5rem 0 0;scroll-margin-top:1rem}
+  .phase:first-child{margin-top:0}
   .phase-header{display:flex;align-items:flex-end;gap:.8rem;flex-wrap:wrap;padding-bottom:.7rem;margin-bottom:1rem;border-bottom:1px solid var(--line)}
   .phase-header .num{font-family:'Cormorant Garamond',serif;font-size:2.4rem;font-weight:700;line-height:.85;color:var(--sea);font-style:italic}
   .phase-header h2{flex:1;min-width:200px;font-size:clamp(1.3rem,4.5vw,2rem)}
   .phase-header .meta{font-size:.78rem;color:var(--ink-soft);width:100%;margin-top:.3rem}
   @media (min-width:540px){.phase-header .meta{width:auto;text-align:right;margin-top:0}}
   .phase-intro{color:var(--ink-soft);max-width:720px;margin-bottom:1.4rem;font-size:.94rem;line-height:1.55}
+  .phase-intro.battery-callout{font-size:.82rem;background:rgba(46,125,160,.08);border-left:3px solid var(--sea);padding:.6rem .8rem;border-radius:6px;margin-bottom:1rem}
 
   .days{display:grid;grid-template-columns:1fr;gap:1rem}
-  @media (min-width:680px){.days{grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:1.2rem}}
-  .day{background:var(--bg-card);border:1px solid var(--line);border-radius:14px;padding:1.1rem 1.1rem 1rem;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:.5rem}
+  .day{
+    background:var(--bg-card);border:1px solid var(--line);border-radius:14px;
+    padding:1.1rem 1.1rem 1rem;box-shadow:var(--shadow);
+    display:flex;flex-direction:column;gap:.5rem;
+    cursor:pointer;
+    transition:border-color .15s ease, box-shadow .15s ease, transform .15s ease;
+  }
+  .day:hover{border-color:var(--sea);box-shadow:0 4px 8px rgba(42,37,32,.08),0 16px 32px rgba(42,37,32,.10)}
+  .day.active{border-color:var(--sea);border-width:2px;box-shadow:0 4px 16px rgba(46,125,160,.18),0 16px 40px rgba(46,125,160,.18);transform:translateY(-1px)}
+  .day.dimmed{opacity:.45;filter:saturate(.5)}
   .day-tag{display:inline-block;font-size:.62rem;letter-spacing:.13em;text-transform:uppercase;color:var(--olive);font-weight:700}
   .day-tag.tag-rest{color:var(--gold)}
   .day-tag.tag-drive{color:var(--terra)}
@@ -134,19 +159,58 @@
   footer p{max-width:680px;margin:.4rem auto;color:#bcd2da}
   footer .sig{margin-top:1.2rem;font-style:italic;color:#90a8b1;font-size:.78rem}
 
-  .toc{display:flex;flex-wrap:wrap;gap:.4rem;font-size:.78rem;padding:.8rem 0;color:var(--ink-soft)}
-  .toc a{color:var(--ink-soft);border:1px solid var(--line);padding:.3rem .65rem;border-radius:99px;background:var(--bg-card);font-size:.74rem}
-
+  /* MAP MARKERS */
   .num-marker{background:#fff;border:3px solid var(--sea);color:var(--sea-deep);border-radius:50%;width:30px!important;height:30px!important;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.74rem;font-family:'Inter',sans-serif;box-shadow:0 2px 6px rgba(0,0,0,.25);margin-left:-15px!important;margin-top:-15px!important}
-  .num-marker.wide{width:54px!important;border-radius:18px;font-size:.68rem;letter-spacing:-.01em;margin-left:-27px!important;padding:0 .3rem}
-  .num-marker.cap{font-family:'Inter',sans-serif;font-weight:700;font-size:.62rem;letter-spacing:.06em;text-transform:uppercase;background:var(--sea-deep);color:#fff!important}
+  .num-marker.cap{font-family:'Inter',sans-serif;font-weight:700;font-size:.62rem;letter-spacing:.06em;text-transform:uppercase;background:var(--sea-deep);color:#fff!important;width:36px!important;border-radius:14px}
+
+  /* Charge marker · lightning bolt */
+  .charge-marker{
+    width:32px!important;height:32px!important;
+    background:#FFD93D;border:2px solid #B58E0B;
+    border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 2px 8px rgba(0,0,0,.3),0 0 0 4px rgba(255,217,61,.25);
+    margin-left:-16px!important;margin-top:-16px!important;
+  }
+  .charge-marker svg{width:18px;height:18px;color:#5C3D00;fill:currentColor}
+
+  /* Pass marker · triangle */
+  .pass-marker{
+    width:0!important;height:0!important;
+    border-left:13px solid transparent;border-right:13px solid transparent;
+    border-bottom:22px solid #5B3A57;
+    margin-left:-13px!important;margin-top:-22px!important;
+    filter:drop-shadow(0 2px 4px rgba(0,0,0,.3));
+  }
+
+  /* Battery label · permanent tooltip beside marker */
+  .leaflet-tooltip.battery-label{
+    background:rgba(255,252,245,.96);
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding:.15rem .4rem;
+    font-family:'Inter',sans-serif;
+    font-size:.7rem;
+    font-weight:700;
+    color:var(--sea-deep);
+    box-shadow:0 2px 6px rgba(0,0,0,.15);
+    white-space:nowrap;
+  }
+  .leaflet-tooltip.battery-label::before{display:none}
+  .leaflet-tooltip.battery-label.charge-tooltip{color:#5C3D00;background:#FFF6CC;border-color:#B58E0B}
+  .leaflet-tooltip.battery-label.pass-tooltip{color:#fff;background:#5B3A57;border-color:#3A2438}
+
+  /* Active vs dimmed map elements */
+  .leaflet-marker-icon.dim{opacity:.25;filter:saturate(.3)}
+  .leaflet-tooltip.dim{opacity:.25}
+
   .leaflet-popup-content-wrapper{border-radius:10px}
   .leaflet-popup-content{font-family:'Inter',sans-serif;font-size:.85rem;margin:.7rem .9rem;line-height:1.45}
   .leaflet-popup-content b{font-family:'Cormorant Garamond',serif;font-weight:700;font-size:1rem;color:var(--sea-deep);display:block;margin-bottom:.1rem}
   .popup-visit{display:block}
   .popup-visit .popup-meta{display:block;font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--terra);font-weight:700;margin-bottom:.25rem}
   .popup-visit .popup-note{display:block;color:var(--ink-soft);font-size:.82rem}
-  .popup-sep{border:none;border-top:1px solid var(--line);margin:.5rem 0}
+  .popup-visit .popup-batt{display:block;color:var(--sea-deep);font-size:.78rem;font-weight:600;margin-top:.3rem}
   .popup-img-wrap{width:100%;aspect-ratio:4/3;background:linear-gradient(135deg,#EFE6CF 0%,#dfeaf0 100%);border-radius:8px;overflow:hidden;position:relative;margin-bottom:.5rem}
   .popup-img{width:100%;height:100%;object-fit:cover;display:block;opacity:0;transition:opacity .25s}
   .popup-img-loader{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:.7rem;color:var(--ink-soft);text-align:center;padding:.5rem;letter-spacing:.04em}
@@ -156,6 +220,9 @@
   .step-sleep .desc .p4n-btn{margin-top:.5rem}
   .leaflet-popup-content .p4n-btn{margin-top:.35rem;width:100%;justify-content:center}
 
+  .map-status{position:absolute;top:10px;left:50%;transform:translateX(-50%);z-index:1000;background:rgba(255,252,245,.96);border:1px solid #E5DCC8;border-radius:99px;padding:.35rem .85rem;font-size:.72rem;color:#5C5448;box-shadow:0 4px 12px rgba(0,0,0,.08);font-family:Inter,sans-serif;letter-spacing:.04em;transition:opacity .8s}
+
+  /* Image popover (hover/tap on bolded place names) */
   .hoverable-place{cursor:pointer;border-bottom:1px dotted rgba(46,125,160,.45);transition:border-color .15s,color .15s}
   .hoverable-place:active{border-bottom-color:var(--terra);color:var(--terra)}
   #img-popover{position:fixed;left:50%;bottom:0;transform:translate(-50%,100%);width:min(440px,calc(100vw - 16px));background:#fff;border:1px solid var(--line);border-top-left-radius:18px;border-top-right-radius:18px;box-shadow:0 -8px 32px rgba(0,0,0,.18);z-index:9999;padding:.85rem .9rem .7rem;font-family:'Inter',sans-serif;pointer-events:none;opacity:0;visibility:hidden;transition:transform .25s ease,opacity .2s ease,visibility 0s linear .25s}
@@ -175,7 +242,6 @@
   .ipop-loader{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:.82rem;color:var(--ink-soft);text-align:center;padding:1rem}
   .ipop-attr{margin-top:.4rem;font-size:.62rem;text-align:right;color:var(--ink-soft);letter-spacing:.04em;padding:0 .2rem}
   .ipop-attr a{color:var(--ink-soft);border-bottom:none}
-  .map-status{position:absolute;top:10px;left:50%;transform:translateX(-50%);z-index:1000;background:rgba(255,252,245,.96);border:1px solid #E5DCC8;border-radius:99px;padding:.35rem .85rem;font-size:.72rem;color:#5C5448;box-shadow:0 4px 12px rgba(0,0,0,.08);font-family:Inter,sans-serif;letter-spacing:.04em;transition:opacity .8s}
 </style>
 </head>
 <body>
@@ -185,8 +251,8 @@
 <header class="hero">
   <div class="hero-inner">
     <div class="kicker">French Alps · Tesla Model Y · Sleeping in the car · Summer base in Chambéry</div>
-    <h1>Five days, three <em>alpine lakes</em>,<br>three mountain passes.</h1>
-    <p class="lede">A compact 5-day loop entirely within 250 km of Chambéry — Col des Aravis (Mont Blanc panorama), the Beaufortain's Lac de Roselend, the Vanoise National Park, the Col de l'Iseran (highest paved pass in the Alps), and the stone village of Bonneval-sur-Arc. Four mountain passes, deep alpine, no famous lakes.</p>
+    <h1>Five days, four <em>mountain passes</em>,<br>two alpine lakes.</h1>
+    <p class="lede">A compact 5-day loop entirely within 250 km of Chambéry — Col des Aravis (Mont Blanc panorama), Lac de Roselend, Vanoise NP, Col de l'Iseran (highest paved pass in the Alps), and Bonneval-sur-Arc. Map on the right tracks every stop and charge with battery-state forecasts; click any day card to focus on its segment.</p>
     <div class="hero-stats">
       <div class="stat"><div class="num">5</div><div class="lbl">days</div></div>
       <div class="stat"><div class="num">~510</div><div class="lbl">km</div></div>
@@ -194,9 +260,9 @@
       <div class="stat"><div class="num">2</div><div class="lbl">alpine lakes</div></div>
       <div class="stat"><div class="num">1</div><div class="lbl">national park</div></div>
       <div class="stat"><div class="num">2,770m</div><div class="lbl">highest pass · Iseran</div></div>
-      <div class="stat"><div class="num">~3h</div><div class="lbl">driving / day avg</div></div>
+      <div class="stat"><div class="num">5</div><div class="lbl">charge stops</div></div>
       <div class="stat"><div class="num">~€80</div><div class="lbl">charging</div></div>
-      <div class="stat"><div class="num">€0</div><div class="lbl">tolls</div></div>
+      <div class="stat"><div class="num">15%</div><div class="lbl">hard floor on battery</div></div>
       <div class="stat"><div class="num">€0</div><div class="lbl">accommodation</div></div>
     </div>
   </div>
@@ -208,162 +274,173 @@
   <div class="hl"><div class="num">03</div><div class="meta"><div class="lbl">Stone-roofed mountain village</div><div class="name">Bonneval-sur-Arc · 1,800 m</div></div></div>
 </div>
 
-<section class="map-section">
-  <div class="map-wrap"><div id="map"></div></div>
-</section>
+<section class="trip-section">
+  <div class="trip-grid">
 
-<section class="phases">
-  <div class="section-head">
-    <div class="kicker">Day-by-day · summer rhythm</div>
-    <h2>Hour-by-hour, mobile-friendly.</h2>
-    <p>Built around 9 am wake / 9 pm sleep. Mountain roads average 50–60 km/h, and alpine elevation gain reduces EV range by ~20–25%, so each day has 1 charging stop sized for a ~225 km/charge car. Tap any bolded place for photos.</p>
-    <nav class="toc" id="toc"></nav>
-  </div>
-
-  <!-- ===== PHASE 1 ===== -->
-  <div class="phase" id="phase-1">
-    <div class="phase-header"><div class="num">01</div><h2>Aravis massif · Col des Aravis</h2><div class="meta">Day 1 · 90 km · first mountain pass</div></div>
-    <p class="phase-intro">Skip the famous lakes. Drive straight up into the <b>Aravis massif</b> — Reblochon cheese country, alpine pastures, and the <b>Col des Aravis</b> (1,486 m) with a panoramic view of Mont Blanc directly across the valley. Sleep on the pass.</p>
-    <p class="phase-intro" style="font-size:.82rem;color:var(--ink-soft);background:rgba(46,125,160,.08);border-left:3px solid var(--sea);padding:.6rem .8rem;border-radius:6px;margin-bottom:1rem"><b>Battery plan</b> · leave Chambéry at 80% · charge at SC Annecy mid-route to keep ≥15% throughout · sleep at Col des Aravis with <b>~77%</b> · wake with <b>~57%</b> after overnight AC (–20%).</p>
-    <div class="days">
-      <div class="day">
-        <div class="day-tag tag-pass">Mountain pass · alpine pastures</div>
-        <div class="day-top"><span class="day-num">D 01</span><h4>Col des Aravis · 1,486 m</h4></div>
-        <div class="km">From Chambéry · 90 km · ~1h45 via Annecy bypass</div>
-        <ol class="timeline">
-          <li class="step step-wake"><span class="t">09:00</span><span class="lbl">Wake</span><span class="desc">Pack up at base in Chambéry</span></li>
-          <li class="step step-eat"><span class="t">09:30</span><span class="lbl">Eat</span><span class="desc">Breakfast at home</span></li>
-          <li class="step step-depart"><span class="t">10:30</span><span class="lbl">Depart</span><span class="desc">North on A41 toward Annecy</span></li>
-          <li class="step step-charge"><span class="t">11:15</span><span class="lbl">Charge</span><span class="desc">SC <b>Annecy</b> · 25 min coffee · top up to 90% before the mountain climb (50 km, arrive ~67%)</span></li>
-          <li class="step step-drive"><span class="t">11:40</span><span class="lbl">Drive</span><span class="desc">D909 east through Thônes valley · Reblochon country</span></li>
-          <li class="step step-arrive"><span class="t">12:30</span><span class="lbl">Arrive</span><span class="desc"><b>La Clusaz</b> village (1,100 m) · alpine ski-then-cheese town</span></li>
-          <li class="step step-eat"><span class="t">12:30</span><span class="lbl">Eat</span><span class="desc">Lunch in La Clusaz · tartiflette with proper Reblochon AOP</span></li>
-          <li class="step step-visit"><span class="t">14:00</span><span class="lbl">Visit</span><span class="desc"><b>Coopérative laitière</b> · taste fresh Reblochon at the source</span></li>
-          <li class="step step-pass"><span class="t">15:00</span><span class="lbl">Pass</span><span class="desc">Drive <b>Col des Aravis</b> · 12 km of switchbacks (~30 min)</span></li>
-          <li class="step step-arrive"><span class="t">15:30</span><span class="lbl">Arrive</span><span class="desc"><b>Col des Aravis</b> summit · Mont Blanc filling the eastern horizon</span></li>
-          <li class="step step-hike"><span class="t">16:00</span><span class="lbl">Hike</span><span class="desc">To <b>La Tête de l'Aulp</b> ridge (4 km, +400 m, ~2h) · 360° on the Aravis chain</span></li>
-          <li class="step step-sunset"><span class="t">19:00</span><span class="lbl">Sunset</span><span class="desc">Mont Blanc glows pink from the pass — best free view in the Alps</span></li>
-          <li class="step step-eat"><span class="t">19:30</span><span class="lbl">Eat</span><span class="desc">Cook at the pass · cool 12°C night at altitude</span></li>
-          <li class="step step-sleep"><span class="t">21:00</span><span class="lbl">Sleep</span><span class="desc">Free spot at <b>Col des Aravis</b> or just below on Plateau de Beauregard<br><small style="color:var(--ink-soft);font-size:.75rem">Battery: sleep 77% → wake 57% (–20% overnight AC)</small></span></li>
-        </ol>
+    <aside class="trip-map-col">
+      <div class="map-wrap">
+        <div id="map"></div>
       </div>
-    </div>
-  </div>
+    </aside>
 
-  <!-- ===== PHASE 2 ===== -->
-  <div class="phase" id="phase-2">
-    <div class="phase-header"><div class="num">02</div><h2>Beaufortain · Lac de Roselend</h2><div class="meta">Day 2 · 80 km · Cormet de Roselend pass</div></div>
-    <p class="phase-intro"><b>Highlight #1.</b> Drive over the <b>Cormet de Roselend</b> pass (1,968 m, a Tour de France classic) and arrive at <b>Lac de Roselend</b> — a turquoise reservoir at 1,500 m, ringed by alpine pastures and the granite peaks of the Beaufortain massif. Beaufort cheese on the way up, sunset on the dam.</p>
-    <p class="phase-intro" style="font-size:.82rem;color:var(--ink-soft);background:rgba(46,125,160,.08);border-left:3px solid var(--sea);padding:.6rem .8rem;border-radius:6px;margin-bottom:1rem"><b>Battery plan</b> · wake at <b>57%</b> · 45 km descent to SC Albertville arrives at ~48% · charge to 80% · Cormet pass + final climb sleep at <b>~65%</b>, wake at <b>~45%</b>. Min state of trip: ≥30% (well above 15% floor).</p>
-    <div class="days">
-      <div class="day">
-        <div class="day-tag tag-pass">Mountain pass · alpine lake</div>
-        <div class="day-top"><span class="day-num">D 02</span><h4>Lac de Roselend (Beaufortain)</h4></div>
-        <div class="km">From Col des Aravis · 75 km · ~1h45 via Megève + Albertville</div>
-        <ol class="timeline">
-          <li class="step step-wake"><span class="t">09:00</span><span class="lbl">Wake</span><span class="desc">Sunrise on Mont Blanc from the pass</span></li>
-          <li class="step step-eat"><span class="t">09:30</span><span class="lbl">Eat</span><span class="desc">Coffee at altitude</span></li>
-          <li class="step step-depart"><span class="t">10:30</span><span class="lbl">Depart</span><span class="desc">East down to Flumet, south through Megève to Albertville</span></li>
-          <li class="step step-charge"><span class="t">11:30</span><span class="lbl">Charge</span><span class="desc">SC <b>Albertville</b> · 30 min · top up before the next mountain section (45 km)</span></li>
-          <li class="step step-drive"><span class="t">12:00</span><span class="lbl">Drive</span><span class="desc">25 km via D925 to <b>Beaufort</b> village</span></li>
-          <li class="step step-arrive"><span class="t">12:45</span><span class="lbl">Arrive</span><span class="desc">Beaufort</span></li>
-          <li class="step step-eat"><span class="t">13:00</span><span class="lbl">Eat</span><span class="desc">Lunch in Beaufort · taste <b>Beaufort AOP</b> at the cooperative</span></li>
-          <li class="step step-pass"><span class="t">14:30</span><span class="lbl">Pass</span><span class="desc">Drive <b>Cormet de Roselend</b> (1,968 m, 18 km of switchbacks) · ~45 min</span></li>
-          <li class="step step-arrive"><span class="t">15:15</span><span class="lbl">Arrive</span><span class="desc"><b>Lac de Roselend</b> (1,500 m)</span></li>
-          <li class="step step-hike"><span class="t">15:30</span><span class="lbl">Hike</span><span class="desc">Loop around the lake · 4 km easy (1h30)</span></li>
-          <li class="step step-swim"><span class="t">17:30</span><span class="lbl">Swim</span><span class="desc">Cold alpine swim (16°C max in summer)</span></li>
-          <li class="step step-sunset"><span class="t">19:00</span><span class="lbl">Sunset</span><span class="desc">From the dam · glaciers of the Pierra Menta massif glow pink</span></li>
-          <li class="step step-eat"><span class="t">19:30</span><span class="lbl">Eat</span><span class="desc">Cook · cool 12°C night</span></li>
-          <li class="step step-sleep"><span class="t">21:00</span><span class="lbl">Sleep</span><span class="desc">Free spot near <b>Lac de Roselend</b> dam<br><small style="color:var(--ink-soft);font-size:.75rem">Battery: sleep 65% → wake 45% (–20% overnight AC)</small></span></li>
-        </ol>
+    <main class="trip-cards-col">
+      <div class="section-head">
+        <div class="kicker">Day-by-day · click to focus on map</div>
+        <h2>Hour-by-hour, with battery forecast.</h2>
+        <p>Lightning markers on the map are charge stops; circles are sleep spots; triangles are passes. Each shows the battery percentage at arrival. Click any day card on the left to focus the map on that segment.</p>
+        <div class="day-filter">
+          <button class="reset-btn" id="reset-btn" disabled>Show all days</button>
+          <span class="hint">click a day card below to focus</span>
+        </div>
       </div>
-    </div>
-  </div>
 
-  <!-- ===== PHASE 3 ===== -->
-  <div class="phase" id="phase-3">
-    <div class="phase-header"><div class="num">03</div><h2>Vanoise National Park · Pralognan</h2><div class="meta">Day 3 · 80 km · big hike day</div></div>
-    <p class="phase-intro">Cross to the southern side of the Tarentaise valley and climb up to <b>Pralognan-la-Vanoise</b> (1,400 m), the gateway to <b>Vanoise NP</b> — France's first national park (1963), shared border with Italy's Gran Paradiso. Glaciers, ibex, and alpine meadows. A full hike day.</p>
-    <p class="phase-intro" style="font-size:.82rem;color:var(--ink-soft);background:rgba(46,125,160,.08);border-left:3px solid var(--sea);padding:.6rem .8rem;border-radius:6px;margin-bottom:1rem"><b>Battery plan</b> · wake at <b>45%</b> · 30 km descent to SC Bourg-St-Maurice arrives at ~39% · charge to 80% · 50 km mountain road to Pralognan, sleep at <b>~63%</b>, wake at <b>~43%</b>.</p>
-    <div class="days">
-      <div class="day">
-        <div class="day-tag tag-drive">Drive · into Vanoise</div>
-        <div class="day-top"><span class="day-num">D 03</span><h4>Pralognan-la-Vanoise</h4></div>
-        <div class="km">From Roselend · 80 km · ~2h</div>
-        <ol class="timeline">
-          <li class="step step-wake"><span class="t">09:00</span><span class="lbl">Wake</span></li>
-          <li class="step step-eat"><span class="t">09:30</span><span class="lbl">Eat</span></li>
-          <li class="step step-depart"><span class="t">10:30</span><span class="lbl">Depart</span></li>
-          <li class="step step-drive"><span class="t">11:00</span><span class="lbl">Drive</span><span class="desc">Down to Bourg-Saint-Maurice via Cormet (~1h)</span></li>
-          <li class="step step-charge"><span class="t">12:00</span><span class="lbl">Charge</span><span class="desc">SC <b>Bourg-Saint-Maurice</b> · 45 min · lunch (refill before mountain road)</span></li>
-          <li class="step step-drive"><span class="t">12:45</span><span class="lbl">Drive</span><span class="desc">50 km via Aime → Macôt → Pralognan (~1h30 winding)</span></li>
-          <li class="step step-arrive"><span class="t">14:15</span><span class="lbl">Arrive</span><span class="desc"><b>Pralognan-la-Vanoise</b> (1,400 m)</span></li>
-          <li class="step step-hike"><span class="t">14:30</span><span class="lbl">Hike</span><span class="desc"><b>Lac des Vaches</b> trail · 8 km return (3-4h, +400 m gain) · stone causeway across the lake, marmots</span></li>
-          <li class="step step-relax"><span class="t">18:30</span><span class="lbl">Relax</span><span class="desc">River dip in the Doron de Chavière</span></li>
-          <li class="step step-eat"><span class="t">19:30</span><span class="lbl">Eat</span><span class="desc">Cook · diots (Savoyard sausages) on the grill</span></li>
-          <li class="step step-sleep"><span class="t">21:00</span><span class="lbl">Sleep</span><span class="desc">Free spot near <b>Pralognan</b> trailhead<br><small style="color:var(--ink-soft);font-size:.75rem">Battery: sleep 63% → wake 43% (–20% overnight AC)</small></span></li>
-        </ol>
+      <!-- ===== PHASE 1 ===== -->
+      <div class="phase" id="phase-1">
+        <div class="phase-header"><div class="num">01</div><h2>Aravis massif · Col des Aravis</h2><div class="meta">Day 1 · 90 km · first mountain pass</div></div>
+        <p class="phase-intro">Skip the famous lakes. Drive straight up into the <b>Aravis massif</b> — Reblochon cheese country, alpine pastures, and the <b>Col des Aravis</b> (1,486 m) with a panoramic view of Mont Blanc directly across the valley. Sleep on the pass.</p>
+        <p class="phase-intro battery-callout"><b>Battery plan</b> · leave Chambéry at 80% · charge at SC Annecy mid-route to keep ≥15% throughout · sleep at Col des Aravis with <b>~77%</b> · wake with <b>~57%</b> after overnight AC.</p>
+        <div class="days">
+          <div class="day" data-day-id="d1">
+            <div class="day-tag tag-pass">Mountain pass · alpine pastures</div>
+            <div class="day-top"><span class="day-num">D 01</span><h4>Col des Aravis · 1,486 m</h4></div>
+            <div class="km">From Chambéry · 90 km · ~2h with charge stop</div>
+            <ol class="timeline">
+              <li class="step step-wake"><span class="t">09:00</span><span class="lbl">Wake</span><span class="desc">Pack up at base in Chambéry · battery 80%</span></li>
+              <li class="step step-eat"><span class="t">09:30</span><span class="lbl">Eat</span><span class="desc">Breakfast at home</span></li>
+              <li class="step step-depart"><span class="t">10:30</span><span class="lbl">Depart</span><span class="desc">North on A41 toward Annecy</span></li>
+              <li class="step step-charge"><span class="t">11:15</span><span class="lbl">Charge</span><span class="desc">SC <b>Annecy</b> · 25 min coffee · arrive 67%, leave 90%</span></li>
+              <li class="step step-drive"><span class="t">11:40</span><span class="lbl">Drive</span><span class="desc">D909 east through Thônes valley · Reblochon country</span></li>
+              <li class="step step-arrive"><span class="t">12:30</span><span class="lbl">Arrive</span><span class="desc"><b>La Clusaz</b> village (1,100 m) · alpine ski-then-cheese town</span></li>
+              <li class="step step-eat"><span class="t">12:45</span><span class="lbl">Eat</span><span class="desc">Lunch in La Clusaz · tartiflette with Reblochon AOP</span></li>
+              <li class="step step-visit"><span class="t">14:00</span><span class="lbl">Visit</span><span class="desc"><b>Coopérative laitière</b> · taste fresh Reblochon at the source</span></li>
+              <li class="step step-pass"><span class="t">15:00</span><span class="lbl">Pass</span><span class="desc">Drive <b>Col des Aravis</b> · 12 km of switchbacks (~30 min)</span></li>
+              <li class="step step-arrive"><span class="t">15:30</span><span class="lbl">Arrive</span><span class="desc"><b>Col des Aravis</b> summit · Mont Blanc filling the eastern horizon</span></li>
+              <li class="step step-hike"><span class="t">16:00</span><span class="lbl">Hike</span><span class="desc">To <b>La Tête de l'Aulp</b> ridge (4 km, +400 m, ~2h) · 360° on the Aravis chain</span></li>
+              <li class="step step-sunset"><span class="t">19:00</span><span class="lbl">Sunset</span><span class="desc">Mont Blanc glows pink from the pass</span></li>
+              <li class="step step-eat"><span class="t">19:30</span><span class="lbl">Eat</span><span class="desc">Cook at the pass · cool 12°C night at altitude</span></li>
+              <li class="step step-sleep"><span class="t">21:00</span><span class="lbl">Sleep</span><span class="desc">Free spot at <b>Col des Aravis</b><br><small style="color:var(--ink-soft);font-size:.75rem">Battery: sleep 77% → wake 57% (–20% overnight AC)</small></span></li>
+            </ol>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
 
-  <!-- ===== PHASE 4 ===== -->
-  <div class="phase" id="phase-4">
-    <div class="phase-header"><div class="num">04</div><h2>Col de l'Iseran · Bonneval-sur-Arc</h2><div class="meta">Day 4 · 110 km · highest pass in the Alps</div></div>
-    <p class="phase-intro"><b>Highlight #2 + #3.</b> Drive up the Tarentaise to Val d'Isère, then over the <b>Col de l'Iseran</b> (2,770 m — the highest paved mountain pass in the Alps, only open July–September). Drop down to <b>Bonneval-sur-Arc</b>, a stone-roofed village on the Italian border — one of the most beautiful villages in France.</p>
-    <p class="phase-intro" style="font-size:.82rem;color:var(--ink-soft);background:rgba(46,125,160,.08);border-left:3px solid var(--sea);padding:.6rem .8rem;border-radius:6px;margin-bottom:1rem"><b>Battery plan</b> · wake at <b>43%</b> · 50 km descent to SC Bourg-St-Maurice arrives at ~32% · charge to <b>90%</b> (Iseran climb is ~1,500 m elevation gain) · sleep at <b>~64%</b>, wake at <b>~44%</b>.</p>
-    <div class="days">
-      <div class="day">
-        <div class="day-tag tag-pass">Iseran pass · 2,770 m</div>
-        <div class="day-top"><span class="day-num">D 04</span><h4>Bonneval-sur-Arc</h4></div>
-        <div class="km">From Pralognan · 110 km · ~3h with pass · ~1,500 m elevation gain (range hit)</div>
-        <ol class="timeline">
-          <li class="step step-wake"><span class="t">09:00</span><span class="lbl">Wake</span></li>
-          <li class="step step-eat"><span class="t">09:30</span><span class="lbl">Eat</span></li>
-          <li class="step step-depart"><span class="t">10:30</span><span class="lbl">Depart</span></li>
-          <li class="step step-drive"><span class="t">11:00</span><span class="lbl">Drive</span><span class="desc">Down to Bourg-Saint-Maurice (~1h)</span></li>
-          <li class="step step-charge"><span class="t">12:00</span><span class="lbl">Charge</span><span class="desc">SC <b>Bourg-Saint-Maurice</b> · 45 min · lunch · charge to 90% (mountain pass needs full battery)</span></li>
-          <li class="step step-drive"><span class="t">12:45</span><span class="lbl">Drive</span><span class="desc">35 km up Tarentaise to <b>Val d'Isère</b> (1,850 m, ~1h)</span></li>
-          <li class="step step-arrive"><span class="t">13:45</span><span class="lbl">Arrive</span><span class="desc">Val d'Isère · last petrol station before pass</span></li>
-          <li class="step step-pass"><span class="t">14:00</span><span class="lbl">Pass</span><span class="desc">Drive <b>Col de l'Iseran</b> · 16 km of switchbacks to 2,770 m (~45 min)</span></li>
-          <li class="step step-arrive"><span class="t">14:45</span><span class="lbl">Arrive</span><span class="desc">Iseran summit · highest paved pass in the Alps</span></li>
-          <li class="step step-relax"><span class="t">15:00</span><span class="lbl">Photo</span><span class="desc">Tundra landscape · Mont Blanc visible north on clear days</span></li>
-          <li class="step step-drive"><span class="t">15:30</span><span class="lbl">Drive</span><span class="desc">Down to Bonneval (~30 km, ~45 min)</span></li>
-          <li class="step step-arrive"><span class="t">16:30</span><span class="lbl">Arrive</span><span class="desc"><b>Bonneval-sur-Arc</b> (1,800 m) · stone village</span></li>
-          <li class="step step-visit"><span class="t">16:45</span><span class="lbl">Walk</span><span class="desc">Cobblestone village · slate-stone roofs unchanged in 200 years</span></li>
-          <li class="step step-eat"><span class="t">19:00</span><span class="lbl">Eat</span><span class="desc">Tartiflette in the village · €18-22</span></li>
-          <li class="step step-sleep"><span class="t">21:00</span><span class="lbl">Sleep</span><span class="desc">Free spot just below <b>Bonneval-sur-Arc</b><br><small style="color:var(--ink-soft);font-size:.75rem">Battery: sleep 64% → wake 44% (–20% overnight AC)</small></span></li>
-        </ol>
+      <!-- ===== PHASE 2 ===== -->
+      <div class="phase" id="phase-2">
+        <div class="phase-header"><div class="num">02</div><h2>Beaufortain · Lac de Roselend</h2><div class="meta">Day 2 · 75 km · Cormet de Roselend pass</div></div>
+        <p class="phase-intro"><b>Highlight #1.</b> Drive over the <b>Cormet de Roselend</b> pass (1,968 m, a Tour de France classic) and arrive at <b>Lac de Roselend</b> — a turquoise reservoir at 1,500 m, ringed by alpine pastures and the granite peaks of the Beaufortain massif.</p>
+        <p class="phase-intro battery-callout"><b>Battery plan</b> · wake at <b>57%</b> · 45 km descent to SC Albertville arrives at ~48% · charge to 80% · Cormet pass + final climb sleep at <b>~65%</b>, wake at <b>~45%</b>. Min state of trip: ≥30% (well above 15% floor).</p>
+        <div class="days">
+          <div class="day" data-day-id="d2">
+            <div class="day-tag tag-pass">Mountain pass · alpine lake</div>
+            <div class="day-top"><span class="day-num">D 02</span><h4>Lac de Roselend (Beaufortain)</h4></div>
+            <div class="km">From Col des Aravis · 75 km · ~1h45 via Megève + Albertville</div>
+            <ol class="timeline">
+              <li class="step step-wake"><span class="t">09:00</span><span class="lbl">Wake</span><span class="desc">Sunrise on Mont Blanc · battery 57%</span></li>
+              <li class="step step-eat"><span class="t">09:30</span><span class="lbl">Eat</span></li>
+              <li class="step step-depart"><span class="t">10:30</span><span class="lbl">Depart</span><span class="desc">East down to Flumet, south through Megève to Albertville</span></li>
+              <li class="step step-charge"><span class="t">11:30</span><span class="lbl">Charge</span><span class="desc">SC <b>Albertville</b> · 30 min top-up · arrive 48%, leave 80%</span></li>
+              <li class="step step-drive"><span class="t">12:00</span><span class="lbl">Drive</span><span class="desc">25 km via D925 to <b>Beaufort</b> village</span></li>
+              <li class="step step-arrive"><span class="t">12:45</span><span class="lbl">Arrive</span><span class="desc">Beaufort</span></li>
+              <li class="step step-eat"><span class="t">13:00</span><span class="lbl">Eat</span><span class="desc">Lunch in Beaufort · taste <b>Beaufort AOP</b> at the cooperative</span></li>
+              <li class="step step-pass"><span class="t">14:30</span><span class="lbl">Pass</span><span class="desc">Drive <b>Cormet de Roselend</b> (1,968 m, 18 km of switchbacks) · ~45 min</span></li>
+              <li class="step step-arrive"><span class="t">15:15</span><span class="lbl">Arrive</span><span class="desc"><b>Lac de Roselend</b> (1,500 m)</span></li>
+              <li class="step step-hike"><span class="t">15:30</span><span class="lbl">Hike</span><span class="desc">Loop around the lake · 4 km easy (1h30)</span></li>
+              <li class="step step-swim"><span class="t">17:30</span><span class="lbl">Swim</span><span class="desc">Cold alpine swim (16°C max in summer)</span></li>
+              <li class="step step-sunset"><span class="t">19:00</span><span class="lbl">Sunset</span><span class="desc">From the dam · Pierra Menta glaciers glow pink</span></li>
+              <li class="step step-eat"><span class="t">19:30</span><span class="lbl">Eat</span><span class="desc">Cook · cool 12°C night</span></li>
+              <li class="step step-sleep"><span class="t">21:00</span><span class="lbl">Sleep</span><span class="desc">Free spot near <b>Lac de Roselend</b> dam<br><small style="color:var(--ink-soft);font-size:.75rem">Battery: sleep 65% → wake 45% (–20% overnight AC)</small></span></li>
+            </ol>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
 
-  <!-- ===== PHASE 5 ===== -->
-  <div class="phase" id="phase-5">
-    <div class="phase-header"><div class="num">05</div><h2>Maurienne valley · home</h2><div class="meta">Day 5 · 150 km</div></div>
-    <p class="phase-intro">Last day. Drop down the <b>Haute-Maurienne</b>, an optional detour to <b>Lac du Mont-Cenis</b> (an alpine lake on the Italian border), then highway back to Chambéry.</p>
-    <p class="phase-intro" style="font-size:.82rem;color:var(--ink-soft);background:rgba(46,125,160,.08);border-left:3px solid var(--sea);padding:.6rem .8rem;border-radius:6px;margin-bottom:1rem"><b>Battery plan</b> · wake at <b>44%</b> · 90 km descent to SC St-Jean-de-Maurienne arrives at ~24% (tightest of the trip — descent + regen helps) · charge to 60% · 80 km autoroute home arrives at <b>~40%</b>.</p>
-    <div class="days">
-      <div class="day">
-        <div class="day-tag tag-drive">Last day · valley descent</div>
-        <div class="day-top"><span class="day-num">D 05</span><h4>Chambéry · home</h4></div>
-        <div class="km">From Bonneval · 150 km · ~3h</div>
-        <ol class="timeline">
-          <li class="step step-wake"><span class="t">09:00</span><span class="lbl">Wake</span></li>
-          <li class="step step-eat"><span class="t">09:30</span><span class="lbl">Eat</span></li>
-          <li class="step step-depart"><span class="t">10:30</span><span class="lbl">Depart</span></li>
-          <li class="step step-drive"><span class="t">11:00</span><span class="lbl">Drive</span><span class="desc">Down to Lanslevillard (15 km)</span></li>
-          <li class="step step-visit"><span class="t">11:30</span><span class="lbl">Detour</span><span class="desc">Optional: drive 8 km up to <b>Lac du Mont-Cenis</b> · alpine lake on Italian border</span></li>
-          <li class="step step-eat"><span class="t">12:30</span><span class="lbl">Eat</span><span class="desc">Picnic at the lake or in the upper Maurienne</span></li>
-          <li class="step step-drive"><span class="t">13:30</span><span class="lbl">Drive</span><span class="desc">Down Maurienne valley to Saint-Jean (~1h)</span></li>
-          <li class="step step-charge"><span class="t">14:30</span><span class="lbl">Charge</span><span class="desc">SC <b>Saint-Jean-de-Maurienne</b> · 30 min · last charge (~70 km from home)</span></li>
-          <li class="step step-drive"><span class="t">15:00</span><span class="lbl">Drive</span><span class="desc">80 km via A43 to Chambéry (~1h)</span></li>
-          <li class="step step-arrive"><span class="t">16:00</span><span class="lbl">Arrive</span><span class="desc"><b>Chambéry · home</b> · 5 days, 510 km, 4 passes<br><small style="color:var(--ink-soft);font-size:.75rem">Battery on arrival: ~40% · ready to plug in at home</small></span></li>
-        </ol>
+      <!-- ===== PHASE 3 ===== -->
+      <div class="phase" id="phase-3">
+        <div class="phase-header"><div class="num">03</div><h2>Vanoise National Park · Pralognan</h2><div class="meta">Day 3 · 80 km · big hike day</div></div>
+        <p class="phase-intro">Cross to the southern side of the Tarentaise valley and climb up to <b>Pralognan-la-Vanoise</b> (1,400 m), the gateway to <b>Vanoise NP</b> — France's first national park (1963). Glaciers, ibex, and alpine meadows.</p>
+        <p class="phase-intro battery-callout"><b>Battery plan</b> · wake at <b>45%</b> · 30 km descent to SC Bourg-St-Maurice arrives at ~39% · charge to 80% · 50 km mountain road to Pralognan, sleep at <b>~63%</b>, wake at <b>~43%</b>.</p>
+        <div class="days">
+          <div class="day" data-day-id="d3">
+            <div class="day-tag tag-drive">Drive · into Vanoise</div>
+            <div class="day-top"><span class="day-num">D 03</span><h4>Pralognan-la-Vanoise</h4></div>
+            <div class="km">From Roselend · 80 km · ~2h</div>
+            <ol class="timeline">
+              <li class="step step-wake"><span class="t">09:00</span><span class="lbl">Wake</span><span class="desc">Battery 45%</span></li>
+              <li class="step step-eat"><span class="t">09:30</span><span class="lbl">Eat</span></li>
+              <li class="step step-depart"><span class="t">10:30</span><span class="lbl">Depart</span></li>
+              <li class="step step-drive"><span class="t">11:00</span><span class="lbl">Drive</span><span class="desc">Down to Bourg-Saint-Maurice via Cormet (~1h)</span></li>
+              <li class="step step-charge"><span class="t">12:00</span><span class="lbl">Charge</span><span class="desc">SC <b>Bourg-Saint-Maurice</b> · 45 min · lunch · arrive 39%, leave 80%</span></li>
+              <li class="step step-drive"><span class="t">12:45</span><span class="lbl">Drive</span><span class="desc">50 km via Aime → Macôt → Pralognan (~1h30 winding)</span></li>
+              <li class="step step-arrive"><span class="t">14:15</span><span class="lbl">Arrive</span><span class="desc"><b>Pralognan-la-Vanoise</b> (1,400 m)</span></li>
+              <li class="step step-hike"><span class="t">14:30</span><span class="lbl">Hike</span><span class="desc"><b>Lac des Vaches</b> trail · 8 km return (3-4h, +400 m)</span></li>
+              <li class="step step-relax"><span class="t">18:30</span><span class="lbl">Relax</span><span class="desc">River dip in the Doron de Chavière</span></li>
+              <li class="step step-eat"><span class="t">19:30</span><span class="lbl">Eat</span><span class="desc">Cook · diots (Savoyard sausages) on the grill</span></li>
+              <li class="step step-sleep"><span class="t">21:00</span><span class="lbl">Sleep</span><span class="desc">Free spot near <b>Pralognan</b> trailhead<br><small style="color:var(--ink-soft);font-size:.75rem">Battery: sleep 63% → wake 43% (–20% overnight AC)</small></span></li>
+            </ol>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
 
+      <!-- ===== PHASE 4 ===== -->
+      <div class="phase" id="phase-4">
+        <div class="phase-header"><div class="num">04</div><h2>Col de l'Iseran · Bonneval-sur-Arc</h2><div class="meta">Day 4 · 110 km · highest pass in the Alps</div></div>
+        <p class="phase-intro"><b>Highlight #2 + #3.</b> Drive up the Tarentaise to Val d'Isère, then over the <b>Col de l'Iseran</b> (2,770 m — the highest paved mountain pass in the Alps, only open July–September). Drop down to <b>Bonneval-sur-Arc</b>, a stone-roofed village on the Italian border.</p>
+        <p class="phase-intro battery-callout"><b>Battery plan</b> · wake at <b>43%</b> · 50 km descent to SC Bourg-St-Maurice arrives at ~32% · charge to <b>90%</b> (Iseran climb is ~1,500 m elevation gain) · sleep at <b>~64%</b>, wake at <b>~44%</b>.</p>
+        <div class="days">
+          <div class="day" data-day-id="d4">
+            <div class="day-tag tag-pass">Iseran pass · 2,770 m</div>
+            <div class="day-top"><span class="day-num">D 04</span><h4>Bonneval-sur-Arc</h4></div>
+            <div class="km">From Pralognan · 110 km · ~3h with pass</div>
+            <ol class="timeline">
+              <li class="step step-wake"><span class="t">09:00</span><span class="lbl">Wake</span><span class="desc">Battery 43%</span></li>
+              <li class="step step-eat"><span class="t">09:30</span><span class="lbl">Eat</span></li>
+              <li class="step step-depart"><span class="t">10:30</span><span class="lbl">Depart</span></li>
+              <li class="step step-drive"><span class="t">11:00</span><span class="lbl">Drive</span><span class="desc">Down to Bourg-Saint-Maurice (~1h)</span></li>
+              <li class="step step-charge"><span class="t">12:00</span><span class="lbl">Charge</span><span class="desc">SC <b>Bourg-Saint-Maurice</b> · 45 min · lunch · arrive 32%, leave 90%</span></li>
+              <li class="step step-drive"><span class="t">12:45</span><span class="lbl">Drive</span><span class="desc">35 km up Tarentaise to <b>Val d'Isère</b> (1,850 m, ~1h)</span></li>
+              <li class="step step-arrive"><span class="t">13:45</span><span class="lbl">Arrive</span><span class="desc">Val d'Isère · last petrol station before pass</span></li>
+              <li class="step step-pass"><span class="t">14:00</span><span class="lbl">Pass</span><span class="desc">Drive <b>Col de l'Iseran</b> · 16 km of switchbacks to 2,770 m (~45 min)</span></li>
+              <li class="step step-arrive"><span class="t">14:45</span><span class="lbl">Arrive</span><span class="desc">Iseran summit · highest paved pass in the Alps</span></li>
+              <li class="step step-relax"><span class="t">15:00</span><span class="lbl">Photo</span><span class="desc">Tundra landscape · Mont Blanc visible north on clear days</span></li>
+              <li class="step step-drive"><span class="t">15:30</span><span class="lbl">Drive</span><span class="desc">Down to Bonneval (~30 km, ~45 min)</span></li>
+              <li class="step step-arrive"><span class="t">16:30</span><span class="lbl">Arrive</span><span class="desc"><b>Bonneval-sur-Arc</b> (1,800 m) · stone village</span></li>
+              <li class="step step-visit"><span class="t">16:45</span><span class="lbl">Walk</span><span class="desc">Cobblestone village · slate-stone roofs unchanged in 200 years</span></li>
+              <li class="step step-eat"><span class="t">19:00</span><span class="lbl">Eat</span><span class="desc">Tartiflette in the village · €18-22</span></li>
+              <li class="step step-sleep"><span class="t">21:00</span><span class="lbl">Sleep</span><span class="desc">Free spot just below <b>Bonneval-sur-Arc</b><br><small style="color:var(--ink-soft);font-size:.75rem">Battery: sleep 64% → wake 44% (–20% overnight AC)</small></span></li>
+            </ol>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== PHASE 5 ===== -->
+      <div class="phase" id="phase-5">
+        <div class="phase-header"><div class="num">05</div><h2>Maurienne valley · home</h2><div class="meta">Day 5 · 150 km</div></div>
+        <p class="phase-intro">Last day. Drop down the <b>Haute-Maurienne</b>, optional detour to <b>Lac du Mont-Cenis</b>, then highway back to Chambéry.</p>
+        <p class="phase-intro battery-callout"><b>Battery plan</b> · wake at <b>44%</b> · 90 km descent to SC St-Jean-de-Maurienne arrives at ~24% (tightest of the trip) · charge to 60% · 80 km autoroute home arrives at <b>~40%</b>.</p>
+        <div class="days">
+          <div class="day" data-day-id="d5">
+            <div class="day-tag tag-drive">Last day · valley descent</div>
+            <div class="day-top"><span class="day-num">D 05</span><h4>Chambéry · home</h4></div>
+            <div class="km">From Bonneval · 150 km · ~3h</div>
+            <ol class="timeline">
+              <li class="step step-wake"><span class="t">09:00</span><span class="lbl">Wake</span><span class="desc">Battery 44%</span></li>
+              <li class="step step-eat"><span class="t">09:30</span><span class="lbl">Eat</span></li>
+              <li class="step step-depart"><span class="t">10:30</span><span class="lbl">Depart</span></li>
+              <li class="step step-drive"><span class="t">11:00</span><span class="lbl">Drive</span><span class="desc">Down to Lanslevillard (15 km)</span></li>
+              <li class="step step-visit"><span class="t">11:30</span><span class="lbl">Detour</span><span class="desc">Optional: drive 8 km up to <b>Lac du Mont-Cenis</b></span></li>
+              <li class="step step-eat"><span class="t">12:30</span><span class="lbl">Eat</span><span class="desc">Picnic at the lake or in the upper Maurienne</span></li>
+              <li class="step step-drive"><span class="t">13:30</span><span class="lbl">Drive</span><span class="desc">Down Maurienne valley to Saint-Jean (~1h)</span></li>
+              <li class="step step-charge"><span class="t">14:30</span><span class="lbl">Charge</span><span class="desc">SC <b>Saint-Jean-de-Maurienne</b> · 30 min · arrive 24%, leave 60%</span></li>
+              <li class="step step-drive"><span class="t">15:00</span><span class="lbl">Drive</span><span class="desc">80 km via A43 to Chambéry (~1h)</span></li>
+              <li class="step step-arrive"><span class="t">16:00</span><span class="lbl">Arrive</span><span class="desc"><b>Chambéry · home</b><br><small style="color:var(--ink-soft);font-size:.75rem">Battery on arrival: ~40% · ready to plug in at home</small></span></li>
+            </ol>
+          </div>
+        </div>
+      </div>
+
+    </main>
+
+  </div>
 </section>
 
 <section class="tips">
@@ -386,10 +463,10 @@
         <h4>EV range &amp; battery plan</h4>
         <ul>
           <li><b>Start state:</b> leave Chambéry at 80%</li>
-          <li><b>Overnight loss:</b> ~20% from Camp Mode AC (summer mountain nights). Each day's SLEEP step shows arrival % and wake %.</li>
-          <li><b>Hard floor: 15%.</b> Trip is planned so the minimum reachable state is always ≥30% (double the floor) for weather/regen-variation buffer.</li>
-          <li>Mountain driving with elevation gain consumes ~25% more battery per km · regen recovers ~30% on descent</li>
-          <li>Charge to <b>90%</b> before the Iseran pass section · pre-condition battery on cold mornings above 2,000 m</li>
+          <li><b>Overnight loss:</b> ~20% from Camp Mode AC. Each SLEEP step shows arrival % and wake %.</li>
+          <li><b>Hard floor: 15%.</b> Trip is planned so the minimum reachable state is always ≥30% for buffer.</li>
+          <li>Mountain driving with elevation gain consumes ~25% more · regen recovers ~30% on descent</li>
+          <li>Charge to <b>90%</b> before the Iseran pass · pre-condition battery on cold mornings above 2,000 m</li>
         </ul>
       </div>
       <div class="tip">
@@ -399,18 +476,17 @@
           <li>Sleeping inside a parked car is legal almost everywhere · camping (chairs out) is what's banned</li>
           <li>Most alpine D-roads have signed lay-bys with no overnight ban</li>
           <li>Avoid signposted "interdit aux camping-cars" zones near busy resorts (Val d'Isère in season)</li>
-          <li>Park4Night has dense coverage in this region · check reviews before each stop</li>
+          <li>Park4Night has dense coverage in this region</li>
         </ul>
       </div>
       <div class="tip">
         <div class="icon">04</div>
         <h4>Budget anchors</h4>
         <ul>
-          <li><b>Charging: ~€80.</b> 470 km in mountains = ~570 km flat-equivalent. ~3 charge stops × €16.</li>
+          <li><b>Charging: ~€80.</b> 5 charges × ~€16 each</li>
           <li>Tolls: €0 · all D-roads + free A43 sections</li>
-          <li>Bike rental Annecy: €15</li>
-          <li>Vanoise NP entrance: free (national park)</li>
           <li>Food: ~€80 (cook + 2 mountain meals)</li>
+          <li>Vanoise NP entrance: free</li>
           <li><b>Total ~€175 · 5 days</b></li>
         </ul>
       </div>
@@ -419,45 +495,97 @@
 </section>
 
 <footer>
-  <h3>Three lakes, three passes, no rush.</h3>
-  <p>Roselend is glacial blue, Iseran is roof-of-Europe, Bonneval is a postcard. The trip is built so you spend most afternoons by water and most evenings above 1,500 m.</p>
+  <h3>Three lakes, four passes, no rush.</h3>
+  <p>Roselend is glacial blue, Iseran is roof-of-Europe, Bonneval is a postcard. Most afternoons by water, most evenings above 1,500 m.</p>
   <p class="sig">Plan generated for Chambéry → Alps loop · 5 days · Tesla Model Y</p>
 </footer>
 
 <script>
-// Route entries: [lat, lng, dayLabel, title, notes, optional custom Park4Night URL]
-// If the 6th element is set, that exact P4N place URL is used for the SLEEP and popup links.
-// Otherwise, falls back to a coordinate-centered search on park4night.com.
-const route = [
-  [45.5646, 5.9178, "Start", "Chambéry · départ",                  "Trip start · summer base"],
-  [45.8717, 6.4644, "D1",    "Col des Aravis · 1,486 m",           "Mountain pass · Mont Blanc panorama · Reblochon country", "https://park4night.com/en/place/107196"],
-  [45.6951, 6.6342, "D2",    "Lac de Roselend (Beaufortain)",      "Turquoise reservoir at 1,500 m · Cormet pass"],
-  [45.3807, 6.7365, "D3",    "Pralognan-la-Vanoise",               "Vanoise NP gateway · Lac des Vaches hike", "https://park4night.com/en/place/444815"],
-  [45.3690, 7.0429, "D4",    "Bonneval-sur-Arc",                   "Stone village 1,800 m · over Col de l'Iseran 2,770 m"],
-  [45.5646, 5.9178, "End",   "Chambéry · home",                    "Trip end · Day 5 evening"]
-];
+// =====================================================================
+//   TRIP DATA · waypoints per day (sleep, charges, passes, visits)
+// =====================================================================
+// Each waypoint: { type, coords:[lat,lng], name, arrive?, leave?, battery?, p4n? }
+// type: 'depart' | 'wake' | 'charge' | 'pass' | 'visit' | 'sleep' | 'home'
+const TRIP = {
+  startLabel: 'Chambéry',
+  startCoords: [45.5646, 5.9178],
+  startBattery: 80,
+  days: [
+    {
+      id: 'd1', label: '01', title: 'Col des Aravis · 1,486 m',
+      waypoints: [
+        { type:'depart', coords:[45.5646, 5.9178], name:'Chambéry · départ',     battery:80 },
+        { type:'charge', coords:[45.8975, 6.1066], name:'SC Annecy',             arrive:67, leave:90 },
+        { type:'visit',  coords:[45.9047, 6.4244], name:'La Clusaz · lunch' },
+        { type:'sleep',  coords:[45.8717, 6.4644], name:'Col des Aravis',        battery:77,
+          p4n:'https://park4night.com/en/place/107196',
+          note:'Mountain pass · Mont Blanc panorama · sleep 77% → wake 57%' }
+      ]
+    },
+    {
+      id: 'd2', label: '02', title: 'Lac de Roselend · 1,500 m',
+      waypoints: [
+        { type:'wake',   coords:[45.8717, 6.4644], name:'Col des Aravis · wake', battery:57 },
+        { type:'charge', coords:[45.6797, 6.3892], name:'SC Albertville',        arrive:48, leave:80 },
+        { type:'visit',  coords:[45.7222, 6.5694], name:'Beaufort · lunch' },
+        { type:'pass',   coords:[45.6822, 6.6800], name:"Cormet de Roselend · 1,968 m" },
+        { type:'sleep',  coords:[45.6951, 6.6342], name:'Lac de Roselend',       battery:65,
+          note:'Turquoise alpine lake · sleep 65% → wake 45%' }
+      ]
+    },
+    {
+      id: 'd3', label: '03', title: 'Pralognan-la-Vanoise',
+      waypoints: [
+        { type:'wake',   coords:[45.6951, 6.6342], name:'Roselend · wake',       battery:45 },
+        { type:'charge', coords:[45.6189, 6.7708], name:'SC Bourg-Saint-Maurice', arrive:39, leave:80 },
+        { type:'sleep',  coords:[45.3807, 6.7365], name:'Pralognan-la-Vanoise',  battery:63,
+          p4n:'https://park4night.com/en/place/444815',
+          note:'Vanoise NP gateway · sleep 63% → wake 43%' }
+      ]
+    },
+    {
+      id: 'd4', label: '04', title: "Bonneval-sur-Arc",
+      waypoints: [
+        { type:'wake',   coords:[45.3807, 6.7365], name:'Pralognan · wake',      battery:43 },
+        { type:'charge', coords:[45.6189, 6.7708], name:'SC Bourg-Saint-Maurice', arrive:32, leave:90 },
+        { type:'visit',  coords:[45.4486, 6.9803], name:"Val d'Isère" },
+        { type:'pass',   coords:[45.4172, 7.0319], name:"Col de l'Iseran · 2,770 m" },
+        { type:'sleep',  coords:[45.3690, 7.0429], name:'Bonneval-sur-Arc',      battery:64,
+          note:'Stone village 1,800 m · sleep 64% → wake 44%' }
+      ]
+    },
+    {
+      id: 'd5', label: '05', title: 'Chambéry · home',
+      waypoints: [
+        { type:'wake',   coords:[45.3690, 7.0429], name:'Bonneval · wake',       battery:44 },
+        { type:'visit',  coords:[45.2542, 6.9456], name:'Lac du Mont-Cenis · optional detour' },
+        { type:'charge', coords:[45.2740, 6.3528], name:'SC Saint-Jean-de-Maurienne', arrive:24, leave:60 },
+        { type:'home',   coords:[45.5646, 5.9178], name:'Chambéry · home',       battery:40,
+          note:'Trip end · ready to plug in' }
+      ]
+    }
+  ]
+};
 
-// Use a custom P4N place URL if the route entry provides one, else search by lat/lng
-function buildP4nUrl(r) {
-  return r[5] || `https://park4night.com/en/search?lat=${r[0]}&lng=${r[1]}&z=12`;
-}
+const DAY_COLOR = '#2E7DA0';
+const DIM_COLOR = '#a6c3d0';
 
+// =====================================================================
+//   MAP
+// =====================================================================
 const map = L.map('map', { zoomControl:true, scrollWheelZoom:false }).setView([45.55, 6.5], 9);
-
 L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
   attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>',
   subdomains: 'abcd', maxZoom: 19
 }).addTo(map);
-
-const TRIP_COLOR = '#2E7DA0';
-const latlngs = route.map(r => [r[0], r[1]]);
+map.on('click', () => map.scrollWheelZoom.enable());
 
 const statusEl = document.createElement('div');
 statusEl.className = 'map-status';
 statusEl.textContent = 'Loading driving routes…';
 document.querySelector('.map-wrap').appendChild(statusEl);
 
-async function fetchOSRM(coords) {
+async function fetchOSRM(coords){
   const path = coords.map(c => `${c[1]},${c[0]}`).join(';');
   const url = `https://router.project-osrm.org/route/v1/driving/${path}?overview=full&geometries=geojson&continue_straight=false`;
   const r = await fetch(url);
@@ -467,102 +595,191 @@ async function fetchOSRM(coords) {
   return data.routes[0].geometry.coordinates.map(c => [c[1], c[0]]);
 }
 
-(async () => {
-  try {
-    const geom = await fetchOSRM(latlngs);
-    L.polyline(geom, { color: TRIP_COLOR, weight: 4, opacity: .9, lineJoin: 'round' }).addTo(map);
-  } catch (e) {
-    L.polyline(latlngs, { color: TRIP_COLOR, weight: 3, opacity: .55, dashArray: '4,4' }).addTo(map);
-  }
+// SVG lightning bolt for charge markers
+const LIGHTNING_SVG = '<svg viewBox="0 0 24 24"><path d="M13 2L3 14h7l-1 8 11-12h-7z"/></svg>';
 
-  const locKey = r => `${r[0].toFixed(4)},${r[1].toFixed(4)}`;
-  const groups = new Map();
-  route.forEach((r, i) => {
-    const k = locKey(r);
-    if (!groups.has(k)) groups.set(k, []);
-    groups.get(k).push(i);
-  });
-
-  const cleanQuery = (s) => s.replace(/\s*[·(].*$/, '').trim();
-  groups.forEach((indices) => {
-    const first = route[indices[0]];
-    const dayLabel = (idx) => {
-      const raw = route[idx][2];
-      if (raw === 'Start' || raw === 'End') return raw;
-      return raw.replace(/^D/, '');
-    };
-    const labelText = indices.map(dayLabel).join('·');
-    const wide = labelText.length > 2;
-    const isCap = labelText === 'Start' || labelText === 'End';
-    const icon = L.divIcon({
-      className: 'num-marker' + (wide ? ' wide' : '') + (isCap ? ' cap' : ''),
-      html: labelText,
-      iconSize: wide ? [54, 30] : [30, 30]
+function makeIcon(wp){
+  if (wp.type === 'charge') {
+    return L.divIcon({
+      className: 'charge-marker',
+      html: LIGHTNING_SVG,
+      iconSize: [32, 32]
     });
-    const marker = L.marker([first[0], first[1]], { icon }).addTo(map);
-    const popupHtml = indices.map(i => {
-      const r = route[i];
-      const meta = r[2] === 'Start' ? 'Trip start' :
-                   r[2] === 'End'   ? 'Trip end'   :
-                   'Day ' + r[2].replace(/^D/, '');
-      const q = cleanQuery(r[3]);
-      const p4n = buildP4nUrl(r);
-      return `<div class="popup-visit">
-        <div class="popup-img-wrap"><img class="popup-img" data-query="${q.replace(/"/g,'&quot;')}" alt="" /><div class="popup-img-loader">Loading photo…</div></div>
-        <b>${r[3]}</b><span class="popup-meta">${meta}</span><span class="popup-note">${r[4]}</span>
-        <a class="p4n-btn" href="${p4n}" target="_blank" rel="noopener">Open in Park4Night</a>
-      </div>`;
-    }).join('<hr class="popup-sep">');
-    marker.bindPopup(popupHtml, { maxWidth: 280 });
+  }
+  if (wp.type === 'pass') {
+    return L.divIcon({
+      className: 'pass-marker',
+      html: '',
+      iconSize: [26, 22]
+    });
+  }
+  if (wp.type === 'sleep' || wp.type === 'home') {
+    const label = wp.type === 'home' ? 'End' : (TRIP.days.findIndex(d => d.waypoints.includes(wp)) + 1);
+    return L.divIcon({
+      className: 'num-marker' + (wp.type === 'home' ? ' cap' : ''),
+      html: String(label),
+      iconSize: wp.type === 'home' ? [36, 30] : [30, 30]
+    });
+  }
+  if (wp.type === 'depart') {
+    return L.divIcon({
+      className: 'num-marker cap',
+      html: 'Start',
+      iconSize: [40, 30]
+    });
+  }
+  // visit / wake — small dot
+  return L.divIcon({
+    className: 'num-marker',
+    html: '',
+    iconSize: [12, 12]
   });
+}
 
-  map.fitBounds(L.latLngBounds(latlngs).pad(0.1));
-  statusEl.textContent = 'Real driving routes from OpenStreetMap';
-  setTimeout(() => { statusEl.style.opacity = '0'; }, 3000);
-  setTimeout(() => { statusEl.remove(); }, 4500);
-})();
+function batteryLabel(wp){
+  if (wp.type === 'charge') return `${wp.arrive}→${wp.leave}%`;
+  if (typeof wp.battery === 'number') return `${wp.battery}%`;
+  return null;
+}
 
-const toc = document.getElementById('toc');
-document.querySelectorAll('.phase').forEach((p) => {
-  const num = (p.querySelector('.phase-header .num') || {}).textContent || '';
-  const title = p.querySelector('h2').textContent.trim();
-  const a = document.createElement('a');
-  a.href = '#' + p.id;
-  a.textContent = num.trim() + '  ·  ' + title;
-  toc.appendChild(a);
+function tooltipClass(wp){
+  if (wp.type === 'charge') return 'battery-label charge-tooltip';
+  if (wp.type === 'pass')   return 'battery-label pass-tooltip';
+  return 'battery-label';
+}
+
+function popupHtml(wp, dayIdx){
+  const meta = wp.type === 'charge' ? 'Charge stop' :
+               wp.type === 'pass'   ? 'Mountain pass' :
+               wp.type === 'sleep'  ? `Day ${dayIdx + 1} · sleep` :
+               wp.type === 'depart' ? 'Trip start' :
+               wp.type === 'wake'   ? `Day ${dayIdx + 1} · wake` :
+               wp.type === 'home'   ? 'Trip end' :
+               'Stop';
+  let battery = '';
+  if (wp.type === 'charge') battery = `<span class="popup-batt">⚡ Arrive ${wp.arrive}% · Leave ${wp.leave}%</span>`;
+  else if (typeof wp.battery === 'number') battery = `<span class="popup-batt">Battery: ${wp.battery}%</span>`;
+  const p4nBtn = wp.p4n
+    ? `<a class="p4n-btn" href="${wp.p4n}" target="_blank" rel="noopener">Open this spot on Park4Night</a>`
+    : (wp.type === 'sleep' ? `<a class="p4n-btn" href="https://park4night.com/en/search?lat=${wp.coords[0]}&lng=${wp.coords[1]}&z=12" target="_blank" rel="noopener">Open in Park4Night</a>` : '');
+  const photoFrame = (wp.type === 'sleep' || wp.type === 'visit' || wp.type === 'pass')
+    ? `<div class="popup-img-wrap"><img class="popup-img" data-query="${wp.name.replace(/"/g,'&quot;').replace(/\s*[·(].*$/,'').trim()}" alt="" /><div class="popup-img-loader">Loading photo…</div></div>`
+    : '';
+  return `<div class="popup-visit">${photoFrame}<b>${wp.name}</b><span class="popup-meta">${meta}</span>${wp.note ? `<span class="popup-note">${wp.note}</span>` : ''}${battery}${p4nBtn}</div>`;
+}
+
+// Build per-day layer groups
+const dayLayers = {}; // { d1: { polyline, markers, tooltips, latlngs } }
+
+async function buildAll(){
+  let count = 0;
+  for (const day of TRIP.days) {
+    const coords = day.waypoints.map(w => w.coords);
+    let geom;
+    try { geom = await fetchOSRM(coords); }
+    catch(e) { geom = coords; } // fallback to straight lines
+    const polyline = L.polyline(geom, { color: DAY_COLOR, weight: 4, opacity: .9, lineJoin: 'round' });
+    const markers = [];
+    const dayIdx = TRIP.days.indexOf(day);
+    day.waypoints.forEach((wp) => {
+      const marker = L.marker(wp.coords, { icon: makeIcon(wp) });
+      marker.bindPopup(popupHtml(wp, dayIdx), { maxWidth: 280 });
+      const lbl = batteryLabel(wp);
+      if (lbl) {
+        marker.bindTooltip(lbl, {
+          permanent: true,
+          direction: 'right',
+          offset: [12, 0],
+          className: tooltipClass(wp)
+        });
+      }
+      markers.push(marker);
+    });
+    dayLayers[day.id] = { polyline, markers, latlngs: coords };
+    count++;
+    statusEl.textContent = `Loading driving routes… ${count} / ${TRIP.days.length}`;
+  }
+  showAllDays();
+  statusEl.textContent = 'Click a day card to focus that segment';
+  setTimeout(() => { statusEl.style.opacity = '0'; }, 4500);
+  setTimeout(() => { statusEl.remove(); }, 6000);
+}
+
+let activeDayId = null;
+
+function showAllDays(){
+  Object.entries(dayLayers).forEach(([id, d]) => {
+    d.polyline.setStyle({ color: DAY_COLOR, weight: 4, opacity: .85 });
+    d.polyline.addTo(map);
+    d.markers.forEach(m => {
+      m.addTo(map);
+      m._icon && m._icon.classList.remove('dim');
+      const tt = m.getTooltip();
+      if (tt) {
+        const el = tt.getElement();
+        if (el) el.classList.remove('dim');
+      }
+    });
+  });
+  // Fit to all
+  const all = Object.values(dayLayers).flatMap(d => d.latlngs);
+  if (all.length) map.fitBounds(L.latLngBounds(all).pad(0.1));
+  activeDayId = null;
+  document.querySelectorAll('.day').forEach(c => { c.classList.remove('active'); c.classList.remove('dimmed'); });
+  document.getElementById('reset-btn').disabled = true;
+}
+
+function showOnlyDay(dayId){
+  Object.entries(dayLayers).forEach(([id, d]) => {
+    if (id === dayId) {
+      d.polyline.setStyle({ color: DAY_COLOR, weight: 5, opacity: 1 });
+      d.polyline.addTo(map);
+      d.markers.forEach(m => {
+        m.addTo(map);
+        if (m._icon) m._icon.classList.remove('dim');
+        const tt = m.getTooltip();
+        if (tt) { const el = tt.getElement(); if (el) el.classList.remove('dim'); }
+      });
+    } else {
+      d.polyline.setStyle({ color: DIM_COLOR, weight: 2, opacity: .35 });
+      d.polyline.addTo(map);
+      d.markers.forEach(m => {
+        m.addTo(map);
+        if (m._icon) m._icon.classList.add('dim');
+        const tt = m.getTooltip();
+        if (tt) { const el = tt.getElement(); if (el) el.classList.add('dim'); }
+      });
+    }
+  });
+  // Fit to active day
+  const active = dayLayers[dayId];
+  if (active && active.latlngs.length) map.fitBounds(L.latLngBounds(active.latlngs).pad(0.15));
+  activeDayId = dayId;
+  document.querySelectorAll('.day').forEach(c => {
+    if (c.dataset.dayId === dayId) { c.classList.add('active'); c.classList.remove('dimmed'); }
+    else { c.classList.remove('active'); c.classList.add('dimmed'); }
+  });
+  document.getElementById('reset-btn').disabled = false;
+}
+
+// Wire card clicks
+document.querySelectorAll('.day[data-day-id]').forEach(card => {
+  card.addEventListener('click', (e) => {
+    // Don't trigger when clicking on a hoverable place / link / button inside the card
+    if (e.target.closest('a, .hoverable-place')) return;
+    const id = card.dataset.dayId;
+    if (activeDayId === id) showAllDays();
+    else showOnlyDay(id);
+  });
 });
 
-map.on('click', () => map.scrollWheelZoom.enable());
+document.getElementById('reset-btn').addEventListener('click', showAllDays);
 
-// Inject Park4Night deep links into each day's SLEEP step
-(function(){
-  function getRouteEntryForDay(dayNumStr){
-    const clean = dayNumStr.replace(/\s/g, '').replace(/^D0(\d)/, 'D$1');
-    for (const r of route) {
-      const label = (r[2] || '').replace(/\s/g, '');
-      if (label === clean) return r;
-    }
-    return null;
-  }
-  document.querySelectorAll('.day').forEach(day => {
-    const dayNum = (day.querySelector('.day-num') || {}).textContent || '';
-    const r = getRouteEntryForDay(dayNum);
-    if (!r) return;
-    const sleepStep = day.querySelector('.step-sleep .desc');
-    if (!sleepStep) return;
-    const a = document.createElement('a');
-    a.href = buildP4nUrl(r);
-    a.target = '_blank';
-    a.rel = 'noopener';
-    a.className = 'p4n-btn';
-    // If we have a specific place URL, label the button accordingly
-    a.textContent = r[5] ? 'Open this spot on Park4Night' : 'Open in Park4Night';
-    sleepStep.appendChild(document.createElement('br'));
-    sleepStep.appendChild(a);
-  });
-})();
+buildAll();
 
-// Image popover · Pexels-first via /api/images
+// =====================================================================
+//   Image popover (Pexels via /api/images, fallback to Wikipedia/Commons)
+// =====================================================================
 (function(){
   const popover = document.createElement('div');
   popover.id = 'img-popover';
@@ -611,9 +828,7 @@ map.on('click', () => map.scrollWheelZoom.enable());
     btnPrev.disabled = images.length < 2;
     btnNext.disabled = images.length < 2;
   }
-
   function close(){ popover.classList.remove('show'); currentTarget = null; }
-
   function position(target){
     if (window.innerWidth < 680) return;
     const rect = target.getBoundingClientRect();
@@ -626,7 +841,6 @@ map.on('click', () => map.scrollWheelZoom.enable());
     popover.style.top = top + 'px';
     popover.style.left = left + 'px';
   }
-
   document.addEventListener('click', (e) => {
     if (!popover.classList.contains('show')) return;
     if (popover.contains(e.target)) return;
@@ -646,9 +860,7 @@ map.on('click', () => map.scrollWheelZoom.enable());
         const urls = (data.items || []).map(it => it.link).filter(Boolean);
         result = { urls, error: urls.length ? null : 'No photos found' };
       }
-    } catch(e) {
-      result = { urls: [], error: 'Network: ' + e.message };
-    }
+    } catch(e) { result = { urls: [], error: 'Network: ' + e.message }; }
     cache.set(query, result);
     return result;
   }
