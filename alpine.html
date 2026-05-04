@@ -80,14 +80,45 @@
   .section-head .kicker{margin-bottom:.5rem}
   .section-head p{font-size:.92rem;color:var(--ink-soft)}
 
-  .day-filter{display:flex;align-items:center;gap:.5rem;margin-bottom:1rem;font-size:.78rem;color:var(--ink-soft);flex-wrap:wrap}
-  .day-filter .reset-btn{padding:.35rem .75rem;border:1px solid var(--line);background:var(--bg-card);border-radius:99px;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--ink-soft);cursor:pointer;font-family:inherit}
-  .day-filter .reset-btn:disabled{opacity:.4;cursor:default}
-  .day-filter .reset-btn:hover:not(:disabled){background:var(--line);color:var(--sea-deep)}
-  .day-filter .hint{font-style:italic}
+  .day-nav{
+    position:sticky; top:.5rem; z-index:50;
+    display:flex; align-items:center; gap:.4rem;
+    padding:.45rem .55rem;
+    background:rgba(255,252,245,.96); backdrop-filter:saturate(180%) blur(6px);
+    border:1px solid var(--line); border-radius:99px;
+    box-shadow:0 2px 8px rgba(42,37,32,.08), 0 12px 28px rgba(42,37,32,.06);
+    margin-bottom:1.5rem; flex-wrap:nowrap;
+  }
+  .day-nav-arrow{
+    width:34px;height:34px;border-radius:50%;flex-shrink:0;
+    background:var(--sea);color:#fff;border:none;
+    font-size:1.15rem;line-height:1;cursor:pointer;font-family:inherit;
+    display:flex;align-items:center;justify-content:center;
+    transition:background .15s ease, transform .15s ease;
+  }
+  .day-nav-arrow:hover:not(:disabled){background:var(--sea-deep)}
+  .day-nav-arrow:active:not(:disabled){transform:scale(.94)}
+  .day-nav-arrow:disabled{background:var(--line);color:var(--ink-soft);opacity:.55;cursor:default}
+  .day-pills{display:flex;gap:.25rem;flex:1;justify-content:center;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+  .day-pills::-webkit-scrollbar{display:none}
+  .day-pill{
+    padding:.4rem .7rem;flex-shrink:0;
+    border:1px solid var(--line);background:var(--bg);
+    border-radius:99px;font-size:.7rem;letter-spacing:.07em;font-weight:700;
+    color:var(--ink-soft);cursor:pointer;font-family:inherit;
+    transition:background .15s, color .15s, border-color .15s;
+  }
+  .day-pill.active{background:var(--sea);color:#fff;border-color:var(--sea-deep);box-shadow:0 2px 6px rgba(46,125,160,.3)}
+  .day-pill:hover:not(.active){background:var(--line);color:var(--sea-deep)}
+  @media (max-width:540px){
+    .day-pill{padding:.35rem .55rem;font-size:.65rem;letter-spacing:.04em}
+    .day-nav{gap:.3rem;padding:.4rem}
+    .day-nav-arrow{width:30px;height:30px;font-size:1rem}
+  }
 
-  .phase{margin:2.5rem 0 0;scroll-margin-top:1rem}
-  .phase:first-child{margin-top:0}
+  .phase{margin:0;scroll-margin-top:5rem;display:none;animation:fadeIn .25s ease}
+  .phase.active{display:block}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
   .phase-header{display:flex;align-items:flex-end;gap:.8rem;flex-wrap:wrap;padding-bottom:.7rem;margin-bottom:1rem;border-bottom:1px solid var(--line)}
   .phase-header .num{font-family:'Cormorant Garamond',serif;font-size:2.4rem;font-weight:700;line-height:.85;color:var(--sea);font-style:italic}
   .phase-header h2{flex:1;min-width:200px;font-size:clamp(1.3rem,4.5vw,2rem)}
@@ -135,10 +166,12 @@
   .step-swim .lbl{color:#2E7DA0}
   .step-bike .lbl{color:var(--olive)}
   .step-eat .lbl{color:#7a5226}
+  .step-eat .lbl::before{content:"🍴 ";font-size:.95em;letter-spacing:0}
   .step-relax .lbl{color:#9d8a52}
   .step-sunset .lbl{color:#c4671b}
   .step-pass .lbl{color:#5b3a57;background:rgba(91,58,87,.1);border-radius:4px;padding:.15rem .35rem}
-  .step-sleep .lbl{color:#fff;background:var(--sea-deep);border-radius:4px;padding:.18rem .4rem}
+  .step-sleep .lbl{color:#fff;background:var(--sea-deep);border-radius:4px;padding:.18rem .4rem;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:.78rem;letter-spacing:.04em}
+  .step-sleep .lbl::before{content:"Zz ";font-style:italic;font-weight:700}
 
   .tips{background:linear-gradient(180deg,#E8E5D2 0%,#DCD7BC 100%);border-top:1px solid var(--line);padding:2.5rem 5vw}
   @media (min-width:900px){.tips{padding:5rem 5vw}}
@@ -162,6 +195,31 @@
   /* MAP MARKERS */
   .num-marker{background:#fff;border:3px solid var(--sea);color:var(--sea-deep);border-radius:50%;width:30px!important;height:30px!important;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.74rem;font-family:'Inter',sans-serif;box-shadow:0 2px 6px rgba(0,0,0,.25);margin-left:-15px!important;margin-top:-15px!important}
   .num-marker.cap{font-family:'Inter',sans-serif;font-weight:700;font-size:.62rem;letter-spacing:.06em;text-transform:uppercase;background:var(--sea-deep);color:#fff!important;width:36px!important;border-radius:14px}
+
+  /* Sleep marker · Zz on dark blue circle */
+  .sleep-marker{
+    width:34px!important;height:34px!important;
+    background:var(--sea-deep);border:2px solid #fff;
+    color:#fff;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Cormorant Garamond',serif;font-weight:700;
+    font-size:1rem;letter-spacing:.02em;
+    box-shadow:0 2px 8px rgba(0,0,0,.3),0 0 0 3px rgba(27,77,102,.18);
+    margin-left:-17px!important;margin-top:-17px!important;
+  }
+  .sleep-marker .zz-big{font-size:1.05rem;line-height:1}
+  .sleep-marker .zz-small{font-size:.72rem;line-height:1;margin-left:-.05rem;margin-top:-.2rem}
+
+  /* Lunch marker · fork & knife */
+  .lunch-marker{
+    width:30px!important;height:30px!important;
+    background:#7a5226;border:2px solid #fff;
+    border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 2px 6px rgba(0,0,0,.3),0 0 0 3px rgba(122,82,38,.18);
+    margin-left:-15px!important;margin-top:-15px!important;
+  }
+  .lunch-marker svg{width:16px;height:16px;color:#fff;fill:currentColor}
 
   /* Charge marker · lightning bolt */
   .charge-marker{
@@ -199,6 +257,7 @@
   .leaflet-tooltip.battery-label::before{display:none}
   .leaflet-tooltip.battery-label.charge-tooltip{color:#5C3D00;background:#FFF6CC;border-color:#B58E0B}
   .leaflet-tooltip.battery-label.pass-tooltip{color:#fff;background:#5B3A57;border-color:#3A2438}
+  .leaflet-tooltip.battery-label.sleep-tooltip{color:#fff;background:var(--sea-deep);border-color:#0e3a4f}
 
   /* Active vs dimmed map elements */
   .leaflet-marker-icon.dim{opacity:.25;filter:saturate(.3)}
@@ -285,17 +344,25 @@
 
     <main class="trip-cards-col">
       <div class="section-head">
-        <div class="kicker">Day-by-day · click to focus on map</div>
+        <div class="kicker">Day-by-day · use arrows to flip through</div>
         <h2>Hour-by-hour, with battery forecast.</h2>
-        <p>Lightning markers on the map are charge stops; circles are sleep spots; triangles are passes. Each shows the battery percentage at arrival. Click any day card on the left to focus the map on that segment.</p>
-        <div class="day-filter">
-          <button class="reset-btn" id="reset-btn" disabled>Show all days</button>
-          <span class="hint">click a day card below to focus</span>
-        </div>
+        <p>One day at a time. Lightning markers are charge stops, <b>Zz</b> circles are sleep spots, forks are lunch stops, triangles are passes — each labeled with the battery percentage. Use the arrows or pills to switch days; the map updates automatically.</p>
       </div>
 
+      <nav class="day-nav" aria-label="Day navigation">
+        <button class="day-nav-arrow" id="prev-day" aria-label="Previous day">&lsaquo;</button>
+        <div class="day-pills" role="tablist">
+          <button class="day-pill active" data-day-id="d1" role="tab">D 01</button>
+          <button class="day-pill" data-day-id="d2" role="tab">D 02</button>
+          <button class="day-pill" data-day-id="d3" role="tab">D 03</button>
+          <button class="day-pill" data-day-id="d4" role="tab">D 04</button>
+          <button class="day-pill" data-day-id="d5" role="tab">D 05</button>
+        </div>
+        <button class="day-nav-arrow" id="next-day" aria-label="Next day">&rsaquo;</button>
+      </nav>
+
       <!-- ===== PHASE 1 ===== -->
-      <div class="phase" id="phase-1">
+      <div class="phase active" id="phase-1">
         <div class="phase-header"><div class="num">01</div><h2>Aravis massif · Col des Aravis</h2><div class="meta">Day 1 · 90 km · first mountain pass</div></div>
         <p class="phase-intro">Skip the famous lakes. Drive straight up into the <b>Aravis massif</b> — Reblochon cheese country, alpine pastures, and the <b>Col des Aravis</b> (1,486 m) with a panoramic view of Mont Blanc directly across the valley. Sleep on the pass.</p>
         <p class="phase-intro battery-callout"><b>Battery plan</b> · leave Chambéry at 80% · charge at SC Annecy mid-route to keep ≥15% throughout · sleep at Col des Aravis with <b>~77%</b> · wake with <b>~57%</b> after overnight AC.</p>
@@ -516,7 +583,7 @@ const TRIP = {
       waypoints: [
         { type:'depart', coords:[45.5646, 5.9178], name:'Chambéry · départ',     battery:80 },
         { type:'charge', coords:[45.8975, 6.1066], name:'SC Annecy',             arrive:67, leave:90 },
-        { type:'visit',  coords:[45.9047, 6.4244], name:'La Clusaz · lunch' },
+        { type:'lunch',  coords:[45.9047, 6.4244], name:'La Clusaz · lunch' },
         { type:'sleep',  coords:[45.8717, 6.4644], name:'Col des Aravis',        battery:77,
           p4n:'https://park4night.com/en/place/107196',
           note:'Mountain pass · Mont Blanc panorama · sleep 77% → wake 57%' }
@@ -527,7 +594,7 @@ const TRIP = {
       waypoints: [
         { type:'wake',   coords:[45.8717, 6.4644], name:'Col des Aravis · wake', battery:57 },
         { type:'charge', coords:[45.6797, 6.3892], name:'SC Albertville',        arrive:48, leave:80 },
-        { type:'visit',  coords:[45.7222, 6.5694], name:'Beaufort · lunch' },
+        { type:'lunch',  coords:[45.7222, 6.5694], name:'Beaufort · lunch' },
         { type:'pass',   coords:[45.6822, 6.6800], name:"Cormet de Roselend · 1,968 m" },
         { type:'sleep',  coords:[45.6951, 6.6342], name:'Lac de Roselend',       battery:65,
           note:'Turquoise alpine lake · sleep 65% → wake 45%' }
@@ -548,7 +615,7 @@ const TRIP = {
       waypoints: [
         { type:'wake',   coords:[45.3807, 6.7365], name:'Pralognan · wake',      battery:43 },
         { type:'charge', coords:[45.6189, 6.7708], name:'SC Bourg-Saint-Maurice', arrive:32, leave:90 },
-        { type:'visit',  coords:[45.4486, 6.9803], name:"Val d'Isère" },
+        { type:'lunch',  coords:[45.4486, 6.9803], name:"Val d'Isère · lunch" },
         { type:'pass',   coords:[45.4172, 7.0319], name:"Col de l'Iseran · 2,770 m" },
         { type:'sleep',  coords:[45.3690, 7.0429], name:'Bonneval-sur-Arc',      battery:64,
           note:'Stone village 1,800 m · sleep 64% → wake 44%' }
@@ -558,7 +625,7 @@ const TRIP = {
       id: 'd5', label: '05', title: 'Chambéry · home',
       waypoints: [
         { type:'wake',   coords:[45.3690, 7.0429], name:'Bonneval · wake',       battery:44 },
-        { type:'visit',  coords:[45.2542, 6.9456], name:'Lac du Mont-Cenis · optional detour' },
+        { type:'lunch',  coords:[45.2542, 6.9456], name:'Lac du Mont-Cenis · picnic detour' },
         { type:'charge', coords:[45.2740, 6.3528], name:'SC Saint-Jean-de-Maurienne', arrive:24, leave:60 },
         { type:'home',   coords:[45.5646, 5.9178], name:'Chambéry · home',       battery:40,
           note:'Trip end · ready to plug in' }
@@ -597,6 +664,8 @@ async function fetchOSRM(coords){
 
 // SVG lightning bolt for charge markers
 const LIGHTNING_SVG = '<svg viewBox="0 0 24 24"><path d="M13 2L3 14h7l-1 8 11-12h-7z"/></svg>';
+// SVG fork & knife for lunch markers
+const FORK_SVG = '<svg viewBox="0 0 24 24"><path d="M11 2v8a3 3 0 0 1-2 2.83V22H7v-9.17A3 3 0 0 1 5 10V2h2v8h1V2h2v8h1V2h0Zm6 0a4 4 0 0 0-4 4v6a3 3 0 0 0 2 2.83V22h2v-7.17A3 3 0 0 0 19 12V2h-2Z"/></svg>';
 
 function makeIcon(wp){
   if (wp.type === 'charge') {
@@ -613,12 +682,25 @@ function makeIcon(wp){
       iconSize: [26, 22]
     });
   }
-  if (wp.type === 'sleep' || wp.type === 'home') {
-    const label = wp.type === 'home' ? 'End' : (TRIP.days.findIndex(d => d.waypoints.includes(wp)) + 1);
+  if (wp.type === 'lunch') {
     return L.divIcon({
-      className: 'num-marker' + (wp.type === 'home' ? ' cap' : ''),
-      html: String(label),
-      iconSize: wp.type === 'home' ? [36, 30] : [30, 30]
+      className: 'lunch-marker',
+      html: FORK_SVG,
+      iconSize: [30, 30]
+    });
+  }
+  if (wp.type === 'sleep') {
+    return L.divIcon({
+      className: 'sleep-marker',
+      html: '<span class="zz-big">Z</span><span class="zz-small">z</span>',
+      iconSize: [34, 34]
+    });
+  }
+  if (wp.type === 'home') {
+    return L.divIcon({
+      className: 'num-marker cap',
+      html: 'End',
+      iconSize: [36, 30]
     });
   }
   if (wp.type === 'depart') {
@@ -645,6 +727,7 @@ function batteryLabel(wp){
 function tooltipClass(wp){
   if (wp.type === 'charge') return 'battery-label charge-tooltip';
   if (wp.type === 'pass')   return 'battery-label pass-tooltip';
+  if (wp.type === 'sleep')  return 'battery-label sleep-tooltip';
   return 'battery-label';
 }
 
@@ -652,6 +735,7 @@ function popupHtml(wp, dayIdx){
   const meta = wp.type === 'charge' ? 'Charge stop' :
                wp.type === 'pass'   ? 'Mountain pass' :
                wp.type === 'sleep'  ? `Day ${dayIdx + 1} · sleep` :
+               wp.type === 'lunch'  ? `Day ${dayIdx + 1} · lunch` :
                wp.type === 'depart' ? 'Trip start' :
                wp.type === 'wake'   ? `Day ${dayIdx + 1} · wake` :
                wp.type === 'home'   ? 'Trip end' :
@@ -662,7 +746,7 @@ function popupHtml(wp, dayIdx){
   const p4nBtn = wp.p4n
     ? `<a class="p4n-btn" href="${wp.p4n}" target="_blank" rel="noopener">Open this spot on Park4Night</a>`
     : (wp.type === 'sleep' ? `<a class="p4n-btn" href="https://park4night.com/en/search?lat=${wp.coords[0]}&lng=${wp.coords[1]}&z=12" target="_blank" rel="noopener">Open in Park4Night</a>` : '');
-  const photoFrame = (wp.type === 'sleep' || wp.type === 'visit' || wp.type === 'pass')
+  const photoFrame = (wp.type === 'sleep' || wp.type === 'visit' || wp.type === 'pass' || wp.type === 'lunch')
     ? `<div class="popup-img-wrap"><img class="popup-img" data-query="${wp.name.replace(/"/g,'&quot;').replace(/\s*[·(].*$/,'').trim()}" alt="" /><div class="popup-img-loader">Loading photo…</div></div>`
     : '';
   return `<div class="popup-visit">${photoFrame}<b>${wp.name}</b><span class="popup-meta">${meta}</span>${wp.note ? `<span class="popup-note">${wp.note}</span>` : ''}${battery}${p4nBtn}</div>`;
@@ -699,81 +783,71 @@ async function buildAll(){
     count++;
     statusEl.textContent = `Loading driving routes… ${count} / ${TRIP.days.length}`;
   }
-  showAllDays();
-  statusEl.textContent = 'Click a day card to focus that segment';
-  setTimeout(() => { statusEl.style.opacity = '0'; }, 4500);
-  setTimeout(() => { statusEl.remove(); }, 6000);
+  setActiveDay('d1');
+  statusEl.textContent = 'Use arrows or pills to switch days';
+  setTimeout(() => { statusEl.style.opacity = '0'; }, 3500);
+  setTimeout(() => { statusEl.remove(); }, 5000);
 }
 
+const dayOrder = TRIP.days.map(d => d.id);
 let activeDayId = null;
 
-function showAllDays(){
-  Object.entries(dayLayers).forEach(([id, d]) => {
-    d.polyline.setStyle({ color: DAY_COLOR, weight: 4, opacity: .85 });
-    d.polyline.addTo(map);
-    d.markers.forEach(m => {
-      m.addTo(map);
-      m._icon && m._icon.classList.remove('dim');
-      const tt = m.getTooltip();
-      if (tt) {
-        const el = tt.getElement();
-        if (el) el.classList.remove('dim');
-      }
-    });
-  });
-  // Fit to all
-  const all = Object.values(dayLayers).flatMap(d => d.latlngs);
-  if (all.length) map.fitBounds(L.latLngBounds(all).pad(0.1));
-  activeDayId = null;
-  document.querySelectorAll('.day').forEach(c => { c.classList.remove('active'); c.classList.remove('dimmed'); });
-  document.getElementById('reset-btn').disabled = true;
-}
-
-function showOnlyDay(dayId){
+function setActiveDay(dayId){
+  // Hide everything, then show only this day
   Object.entries(dayLayers).forEach(([id, d]) => {
     if (id === dayId) {
       d.polyline.setStyle({ color: DAY_COLOR, weight: 5, opacity: 1 });
       d.polyline.addTo(map);
-      d.markers.forEach(m => {
-        m.addTo(map);
-        if (m._icon) m._icon.classList.remove('dim');
-        const tt = m.getTooltip();
-        if (tt) { const el = tt.getElement(); if (el) el.classList.remove('dim'); }
-      });
+      d.markers.forEach(m => m.addTo(map));
     } else {
-      d.polyline.setStyle({ color: DIM_COLOR, weight: 2, opacity: .35 });
-      d.polyline.addTo(map);
-      d.markers.forEach(m => {
-        m.addTo(map);
-        if (m._icon) m._icon.classList.add('dim');
-        const tt = m.getTooltip();
-        if (tt) { const el = tt.getElement(); if (el) el.classList.add('dim'); }
-      });
+      map.removeLayer(d.polyline);
+      d.markers.forEach(m => map.removeLayer(m));
     }
   });
   // Fit to active day
   const active = dayLayers[dayId];
   if (active && active.latlngs.length) map.fitBounds(L.latLngBounds(active.latlngs).pad(0.15));
+
   activeDayId = dayId;
-  document.querySelectorAll('.day').forEach(c => {
-    if (c.dataset.dayId === dayId) { c.classList.add('active'); c.classList.remove('dimmed'); }
-    else { c.classList.remove('active'); c.classList.add('dimmed'); }
+
+  // Card visibility (one phase at a time)
+  const dayIndex = dayOrder.indexOf(dayId);
+  document.querySelectorAll('.phase').forEach(p => p.classList.remove('active'));
+  const targetPhase = document.getElementById('phase-' + (dayIndex + 1));
+  if (targetPhase) targetPhase.classList.add('active');
+
+  // Pill state
+  document.querySelectorAll('.day-pill').forEach(p => {
+    p.classList.toggle('active', p.dataset.dayId === dayId);
   });
-  document.getElementById('reset-btn').disabled = false;
+
+  // Arrow disabled state
+  const prev = document.getElementById('prev-day');
+  const next = document.getElementById('next-day');
+  if (prev) prev.disabled = dayIndex === 0;
+  if (next) next.disabled = dayIndex === dayOrder.length - 1;
 }
 
-// Wire card clicks
-document.querySelectorAll('.day[data-day-id]').forEach(card => {
-  card.addEventListener('click', (e) => {
-    // Don't trigger when clicking on a hoverable place / link / button inside the card
-    if (e.target.closest('a, .hoverable-place')) return;
-    const id = card.dataset.dayId;
-    if (activeDayId === id) showAllDays();
-    else showOnlyDay(id);
-  });
+// Wire prev / next / pills
+document.getElementById('prev-day').addEventListener('click', () => {
+  const i = dayOrder.indexOf(activeDayId);
+  if (i > 0) setActiveDay(dayOrder[i - 1]);
+});
+document.getElementById('next-day').addEventListener('click', () => {
+  const i = dayOrder.indexOf(activeDayId);
+  if (i >= 0 && i < dayOrder.length - 1) setActiveDay(dayOrder[i + 1]);
+});
+document.querySelectorAll('.day-pill[data-day-id]').forEach(pill => {
+  pill.addEventListener('click', () => setActiveDay(pill.dataset.dayId));
 });
 
-document.getElementById('reset-btn').addEventListener('click', showAllDays);
+// Keyboard shortcuts: ← / →
+document.addEventListener('keydown', (e) => {
+  if (e.target.matches('input, textarea')) return;
+  const i = dayOrder.indexOf(activeDayId);
+  if (e.key === 'ArrowLeft' && i > 0) { setActiveDay(dayOrder[i - 1]); e.preventDefault(); }
+  if (e.key === 'ArrowRight' && i < dayOrder.length - 1) { setActiveDay(dayOrder[i + 1]); e.preventDefault(); }
+});
 
 buildAll();
 
