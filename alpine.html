@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#2E7DA0">
+<title>Tesla Model Y · French Alps loop · 5 days from Chambéry</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<style>
+  :root{
+    --bg:#F0EFE3;
+    --bg-card:#FFFCF5;
+    --ink:#2A2520;
+    --ink-soft:#5C5448;
+    --line:#D8D5C2;
+    --sea:#2E7DA0;
+    --sea-deep:#1B4D66;
+    --terra:#D9722C;
+    --olive:#5E6B3A;
+    --gold:#B7873A;
+    --plum:#5B3A57;
+    --shadow:0 1px 2px rgba(42,37,32,.06), 0 8px 24px rgba(42,37,32,.06);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0;overflow-x:hidden}
+  body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--ink);line-height:1.55;font-weight:400;-webkit-font-smoothing:antialiased}
+  h1,h2,h3,h4{font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;letter-spacing:-.01em;margin:0}
+  h1{font-size:clamp(1.85rem,7vw,3.6rem);line-height:1.05}
+  h2{font-size:clamp(1.4rem,5vw,2.4rem);line-height:1.15;margin-bottom:.3em}
+  h3{font-size:1.25rem;line-height:1.2}
+  h4{font-size:1.05rem;font-weight:700}
+  p{margin:.4em 0}
+  a{color:var(--sea);text-decoration:none;border-bottom:1px solid rgba(46,125,160,.25)}
+  a:hover{border-bottom-color:var(--sea)}
+
+  .topnav{background:var(--bg-card);border-bottom:1px solid var(--line);padding:.7rem 5vw;font-size:.82rem}
+  .topnav a{color:var(--ink-soft);border:none}
+
+  .hero{position:relative;padding:2.5rem 5vw 2rem;background:radial-gradient(ellipse at 80% 0%, rgba(46,125,160,.16), transparent 55%),radial-gradient(ellipse at 0% 100%, rgba(183,135,58,.12), transparent 50%),linear-gradient(180deg,#F4F0E2 0%, #F0EFE3 100%);border-bottom:1px solid var(--line)}
+  .hero-inner{position:relative;max-width:1280px;margin:0 auto}
+  .kicker{font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--terra);font-weight:700;margin-bottom:.9rem}
+  .hero h1 em{font-style:italic;color:var(--sea-deep)}
+  .hero p.lede{margin-top:1rem;max-width:720px;font-size:1.02rem;color:var(--ink-soft)}
+  .hero-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:.6rem;margin-top:1.5rem}
+  .stat{background:var(--bg-card);border:1px solid var(--line);border-radius:12px;padding:.75rem .85rem;box-shadow:var(--shadow)}
+  .stat .num{font-family:'Cormorant Garamond',serif;font-size:1.55rem;font-weight:700;line-height:1;color:var(--sea-deep)}
+  .stat .lbl{font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);margin-top:.25rem}
+  @media (min-width:540px){.hero{padding:4rem 6vw 3rem}.hero-stats{grid-template-columns:repeat(3,1fr)}}
+  @media (min-width:780px){.hero-stats{grid-template-columns:repeat(5,1fr)}}
+  @media (min-width:900px){.hero{padding:5rem 6vw 3.5rem}.hero p.lede{font-size:1.15rem}.hero-stats{max-width:1100px}}
+
+  .highlights{max-width:1280px;margin:0 auto;padding:1.4rem 5vw 0;display:grid;grid-template-columns:1fr;gap:.6rem}
+  @media (min-width:780px){.highlights{grid-template-columns:repeat(3,1fr);padding:2rem 5vw 0;gap:.8rem}}
+  .hl{display:flex;align-items:center;gap:.75rem;padding:.85rem 1rem;background:var(--bg-card);border:1px solid var(--line);border-radius:12px}
+  .hl .num{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:700;color:var(--sea);font-style:italic;line-height:.85;flex-shrink:0}
+  .hl .meta{display:flex;flex-direction:column}
+  .hl .lbl{font-size:.62rem;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-soft);font-weight:700}
+  .hl .name{font-family:'Cormorant Garamond',serif;font-size:1.08rem;color:var(--sea-deep);font-weight:600;line-height:1.2}
+
+  .map-section{padding:1.5rem 4vw .5rem;background:var(--bg)}
+  .map-wrap{position:relative;max-width:1400px;margin:0 auto;border-radius:14px;overflow:hidden;box-shadow:0 1px 2px rgba(42,37,32,.06),0 12px 32px rgba(42,37,32,.10);border:1px solid var(--line);background:#dfeaf0}
+  #map{height:55vh;min-height:340px;width:100%}
+  @media (min-width:900px){.map-section{padding:3rem 4vw 1rem}#map{height:min(72vh,720px)}}
+
+  section.phases{padding:2rem 5vw 3rem;max-width:1280px;margin:0 auto}
+  .section-head{margin-bottom:1.5rem;max-width:780px}
+  .section-head .kicker{margin-bottom:.5rem}
+  .section-head p{font-size:.92rem;color:var(--ink-soft)}
+  @media (min-width:900px){section.phases{padding:4rem 5vw 5rem}.section-head p{font-size:1rem}}
+  .phase{margin:2.5rem 0 0;scroll-margin-top:1rem}
+  .phase-header{display:flex;align-items:flex-end;gap:.8rem;flex-wrap:wrap;padding-bottom:.7rem;margin-bottom:1rem;border-bottom:1px solid var(--line)}
+  .phase-header .num{font-family:'Cormorant Garamond',serif;font-size:2.4rem;font-weight:700;line-height:.85;color:var(--sea);font-style:italic}
+  .phase-header h2{flex:1;min-width:200px;font-size:clamp(1.3rem,4.5vw,2rem)}
+  .phase-header .meta{font-size:.78rem;color:var(--ink-soft);width:100%;margin-top:.3rem}
+  @media (min-width:540px){.phase-header .meta{width:auto;text-align:right;margin-top:0}}
+  .phase-intro{color:var(--ink-soft);max-width:720px;margin-bottom:1.4rem;font-size:.94rem;line-height:1.55}
+
+  .days{display:grid;grid-template-columns:1fr;gap:1rem}
+  @media (min-width:680px){.days{grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:1.2rem}}
+  .day{background:var(--bg-card);border:1px solid var(--line);border-radius:14px;padding:1.1rem 1.1rem 1rem;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:.5rem}
+  .day-tag{display:inline-block;font-size:.62rem;letter-spacing:.13em;text-transform:uppercase;color:var(--olive);font-weight:700}
+  .day-tag.tag-rest{color:var(--gold)}
+  .day-tag.tag-drive{color:var(--terra)}
+  .day-tag.tag-pass{color:var(--sea-deep);background:rgba(46,125,160,.14);padding:.18rem .4rem;border-radius:4px;letter-spacing:.1em}
+  .day-tag.tag-lake{color:#2E7DA0;background:rgba(46,125,160,.14);padding:.18rem .4rem;border-radius:4px;letter-spacing:.1em}
+  .day-top{display:flex;align-items:baseline;gap:.55rem;flex-wrap:wrap}
+  .day-num{font-family:'Cormorant Garamond',serif;font-size:.95rem;font-weight:600;color:#fff;background:var(--sea);padding:.15rem .55rem;border-radius:6px;letter-spacing:.04em;flex-shrink:0}
+  .day h4{font-size:1.08rem;line-height:1.25;flex:1;min-width:0}
+  .day .km{font-size:.74rem;color:var(--ink-soft);font-variant-numeric:tabular-nums}
+
+  .timeline{list-style:none;margin:.5rem 0 0;padding:0}
+  .step{display:grid;grid-template-columns:42px 64px 1fr;gap:.4rem;padding:.45rem 0;align-items:baseline;border-bottom:1px dashed var(--line)}
+  .step:last-child{border-bottom:none}
+  .step .t{font-variant-numeric:tabular-nums;font-weight:700;color:var(--ink);font-size:.74rem}
+  .step .lbl{font-size:.58rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;align-self:center;padding:.15rem 0}
+  .step .desc{color:var(--ink);font-size:.84rem;line-height:1.4}
+  .step .desc b{font-weight:600;color:var(--sea-deep)}
+  @media (min-width:540px){.step{grid-template-columns:48px 76px 1fr;gap:.55rem}.step .t{font-size:.78rem}.step .lbl{font-size:.62rem;letter-spacing:.12em}.step .desc{font-size:.88rem}}
+  .step-wake .lbl{color:#9b6d2c}
+  .step-depart .lbl{color:var(--terra)}
+  .step-drive .lbl{color:var(--terra)}
+  .step-charge .lbl{color:var(--sea);background:rgba(46,125,160,.1);border-radius:4px;padding:.15rem .35rem}
+  .step-arrive .lbl{color:var(--sea)}
+  .step-visit .lbl{color:var(--plum)}
+  .step-hike .lbl{color:var(--olive)}
+  .step-swim .lbl{color:#2E7DA0}
+  .step-bike .lbl{color:var(--olive)}
+  .step-eat .lbl{color:#7a5226}
+  .step-relax .lbl{color:#9d8a52}
+  .step-sunset .lbl{color:#c4671b}
+  .step-pass .lbl{color:#5b3a57;background:rgba(91,58,87,.1);border-radius:4px;padding:.15rem .35rem}
+  .step-sleep .lbl{color:#fff;background:var(--sea-deep);border-radius:4px;padding:.18rem .4rem}
+
+  .tips{background:linear-gradient(180deg,#E8E5D2 0%,#DCD7BC 100%);border-top:1px solid var(--line);padding:2.5rem 5vw}
+  @media (min-width:900px){.tips{padding:5rem 5vw}}
+  .tips-inner{max-width:1280px;margin:0 auto}
+  .tips-grid{display:grid;grid-template-columns:1fr;gap:.9rem;margin-top:1.5rem}
+  @media (min-width:680px){.tips-grid{grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem}}
+  .tip{background:var(--bg-card);border-radius:12px;padding:1.2rem;border:1px solid var(--line);box-shadow:var(--shadow)}
+  .tip h4{margin-bottom:.4rem;color:var(--sea-deep);font-size:1.05rem}
+  .tip ul{margin:.4rem 0 0;padding-left:1rem;font-size:.86rem;color:var(--ink)}
+  .tip ul li{margin:.25rem 0}
+  .tip .icon{display:inline-block;width:32px;height:32px;border-radius:50%;background:var(--sea);color:#fff;font-weight:700;text-align:center;line-height:32px;margin-bottom:.5rem;font-size:.85rem}
+  .tip:nth-child(2) .icon{background:var(--terra)}
+  .tip:nth-child(3) .icon{background:var(--olive)}
+  .tip:nth-child(4) .icon{background:var(--gold)}
+
+  footer{background:var(--sea-deep);color:#dfeaf0;padding:2rem 5vw;text-align:center;font-size:.88rem}
+  footer h3{color:#fff;margin-bottom:.5rem;font-size:1.2rem}
+  footer p{max-width:680px;margin:.4rem auto;color:#bcd2da}
+  footer .sig{margin-top:1.2rem;font-style:italic;color:#90a8b1;font-size:.78rem}
+
+  .toc{display:flex;flex-wrap:wrap;gap:.4rem;font-size:.78rem;padding:.8rem 0;color:var(--ink-soft)}
+  .toc a{color:var(--ink-soft);border:1px solid var(--line);padding:.3rem .65rem;border-radius:99px;background:var(--bg-card);font-size:.74rem}
+
+  .num-marker{background:#fff;border:3px solid var(--sea);color:var(--sea-deep);border-radius:50%;width:30px!important;height:30px!important;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.74rem;font-family:'Inter',sans-serif;box-shadow:0 2px 6px rgba(0,0,0,.25);margin-left:-15px!important;margin-top:-15px!important}
+  .num-marker.wide{width:54px!important;border-radius:18px;font-size:.68rem;letter-spacing:-.01em;margin-left:-27px!important;padding:0 .3rem}
+  .num-marker.cap{font-family:'Inter',sans-serif;font-weight:700;font-size:.62rem;letter-spacing:.06em;text-transform:uppercase;background:var(--sea-deep);color:#fff!important}
+  .leaflet-popup-content-wrapper{border-radius:10px}
+  .leaflet-popup-content{font-family:'Inter',sans-serif;font-size:.85rem;margin:.7rem .9rem;line-height:1.45}
+  .leaflet-popup-content b{font-family:'Cormorant Garamond',serif;font-weight:700;font-size:1rem;color:var(--sea-deep);display:block;margin-bottom:.1rem}
+  .popup-visit{display:block}
+  .popup-visit .popup-meta{display:block;font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--terra);font-weight:700;margin-bottom:.25rem}
+  .popup-visit .popup-note{display:block;color:var(--ink-soft);font-size:.82rem}
+  .popup-sep{border:none;border-top:1px solid var(--line);margin:.5rem 0}
+  .popup-img-wrap{width:100%;aspect-ratio:4/3;background:linear-gradient(135deg,#EFE6CF 0%,#dfeaf0 100%);border-radius:8px;overflow:hidden;position:relative;margin-bottom:.5rem}
+  .popup-img{width:100%;height:100%;object-fit:cover;display:block;opacity:0;transition:opacity .25s}
+  .popup-img-loader{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:.7rem;color:var(--ink-soft);text-align:center;padding:.5rem;letter-spacing:.04em}
+  .p4n-btn{display:inline-flex;align-items:center;gap:.3rem;padding:.22rem .6rem;background:rgba(214,155,58,.14);border:1px solid rgba(214,155,58,.4);border-radius:99px;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:#8a5a14;text-decoration:none;margin-top:.4rem;white-space:nowrap;font-family:'Inter',sans-serif}
+  .p4n-btn:hover,.p4n-btn:active{background:rgba(214,155,58,.28)}
+  .p4n-btn::after{content:"↗";font-size:.72rem;letter-spacing:0}
+  .step-sleep .desc .p4n-btn{margin-top:.5rem}
+  .leaflet-popup-content .p4n-btn{margin-top:.35rem;width:100%;justify-content:center}
+
+  .hoverable-place{cursor:pointer;border-bottom:1px dotted rgba(46,125,160,.45);transition:border-color .15s,color .15s}
+  .hoverable-place:active{border-bottom-color:var(--terra);color:var(--terra)}
+  #img-popover{position:fixed;left:50%;bottom:0;transform:translate(-50%,100%);width:min(440px,calc(100vw - 16px));background:#fff;border:1px solid var(--line);border-top-left-radius:18px;border-top-right-radius:18px;box-shadow:0 -8px 32px rgba(0,0,0,.18);z-index:9999;padding:.85rem .9rem .7rem;font-family:'Inter',sans-serif;pointer-events:none;opacity:0;visibility:hidden;transition:transform .25s ease,opacity .2s ease,visibility 0s linear .25s}
+  #img-popover.show{transform:translate(-50%,0);pointer-events:auto;opacity:1;visibility:visible;transition:transform .25s ease,opacity .2s ease,visibility 0s}
+  @media (min-width:680px){#img-popover{position:absolute;bottom:auto;border-radius:14px;transform:translateY(8px);box-shadow:0 12px 40px rgba(0,0,0,.18),0 2px 8px rgba(0,0,0,.06)}#img-popover.show{transform:translateY(0)}}
+  .ipop-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem;padding:0 .15rem;gap:.5rem}
+  .ipop-title{font-family:'Cormorant Garamond',serif;font-weight:700;font-size:1.1rem;color:var(--sea-deep);line-height:1.2;flex:1;min-width:0}
+  .ipop-counter{font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);font-weight:600;white-space:nowrap}
+  .ipop-close{background:none;border:none;font-size:1.5rem;line-height:1;color:var(--ink-soft);width:32px;height:32px;border-radius:50%;cursor:pointer;flex-shrink:0;padding:0;display:flex;align-items:center;justify-content:center}
+  .ipop-close:active{background:var(--line)}
+  .ipop-body{display:flex;align-items:stretch;gap:.4rem}
+  .ipop-btn{flex:0 0 38px;background:var(--bg);border:1px solid var(--line);border-radius:10px;font-size:1.4rem;color:var(--sea-deep);cursor:pointer;font-family:inherit;line-height:1;padding:0}
+  .ipop-btn:active{background:var(--line)}
+  .ipop-btn:disabled{opacity:.35}
+  .ipop-frame{flex:1;position:relative;aspect-ratio:4/3;background:linear-gradient(135deg,#EFE6CF 0%,#dfeaf0 100%);border-radius:10px;overflow:hidden}
+  .ipop-img{width:100%;height:100%;object-fit:cover;display:block;transition:opacity .25s}
+  .ipop-loader{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:.82rem;color:var(--ink-soft);text-align:center;padding:1rem}
+  .ipop-attr{margin-top:.4rem;font-size:.62rem;text-align:right;color:var(--ink-soft);letter-spacing:.04em;padding:0 .2rem}
+  .ipop-attr a{color:var(--ink-soft);border-bottom:none}
+  .map-status{position:absolute;top:10px;left:50%;transform:translateX(-50%);z-index:1000;background:rgba(255,252,245,.96);border:1px solid #E5DCC8;border-radius:99px;padding:.35rem .85rem;font-size:.72rem;color:#5C5448;box-shadow:0 4px 12px rgba(0,0,0,.08);font-family:Inter,sans-serif;letter-spacing:.04em;transition:opacity .8s}
+</style>
+</head>
+<body>
+
+<nav class="topnav"><a href="index.html">← All road trips</a></nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="kicker">French Alps · Tesla Model Y · Sleeping in the car · Summer base in Chambéry</div>
+    <h1>Five days, three <em>alpine lakes</em>,<br>three mountain passes.</h1>
+    <p class="lede">A compact 5-day loop entirely within 250 km of Chambéry — Lac d'Annecy, the Beaufortain's Lac de Roselend, the Vanoise National Park, the Col de l'Iseran (highest paved pass in the Alps), and the stone village of Bonneval-sur-Arc. All on Savoie roads, all above 1,000 m.</p>
+    <div class="hero-stats">
+      <div class="stat"><div class="num">5</div><div class="lbl">days</div></div>
+      <div class="stat"><div class="num">~470</div><div class="lbl">km</div></div>
+      <div class="stat"><div class="num">3</div><div class="lbl">alpine lakes</div></div>
+      <div class="stat"><div class="num">3</div><div class="lbl">mountain passes</div></div>
+      <div class="stat"><div class="num">1</div><div class="lbl">national park</div></div>
+      <div class="stat"><div class="num">2,770m</div><div class="lbl">highest pass · Iseran</div></div>
+      <div class="stat"><div class="num">~3h</div><div class="lbl">driving / day avg</div></div>
+      <div class="stat"><div class="num">~€80</div><div class="lbl">charging</div></div>
+      <div class="stat"><div class="num">€0</div><div class="lbl">tolls</div></div>
+      <div class="stat"><div class="num">€0</div><div class="lbl">accommodation</div></div>
+    </div>
+  </div>
+</header>
+
+<div class="highlights">
+  <div class="hl"><div class="num">01</div><div class="meta"><div class="lbl">Turquoise alpine lake at 1,500 m</div><div class="name">Lac de Roselend · Beaufortain</div></div></div>
+  <div class="hl"><div class="num">02</div><div class="meta"><div class="lbl">Highest paved pass in the Alps</div><div class="name">Col de l'Iseran · 2,770 m</div></div></div>
+  <div class="hl"><div class="num">03</div><div class="meta"><div class="lbl">Stone-roofed mountain village</div><div class="name">Bonneval-sur-Arc · 1,800 m</div></div></div>
+</div>
+
+<section class="map-section">
+  <div class="map-wrap"><div id="map"></div></div>
+</section>
+
+<section class="phases">
+  <div class="section-head">
+    <div class="kicker">Day-by-day · summer rhythm</div>
+    <h2>Hour-by-hour, mobile-friendly.</h2>
+    <p>Built around 9 am wake / 9 pm sleep. Mountain roads average 50–60 km/h, and alpine elevation gain reduces EV range by ~20–25%, so each day has 1 charging stop sized for a ~225 km/charge car. Tap any bolded place for photos.</p>
+    <nav class="toc" id="toc"></nav>
+  </div>
+
+  <!-- ===== PHASE 1 ===== -->
+  <div class="phase" id="phase-1">
+    <div class="phase-header"><div class="num">01</div><h2>Lac d'Annecy</h2><div class="meta">Day 1 · 50 km</div></div>
+    <p class="phase-intro">Easy first day. Drive 50 minutes north to the south end of <b>Lac d'Annecy</b> (one of the cleanest lakes in Europe), and spend the rest of the day swimming, biking the lakeside path, and watching the Tournette mountain (2,351 m) glow at sunset.</p>
+    <div class="days">
+      <div class="day">
+        <div class="day-tag tag-lake">Alpine lake · easy day</div>
+        <div class="day-top"><span class="day-num">D 01</span><h4>Lac d'Annecy · Doussard</h4></div>
+        <div class="km">From Chambéry · 50 km · ~1h via A41</div>
+        <ol class="timeline">
+          <li class="step step-wake"><span class="t">09:00</span><span class="lbl">Wake</span><span class="desc">Pack up at base in Chambéry</span></li>
+          <li class="step step-eat"><span class="t">09:30</span><span class="lbl">Eat</span><span class="desc">Breakfast at home</span></li>
+          <li class="step step-depart"><span class="t">10:30</span><span class="lbl">Depart</span><span class="desc">North on A41</span></li>
+          <li class="step step-arrive"><span class="t">11:30</span><span class="lbl">Arrive</span><span class="desc"><b>Bout du Lac</b> · south end of Lac d'Annecy (Doussard)</span></li>
+          <li class="step step-swim"><span class="t">12:00</span><span class="lbl">Swim</span><span class="desc">First lake swim · clear glacial water</span></li>
+          <li class="step step-eat"><span class="t">13:00</span><span class="lbl">Eat</span><span class="desc">Lakeside picnic in the reeds</span></li>
+          <li class="step step-bike"><span class="t">14:30</span><span class="lbl">Bike</span><span class="desc">Rent bikes (€15 day) · Doussard → <b>Talloires</b> on the lake bike path (10 km each way, 2h30 round)</span></li>
+          <li class="step step-swim"><span class="t">17:00</span><span class="lbl">Swim</span><span class="desc">Second swim back at Doussard</span></li>
+          <li class="step step-sunset"><span class="t">19:00</span><span class="lbl">Sunset</span><span class="desc">Tournette ridge lights up across the lake</span></li>
+          <li class="step step-eat"><span class="t">19:30</span><span class="lbl">Eat</span><span class="desc">Cook at the lay-by · grilled lake fish if available</span></li>
+          <li class="step step-sleep"><span class="t">21:00</span><span class="lbl">Sleep</span><span class="desc">Free spot near <b>Bout du Lac</b> · wake up to the lake</span></li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PHASE 2 ===== -->
+  <div class="phase" id="phase-2">
+    <div class="phase-header"><div class="num">02</div><h2>Beaufortain · Lac de Roselend</h2><div class="meta">Day 2 · 80 km · Cormet de Roselend pass</div></div>
+    <p class="phase-intro"><b>Highlight #1.</b> Drive over the <b>Cormet de Roselend</b> pass (1,968 m, a Tour de France classic) and arrive at <b>Lac de Roselend</b> — a turquoise reservoir at 1,500 m, ringed by alpine pastures and the granite peaks of the Beaufortain massif. Beaufort cheese on the way up, sunset on the dam.</p>
+    <div class="days">
+      <div class="day">
+        <div class="day-tag tag-pass">Mountain pass · alpine lake</div>
+        <div class="day-top"><span class="day-num">D 02</span><h4>Lac de Roselend (Beaufortain)</h4></div>
+        <div class="km">From Annecy · 80 km · ~2h with the pass</div>
+        <ol class="timeline">
+          <li class="step step-wake"><span class="t">09:00</span><span class="lbl">Wake</span><span class="desc">Lakeside breakfast</span></li>
+          <li class="step step-eat"><span class="t">09:30</span><span class="lbl">Eat</span></li>
+          <li class="step step-depart"><span class="t">10:30</span><span class="lbl">Depart</span><span class="desc">South via Albertville</span></li>
+          <li class="step step-charge"><span class="t">11:15</span><span class="lbl">Charge</span><span class="desc">SC <b>Albertville</b> · 30 min · top up before the mountains (50 km)</span></li>
+          <li class="step step-drive"><span class="t">11:45</span><span class="lbl">Drive</span><span class="desc">25 km via D925 to <b>Beaufort</b> village</span></li>
+          <li class="step step-arrive"><span class="t">12:30</span><span class="lbl">Arrive</span><span class="desc">Beaufort</span></li>
+          <li class="step step-eat"><span class="t">12:45</span><span class="lbl">Eat</span><span class="desc">Lunch in Beaufort · taste <b>Beaufort AOP</b> cheese at the cooperative</span></li>
+          <li class="step step-pass"><span class="t">14:30</span><span class="lbl">Pass</span><span class="desc">Drive <b>Cormet de Roselend</b> (1,968 m, 18 km of switchbacks) · ~45 min</span></li>
+          <li class="step step-arrive"><span class="t">15:15</span><span class="lbl">Arrive</span><span class="desc"><b>Lac de Roselend</b> (1,500 m)</span></li>
+          <li class="step step-hike"><span class="t">15:30</span><span class="lbl">Hike</span><span class="desc">Loop around the lake · 4 km easy (1h30)</span></li>
+          <li class="step step-swim"><span class="t">17:30</span><span class="lbl">Swim</span><span class="desc">Cold alpine swim (16°C max in summer)</span></li>
+          <li class="step step-sunset"><span class="t">19:00</span><span class="lbl">Sunset</span><span class="desc">From the dam · glaciers of the Pierra Menta massif glow pink</span></li>
+          <li class="step step-eat"><span class="t">19:30</span><span class="lbl">Eat</span><span class="desc">Cook · cool 12°C night</span></li>
+          <li class="step step-sleep"><span class="t">21:00</span><span class="lbl">Sleep</span><span class="desc">Free spot near <b>Lac de Roselend</b> dam</span></li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PHASE 3 ===== -->
+  <div class="phase" id="phase-3">
+    <div class="phase-header"><div class="num">03</div><h2>Vanoise National Park · Pralognan</h2><div class="meta">Day 3 · 80 km · big hike day</div></div>
+    <p class="phase-intro">Cross to the southern side of the Tarentaise valley and climb up to <b>Pralognan-la-Vanoise</b> (1,400 m), the gateway to <b>Vanoise NP</b> — France's first national park (1963), shared border with Italy's Gran Paradiso. Glaciers, ibex, and alpine meadows. A full hike day.</p>
+    <div class="days">
+      <div class="day">
+        <div class="day-tag tag-drive">Drive · into Vanoise</div>
+        <div class="day-top"><span class="day-num">D 03</span><h4>Pralognan-la-Vanoise</h4></div>
+        <div class="km">From Roselend · 80 km · ~2h</div>
+        <ol class="timeline">
+          <li class="step step-wake"><span class="t">09:00</span><span class="lbl">Wake</span></li>
+          <li class="step step-eat"><span class="t">09:30</span><span class="lbl">Eat</span></li>
+          <li class="step step-depart"><span class="t">10:30</span><span class="lbl">Depart</span></li>
+          <li class="step step-drive"><span class="t">11:00</span><span class="lbl">Drive</span><span class="desc">Down to Bourg-Saint-Maurice via Cormet (~1h)</span></li>
+          <li class="step step-charge"><span class="t">12:00</span><span class="lbl">Charge</span><span class="desc">SC <b>Bourg-Saint-Maurice</b> · 45 min · lunch (refill before mountain road)</span></li>
+          <li class="step step-drive"><span class="t">12:45</span><span class="lbl">Drive</span><span class="desc">50 km via Aime → Macôt → Pralognan (~1h30 winding)</span></li>
+          <li class="step step-arrive"><span class="t">14:15</span><span class="lbl">Arrive</span><span class="desc"><b>Pralognan-la-Vanoise</b> (1,400 m)</span></li>
+          <li class="step step-hike"><span class="t">14:30</span><span class="lbl">Hike</span><span class="desc"><b>Lac des Vaches</b> trail · 8 km return (3-4h, +400 m gain) · stone causeway across the lake, marmots</span></li>
+          <li class="step step-relax"><span class="t">18:30</span><span class="lbl">Relax</span><span class="desc">River dip in the Doron de Chavière</span></li>
+          <li class="step step-eat"><span class="t">19:30</span><span class="lbl">Eat</span><span class="desc">Cook · diots (Savoyard sausages) on the grill</span></li>
+          <li class="step step-sleep"><span class="t">21:00</span><span class="lbl">Sleep</span><span class="desc">Free spot near <b>Pralognan</b> trailhead</span></li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PHASE 4 ===== -->
+  <div class="phase" id="phase-4">
+    <div class="phase-header"><div class="num">04</div><h2>Col de l'Iseran · Bonneval-sur-Arc</h2><div class="meta">Day 4 · 110 km · highest pass in the Alps</div></div>
+    <p class="phase-intro"><b>Highlight #2 + #3.</b> Drive up the Tarentaise to Val d'Isère, then over the <b>Col de l'Iseran</b> (2,770 m — the highest paved mountain pass in the Alps, only open July–September). Drop down to <b>Bonneval-sur-Arc</b>, a stone-roofed village on the Italian border — one of the most beautiful villages in France.</p>
+    <div class="days">
+      <div class="day">
+        <div class="day-tag tag-pass">Iseran pass · 2,770 m</div>
+        <div class="day-top"><span class="day-num">D 04</span><h4>Bonneval-sur-Arc</h4></div>
+        <div class="km">From Pralognan · 110 km · ~3h with pass · ~1,500 m elevation gain (range hit)</div>
+        <ol class="timeline">
+          <li class="step step-wake"><span class="t">09:00</span><span class="lbl">Wake</span></li>
+          <li class="step step-eat"><span class="t">09:30</span><span class="lbl">Eat</span></li>
+          <li class="step step-depart"><span class="t">10:30</span><span class="lbl">Depart</span></li>
+          <li class="step step-drive"><span class="t">11:00</span><span class="lbl">Drive</span><span class="desc">Down to Bourg-Saint-Maurice (~1h)</span></li>
+          <li class="step step-charge"><span class="t">12:00</span><span class="lbl">Charge</span><span class="desc">SC <b>Bourg-Saint-Maurice</b> · 45 min · lunch · charge to 90% (mountain pass needs full battery)</span></li>
+          <li class="step step-drive"><span class="t">12:45</span><span class="lbl">Drive</span><span class="desc">35 km up Tarentaise to <b>Val d'Isère</b> (1,850 m, ~1h)</span></li>
+          <li class="step step-arrive"><span class="t">13:45</span><span class="lbl">Arrive</span><span class="desc">Val d'Isère · last petrol station before pass</span></li>
+          <li class="step step-pass"><span class="t">14:00</span><span class="lbl">Pass</span><span class="desc">Drive <b>Col de l'Iseran</b> · 16 km of switchbacks to 2,770 m (~45 min)</span></li>
+          <li class="step step-arrive"><span class="t">14:45</span><span class="lbl">Arrive</span><span class="desc">Iseran summit · highest paved pass in the Alps</span></li>
+          <li class="step step-relax"><span class="t">15:00</span><span class="lbl">Photo</span><span class="desc">Tundra landscape · Mont Blanc visible north on clear days</span></li>
+          <li class="step step-drive"><span class="t">15:30</span><span class="lbl">Drive</span><span class="desc">Down to Bonneval (~30 km, ~45 min)</span></li>
+          <li class="step step-arrive"><span class="t">16:30</span><span class="lbl">Arrive</span><span class="desc"><b>Bonneval-sur-Arc</b> (1,800 m) · stone village</span></li>
+          <li class="step step-visit"><span class="t">16:45</span><span class="lbl">Walk</span><span class="desc">Cobblestone village · slate-stone roofs unchanged in 200 years</span></li>
+          <li class="step step-eat"><span class="t">19:00</span><span class="lbl">Eat</span><span class="desc">Tartiflette in the village · €18-22</span></li>
+          <li class="step step-sleep"><span class="t">21:00</span><span class="lbl">Sleep</span><span class="desc">Free spot just below <b>Bonneval-sur-Arc</b></span></li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PHASE 5 ===== -->
+  <div class="phase" id="phase-5">
+    <div class="phase-header"><div class="num">05</div><h2>Maurienne valley · home</h2><div class="meta">Day 5 · 150 km</div></div>
+    <p class="phase-intro">Last day. Drop down the <b>Haute-Maurienne</b>, an optional detour to <b>Lac du Mont-Cenis</b> (an alpine lake on the Italian border), then highway back to Chambéry.</p>
+    <div class="days">
+      <div class="day">
+        <div class="day-tag tag-drive">Last day · valley descent</div>
+        <div class="day-top"><span class="day-num">D 05</span><h4>Chambéry · home</h4></div>
+        <div class="km">From Bonneval · 150 km · ~3h</div>
+        <ol class="timeline">
+          <li class="step step-wake"><span class="t">09:00</span><span class="lbl">Wake</span></li>
+          <li class="step step-eat"><span class="t">09:30</span><span class="lbl">Eat</span></li>
+          <li class="step step-depart"><span class="t">10:30</span><span class="lbl">Depart</span></li>
+          <li class="step step-drive"><span class="t">11:00</span><span class="lbl">Drive</span><span class="desc">Down to Lanslevillard (15 km)</span></li>
+          <li class="step step-visit"><span class="t">11:30</span><span class="lbl">Detour</span><span class="desc">Optional: drive 8 km up to <b>Lac du Mont-Cenis</b> · alpine lake on Italian border</span></li>
+          <li class="step step-eat"><span class="t">12:30</span><span class="lbl">Eat</span><span class="desc">Picnic at the lake or in the upper Maurienne</span></li>
+          <li class="step step-drive"><span class="t">13:30</span><span class="lbl">Drive</span><span class="desc">Down Maurienne valley to Saint-Jean (~1h)</span></li>
+          <li class="step step-charge"><span class="t">14:30</span><span class="lbl">Charge</span><span class="desc">SC <b>Saint-Jean-de-Maurienne</b> · 30 min · last charge (~70 km from home)</span></li>
+          <li class="step step-drive"><span class="t">15:00</span><span class="lbl">Drive</span><span class="desc">80 km via A43 to Chambéry (~1h)</span></li>
+          <li class="step step-arrive"><span class="t">16:00</span><span class="lbl">Arrive</span><span class="desc"><b>Chambéry · home</b> · 5 days, 470 km, 3 lakes, 3 passes</span></li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<section class="tips">
+  <div class="tips-inner">
+    <div class="kicker" style="color:var(--terra)">Field manual</div>
+    <h2>What you actually need to know.</h2>
+    <div class="tips-grid">
+      <div class="tip">
+        <div class="icon">01</div>
+        <h4>Pass openings</h4>
+        <ul>
+          <li><b>Col de l'Iseran:</b> open early-July to late-September only · check inforoute73.fr before D4</li>
+          <li><b>Cormet de Roselend:</b> open mid-May to October</li>
+          <li><b>Lac du Mont-Cenis:</b> open year-round but pass road only May–November</li>
+          <li>If Iseran is closed: alternative is Col du Mont-Cenis (2,083 m, lower but also dramatic)</li>
+        </ul>
+      </div>
+      <div class="tip">
+        <div class="icon">02</div>
+        <h4>EV range in the mountains</h4>
+        <ul>
+          <li>Mountain driving with elevation gain consumes ~20–25% more battery per km</li>
+          <li>Charge to <b>90%</b> before each mountain pass section (Cormet, Iseran)</li>
+          <li>Regen on descents recovers ~30% of climbing energy · use it</li>
+          <li>Pre-condition battery if driving above 2,000 m for >30 min in cold mornings</li>
+        </ul>
+      </div>
+      <div class="tip">
+        <div class="icon">03</div>
+        <h4>Sleeping legality (France)</h4>
+        <ul>
+          <li>Sleeping inside a parked car is legal almost everywhere · camping (chairs out) is what's banned</li>
+          <li>Most alpine D-roads have signed lay-bys with no overnight ban</li>
+          <li>Avoid signposted "interdit aux camping-cars" zones near busy resorts (Val d'Isère in season)</li>
+          <li>Park4Night has dense coverage in this region · check reviews before each stop</li>
+        </ul>
+      </div>
+      <div class="tip">
+        <div class="icon">04</div>
+        <h4>Budget anchors</h4>
+        <ul>
+          <li><b>Charging: ~€80.</b> 470 km in mountains = ~570 km flat-equivalent. ~3 charge stops × €16.</li>
+          <li>Tolls: €0 · all D-roads + free A43 sections</li>
+          <li>Bike rental Annecy: €15</li>
+          <li>Vanoise NP entrance: free (national park)</li>
+          <li>Food: ~€80 (cook + 2 mountain meals)</li>
+          <li><b>Total ~€175 · 5 days</b></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <h3>Three lakes, three passes, no rush.</h3>
+  <p>Roselend is glacial blue, Iseran is roof-of-Europe, Bonneval is a postcard. The trip is built so you spend most afternoons by water and most evenings above 1,500 m.</p>
+  <p class="sig">Plan generated for Chambéry → Alps loop · 5 days · Tesla Model Y</p>
+</footer>
+
+<script>
+const route = [
+  [45.5646, 5.9178, "Start", "Chambéry · départ",                  "Trip start · summer base"],
+  [45.7833, 6.2167, "D1",    "Lac d'Annecy · Bout du Lac",         "Cleanest big lake in Europe · Tournette ridge"],
+  [45.6951, 6.6342, "D2",    "Lac de Roselend (Beaufortain)",      "Turquoise reservoir at 1,500 m · Cormet pass"],
+  [45.3849, 6.7242, "D3",    "Pralognan-la-Vanoise",               "Vanoise NP gateway · Lac des Vaches hike"],
+  [45.3690, 7.0429, "D4",    "Bonneval-sur-Arc",                   "Stone village 1,800 m · over Col de l'Iseran 2,770 m"],
+  [45.5646, 5.9178, "End",   "Chambéry · home",                    "Trip end · Day 5 evening"]
+];
+
+const map = L.map('map', { zoomControl:true, scrollWheelZoom:false }).setView([45.55, 6.5], 9);
+
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>',
+  subdomains: 'abcd', maxZoom: 19
+}).addTo(map);
+
+const TRIP_COLOR = '#2E7DA0';
+const latlngs = route.map(r => [r[0], r[1]]);
+
+const statusEl = document.createElement('div');
+statusEl.className = 'map-status';
+statusEl.textContent = 'Loading driving routes…';
+document.querySelector('.map-wrap').appendChild(statusEl);
+
+async function fetchOSRM(coords) {
+  const path = coords.map(c => `${c[1]},${c[0]}`).join(';');
+  const url = `https://router.project-osrm.org/route/v1/driving/${path}?overview=full&geometries=geojson&continue_straight=false`;
+  const r = await fetch(url);
+  if (!r.ok) throw new Error('OSRM ' + r.status);
+  const data = await r.json();
+  if (data.code !== 'Ok' || !data.routes.length) throw new Error('OSRM no route');
+  return data.routes[0].geometry.coordinates.map(c => [c[1], c[0]]);
+}
+
+(async () => {
+  try {
+    const geom = await fetchOSRM(latlngs);
+    L.polyline(geom, { color: TRIP_COLOR, weight: 4, opacity: .9, lineJoin: 'round' }).addTo(map);
+  } catch (e) {
+    L.polyline(latlngs, { color: TRIP_COLOR, weight: 3, opacity: .55, dashArray: '4,4' }).addTo(map);
+  }
+
+  const locKey = r => `${r[0].toFixed(4)},${r[1].toFixed(4)}`;
+  const groups = new Map();
+  route.forEach((r, i) => {
+    const k = locKey(r);
+    if (!groups.has(k)) groups.set(k, []);
+    groups.get(k).push(i);
+  });
+
+  const cleanQuery = (s) => s.replace(/\s*[·(].*$/, '').trim();
+  groups.forEach((indices) => {
+    const first = route[indices[0]];
+    const dayLabel = (idx) => {
+      const raw = route[idx][2];
+      if (raw === 'Start' || raw === 'End') return raw;
+      return raw.replace(/^D/, '');
+    };
+    const labelText = indices.map(dayLabel).join('·');
+    const wide = labelText.length > 2;
+    const isCap = labelText === 'Start' || labelText === 'End';
+    const icon = L.divIcon({
+      className: 'num-marker' + (wide ? ' wide' : '') + (isCap ? ' cap' : ''),
+      html: labelText,
+      iconSize: wide ? [54, 30] : [30, 30]
+    });
+    const marker = L.marker([first[0], first[1]], { icon }).addTo(map);
+    const popupHtml = indices.map(i => {
+      const r = route[i];
+      const meta = r[2] === 'Start' ? 'Trip start' :
+                   r[2] === 'End'   ? 'Trip end'   :
+                   'Day ' + r[2].replace(/^D/, '');
+      const q = cleanQuery(r[3]);
+      const p4n = `https://park4night.com/en/search?lat=${r[0]}&lng=${r[1]}&z=12`;
+      return `<div class="popup-visit">
+        <div class="popup-img-wrap"><img class="popup-img" data-query="${q.replace(/"/g,'&quot;')}" alt="" /><div class="popup-img-loader">Loading photo…</div></div>
+        <b>${r[3]}</b><span class="popup-meta">${meta}</span><span class="popup-note">${r[4]}</span>
+        <a class="p4n-btn" href="${p4n}" target="_blank" rel="noopener">Open in Park4Night</a>
+      </div>`;
+    }).join('<hr class="popup-sep">');
+    marker.bindPopup(popupHtml, { maxWidth: 280 });
+  });
+
+  map.fitBounds(L.latLngBounds(latlngs).pad(0.1));
+  statusEl.textContent = 'Real driving routes from OpenStreetMap';
+  setTimeout(() => { statusEl.style.opacity = '0'; }, 3000);
+  setTimeout(() => { statusEl.remove(); }, 4500);
+})();
+
+const toc = document.getElementById('toc');
+document.querySelectorAll('.phase').forEach((p) => {
+  const num = (p.querySelector('.phase-header .num') || {}).textContent || '';
+  const title = p.querySelector('h2').textContent.trim();
+  const a = document.createElement('a');
+  a.href = '#' + p.id;
+  a.textContent = num.trim() + '  ·  ' + title;
+  toc.appendChild(a);
+});
+
+map.on('click', () => map.scrollWheelZoom.enable());
+
+// Inject Park4Night deep links into each day's SLEEP step
+(function(){
+  function getCoordsForDayLabel(dayNumStr){
+    const clean = dayNumStr.replace(/\s/g, '').replace(/^D0(\d)/, 'D$1');
+    for (const r of route) {
+      const label = (r[2] || '').replace(/\s/g, '');
+      if (label === clean) return [r[0], r[1]];
+    }
+    return null;
+  }
+  document.querySelectorAll('.day').forEach(day => {
+    const dayNum = (day.querySelector('.day-num') || {}).textContent || '';
+    const coords = getCoordsForDayLabel(dayNum);
+    if (!coords) return;
+    const sleepStep = day.querySelector('.step-sleep .desc');
+    if (!sleepStep) return;
+    const url = `https://park4night.com/en/search?lat=${coords[0]}&lng=${coords[1]}&z=12`;
+    const a = document.createElement('a');
+    a.href = url;
+    a.target = '_blank';
+    a.rel = 'noopener';
+    a.className = 'p4n-btn';
+    a.textContent = 'Open in Park4Night';
+    sleepStep.appendChild(document.createElement('br'));
+    sleepStep.appendChild(a);
+  });
+})();
+
+// Image popover · Pexels-first via /api/images
+(function(){
+  const popover = document.createElement('div');
+  popover.id = 'img-popover';
+  popover.innerHTML = `
+    <div class="ipop-head">
+      <span class="ipop-title"></span>
+      <span class="ipop-counter"></span>
+      <button class="ipop-close" aria-label="Close">&times;</button>
+    </div>
+    <div class="ipop-body">
+      <button class="ipop-btn ipop-prev" aria-label="Previous">‹</button>
+      <div class="ipop-frame">
+        <img class="ipop-img" alt="" />
+        <div class="ipop-loader">Loading…</div>
+      </div>
+      <button class="ipop-btn ipop-next" aria-label="Next">›</button>
+    </div>
+    <div class="ipop-attr">Photos via Pexels &amp; Wikimedia</div>
+  `;
+  document.body.appendChild(popover);
+
+  const elTitle = popover.querySelector('.ipop-title');
+  const elCounter = popover.querySelector('.ipop-counter');
+  const elImg = popover.querySelector('.ipop-img');
+  const elLoader = popover.querySelector('.ipop-loader');
+  const btnPrev = popover.querySelector('.ipop-prev');
+  const btnNext = popover.querySelector('.ipop-next');
+  const btnClose = popover.querySelector('.ipop-close');
+
+  const cache = new Map();
+  let images = [], idx = 0, currentTarget = null, brokenAttempts = 0;
+
+  btnPrev.onclick = (e) => { e.stopPropagation(); show(idx - 1); };
+  btnNext.onclick = (e) => { e.stopPropagation(); show(idx + 1); };
+  btnClose.onclick = (e) => { e.stopPropagation(); close(); };
+
+  function show(i){
+    if (!images.length) return;
+    idx = ((i % images.length) + images.length) % images.length;
+    elLoader.style.display = 'none';
+    elImg.style.opacity = '0';
+    elImg.onload = () => { elImg.style.opacity = '1'; brokenAttempts = 0; };
+    elImg.onerror = () => { brokenAttempts++; if (brokenAttempts > images.length) { brokenAttempts = 0; return; } show(idx + 1); };
+    elImg.src = images[idx];
+    elCounter.textContent = `${idx + 1} / ${images.length}`;
+    btnPrev.disabled = images.length < 2;
+    btnNext.disabled = images.length < 2;
+  }
+
+  function close(){ popover.classList.remove('show'); currentTarget = null; }
+
+  function position(target){
+    if (window.innerWidth < 680) return;
+    const rect = target.getBoundingClientRect();
+    const popH = popover.offsetHeight || 360;
+    const popW = Math.min(440, window.innerWidth - 24);
+    let top = rect.top + window.scrollY - popH - 14;
+    if (rect.top - popH - 20 < 0) top = rect.bottom + window.scrollY + 14;
+    let left = rect.left + window.scrollX + rect.width/2 - popW/2;
+    left = Math.max(window.scrollX + 12, Math.min(left, window.scrollX + window.innerWidth - popW - 12));
+    popover.style.top = top + 'px';
+    popover.style.left = left + 'px';
+  }
+
+  document.addEventListener('click', (e) => {
+    if (!popover.classList.contains('show')) return;
+    if (popover.contains(e.target)) return;
+    if (e.target.classList.contains('hoverable-place')) return;
+    close();
+  });
+
+  async function fetchPhotos(query){
+    if (cache.has(query)) return cache.get(query);
+    let result;
+    try {
+      const r = await fetch(`/api/images?q=${encodeURIComponent(query)}`);
+      const data = await r.json().catch(() => ({}));
+      if (!r.ok) result = { urls: [], error: data.error || ('HTTP ' + r.status) };
+      else if (data.error) result = { urls: [], error: data.error };
+      else {
+        const urls = (data.items || []).map(it => it.link).filter(Boolean);
+        result = { urls, error: urls.length ? null : 'No photos found' };
+      }
+    } catch(e) {
+      result = { urls: [], error: 'Network: ' + e.message };
+    }
+    cache.set(query, result);
+    return result;
+  }
+
+  function showError(loader, error){
+    if (!loader) return;
+    loader.style.display = 'flex';
+    loader.innerHTML = `<div style="font-size:.72rem">${error || 'No photo'}</div>`;
+  }
+
+  async function open(target){
+    const text = target.textContent.trim();
+    if (text.length < 3 || /[:#]$/.test(text)) return;
+    currentTarget = target;
+    elTitle.textContent = text;
+    elCounter.textContent = '';
+    elImg.removeAttribute('src');
+    elImg.style.opacity = '0';
+    elLoader.style.display = 'flex';
+    elLoader.textContent = 'Searching photos…';
+    images = []; idx = 0;
+    btnPrev.disabled = btnNext.disabled = true;
+    popover.classList.add('show');
+    position(target);
+    const result = await fetchPhotos(text);
+    if (currentTarget !== target) return;
+    if (!result.urls.length) {
+      showError(elLoader, result.error);
+      requestAnimationFrame(() => position(target));
+      return;
+    }
+    images = result.urls;
+    elLoader.style.display = 'none';
+    show(0);
+    requestAnimationFrame(() => position(target));
+  }
+
+  document.querySelectorAll('.day b').forEach(b => {
+    const text = b.textContent.trim();
+    if (text.length < 3 || /[:#]$/.test(text)) return;
+    b.classList.add('hoverable-place');
+    b.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (currentTarget === b && popover.classList.contains('show')) close(); else open(b);
+    });
+  });
+
+  if (typeof map !== 'undefined') {
+    map.on('popupopen', async (e) => {
+      const node = e.popup.getElement();
+      if (!node) return;
+      const imgs = node.querySelectorAll('.popup-img[data-query]');
+      for (const img of imgs) {
+        if (img.src) continue;
+        const query = img.dataset.query;
+        if (!query) continue;
+        const loader = img.parentElement.querySelector('.popup-img-loader');
+        const result = await fetchPhotos(query);
+        if (result.urls.length) {
+          img.onload = () => { img.style.opacity = '1'; if (loader) loader.style.display = 'none'; try { e.popup.update(); } catch(_){} };
+          img.onerror = () => { if (loader) loader.textContent = 'Image URL failed'; };
+          img.src = result.urls[0];
+        } else if (loader) {
+          loader.textContent = result.error || 'No photo';
+        }
+      }
+    });
+  }
+})();
+</script>
+
+</body>
+</html>
