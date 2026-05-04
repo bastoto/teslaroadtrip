@@ -121,10 +121,47 @@
     .day-nav-arrow{width:30px;height:30px;font-size:1rem}
   }
 
-  .phase{margin:0;scroll-margin-top:5rem;display:none;animation:fadeIn .25s ease}
-  .phase.active{display:block}
+  .phase{margin:0;scroll-margin-top:5rem;display:none;flex-direction:column;animation:fadeIn .25s ease}
+  .phase.active{display:flex}
   @keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
-  .phase-header{display:flex;align-items:flex-end;gap:.8rem;flex-wrap:wrap;padding-bottom:.7rem;margin-bottom:1rem;border-bottom:1px solid var(--line)}
+
+  /* Reorder children so the day card timeline appears right after tabs */
+  .phase > .phase-header{order:1;flex-shrink:0}
+  .phase > .phase-tabs{order:2;flex-shrink:0}
+  .phase > .days{order:3;min-height:0}
+  .phase > .phase-intro{order:4}
+
+  /* Tabs */
+  .phase-tabs{display:flex;gap:.3rem;border-bottom:1px solid var(--line);margin-bottom:1rem}
+  .phase-tab{
+    padding:.65rem 1rem;border:none;background:none;
+    font-family:inherit;font-size:.72rem;letter-spacing:.1em;
+    text-transform:uppercase;font-weight:700;color:var(--ink-soft);
+    cursor:pointer;border-bottom:2px solid transparent;
+    margin-bottom:-1px;transition:color .15s, border-color .15s;
+  }
+  .phase-tab.active{color:var(--sea-deep);border-bottom-color:var(--sea)}
+  .phase-tab:hover:not(.active){color:var(--ink)}
+
+  /* Tab content visibility */
+  .phase[data-tab="steps"] > .phase-intro{display:none}
+  .phase[data-tab="about"] > .days{display:none}
+  .phase[data-tab="about"] > .phase-intro:first-of-type{margin-top:0}
+
+  /* Desktop: lock cards column to map height with internal scroll */
+  @media (min-width:1024px){
+    .trip-cards-col{
+      height:calc(100vh - 2rem);
+      max-height:900px;
+      overflow:hidden;
+    }
+    .phase.active{flex:1;min-height:0;height:100%}
+    .phase > .days{flex:1;overflow-y:auto;padding-right:.4rem;scrollbar-gutter:stable}
+    .phase > .days::-webkit-scrollbar{width:8px}
+    .phase > .days::-webkit-scrollbar-thumb{background:var(--line);border-radius:99px}
+    .phase > .days::-webkit-scrollbar-track{background:transparent}
+  }
+  .phase-header{display:flex;align-items:flex-end;gap:.8rem;flex-wrap:wrap;padding-bottom:.7rem;margin-bottom:.4rem;border-bottom:1px solid var(--line)}
   .phase-header .num{font-family:'Cormorant Garamond',serif;font-size:2.4rem;font-weight:700;line-height:.85;color:var(--sea);font-style:italic}
   .phase-header h2{flex:1;min-width:200px;font-size:clamp(1.3rem,4.5vw,2rem)}
   .phase-header .meta{font-size:.78rem;color:var(--ink-soft);width:100%;margin-top:.3rem}
@@ -821,7 +858,17 @@ function setActiveDay(dayId){
   const dayIndex = dayOrder.indexOf(dayId);
   document.querySelectorAll('.phase').forEach(p => p.classList.remove('active'));
   const targetPhase = document.getElementById('phase-' + (dayIndex + 1));
-  if (targetPhase) targetPhase.classList.add('active');
+  if (targetPhase) {
+    targetPhase.classList.add('active');
+    // Reset to "Steps" tab on every day change
+    targetPhase.dataset.tab = 'steps';
+    targetPhase.querySelectorAll('.phase-tab').forEach(b => {
+      b.classList.toggle('active', b.dataset.tab === 'steps');
+    });
+    // Reset scroll position of timeline
+    const days = targetPhase.querySelector('.days');
+    if (days) days.scrollTop = 0;
+  }
 
   // Pill state
   document.querySelectorAll('.day-pill').forEach(p => {
@@ -834,6 +881,29 @@ function setActiveDay(dayId){
   if (prev) prev.disabled = dayIndex === 0;
   if (next) next.disabled = dayIndex === dayOrder.length - 1;
 }
+
+// Inject "Steps / About the place" tabs into each phase
+function injectPhaseTabs(phase){
+  if (phase.querySelector('.phase-tabs')) return;
+  const tabs = document.createElement('div');
+  tabs.className = 'phase-tabs';
+  tabs.innerHTML = `
+    <button class="phase-tab active" data-tab="steps" type="button">Steps</button>
+    <button class="phase-tab" data-tab="about" type="button">About the place</button>
+  `;
+  phase.dataset.tab = 'steps';
+  const header = phase.querySelector('.phase-header');
+  header.insertAdjacentElement('afterend', tabs);
+  tabs.querySelectorAll('.phase-tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      phase.dataset.tab = btn.dataset.tab;
+      tabs.querySelectorAll('.phase-tab').forEach(b => {
+        b.classList.toggle('active', b === btn);
+      });
+    });
+  });
+}
+document.querySelectorAll('.phase').forEach(injectPhaseTabs);
 
 // Wire prev / next / pills
 document.getElementById('prev-day').addEventListener('click', () => {
