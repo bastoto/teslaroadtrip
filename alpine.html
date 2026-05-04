@@ -1071,8 +1071,10 @@ buildAll();
         if (!query) continue;
         const loader = img.parentElement.querySelector('.popup-img-loader');
         const result = await fetchPhotos(query);
+        // Bail if popup was closed while we were fetching
+        if (!document.body.contains(img)) continue;
         if (result.urls.length) {
-          img.onload = () => { img.style.opacity = '1'; if (loader) loader.style.display = 'none'; try { e.popup.update(); } catch(_){} };
+          img.onload = () => { img.style.opacity = '1'; if (loader) loader.style.display = 'none'; };
           img.onerror = () => { if (loader) loader.textContent = 'Image URL failed'; };
           img.src = result.urls[0];
         } else if (loader) {
