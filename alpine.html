@@ -418,14 +418,22 @@
 </footer>
 
 <script>
+// Route entries: [lat, lng, dayLabel, title, notes, optional custom Park4Night URL]
+// If the 6th element is set, that exact P4N place URL is used for the SLEEP and popup links.
+// Otherwise, falls back to a coordinate-centered search on park4night.com.
 const route = [
   [45.5646, 5.9178, "Start", "Chambéry · départ",                  "Trip start · summer base"],
   [45.8744, 6.4942, "D1",    "Col des Aravis · 1,486 m",           "Mountain pass · Mont Blanc panorama · Reblochon country"],
   [45.6951, 6.6342, "D2",    "Lac de Roselend (Beaufortain)",      "Turquoise reservoir at 1,500 m · Cormet pass"],
-  [45.3849, 6.7242, "D3",    "Pralognan-la-Vanoise",               "Vanoise NP gateway · Lac des Vaches hike"],
+  [45.3849, 6.7242, "D3",    "Pralognan-la-Vanoise",               "Vanoise NP gateway · Lac des Vaches hike", "https://park4night.com/en/place/444815"],
   [45.3690, 7.0429, "D4",    "Bonneval-sur-Arc",                   "Stone village 1,800 m · over Col de l'Iseran 2,770 m"],
   [45.5646, 5.9178, "End",   "Chambéry · home",                    "Trip end · Day 5 evening"]
 ];
+
+// Use a custom P4N place URL if the route entry provides one, else search by lat/lng
+function buildP4nUrl(r) {
+  return r[5] || `https://park4night.com/en/search?lat=${r[0]}&lng=${r[1]}&z=12`;
+}
 
 const map = L.map('map', { zoomControl:true, scrollWheelZoom:false }).setView([45.55, 6.5], 9);
 
@@ -491,7 +499,7 @@ async function fetchOSRM(coords) {
                    r[2] === 'End'   ? 'Trip end'   :
                    'Day ' + r[2].replace(/^D/, '');
       const q = cleanQuery(r[3]);
-      const p4n = `https://park4night.com/en/search?lat=${r[0]}&lng=${r[1]}&z=12`;
+      const p4n = buildP4nUrl(r);
       return `<div class="popup-visit">
         <div class="popup-img-wrap"><img class="popup-img" data-query="${q.replace(/"/g,'&quot;')}" alt="" /><div class="popup-img-loader">Loading photo…</div></div>
         <b>${r[3]}</b><span class="popup-meta">${meta}</span><span class="popup-note">${r[4]}</span>
@@ -521,27 +529,27 @@ map.on('click', () => map.scrollWheelZoom.enable());
 
 // Inject Park4Night deep links into each day's SLEEP step
 (function(){
-  function getCoordsForDayLabel(dayNumStr){
+  function getRouteEntryForDay(dayNumStr){
     const clean = dayNumStr.replace(/\s/g, '').replace(/^D0(\d)/, 'D$1');
     for (const r of route) {
       const label = (r[2] || '').replace(/\s/g, '');
-      if (label === clean) return [r[0], r[1]];
+      if (label === clean) return r;
     }
     return null;
   }
   document.querySelectorAll('.day').forEach(day => {
     const dayNum = (day.querySelector('.day-num') || {}).textContent || '';
-    const coords = getCoordsForDayLabel(dayNum);
-    if (!coords) return;
+    const r = getRouteEntryForDay(dayNum);
+    if (!r) return;
     const sleepStep = day.querySelector('.step-sleep .desc');
     if (!sleepStep) return;
-    const url = `https://park4night.com/en/search?lat=${coords[0]}&lng=${coords[1]}&z=12`;
     const a = document.createElement('a');
-    a.href = url;
+    a.href = buildP4nUrl(r);
     a.target = '_blank';
     a.rel = 'noopener';
     a.className = 'p4n-btn';
-    a.textContent = 'Open in Park4Night';
+    // If we have a specific place URL, label the button accordingly
+    a.textContent = r[5] ? 'Open this spot on Park4Night' : 'Open in Park4Night';
     sleepStep.appendChild(document.createElement('br'));
     sleepStep.appendChild(a);
   });
