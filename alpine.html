@@ -420,6 +420,11 @@
   .step-sleep .desc .p4n-btn{margin-top:.5rem}
   .leaflet-popup-content .p4n-btn{margin-top:.35rem;width:100%;justify-content:center}
 
+  .gmaps-btn{display:inline-flex;align-items:center;gap:.3rem;padding:.22rem .6rem;background:rgba(46,125,160,.14);border:1px solid rgba(46,125,160,.4);border-radius:99px;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--sea-deep);text-decoration:none;margin-top:.35rem;white-space:nowrap;font-family:'Inter',sans-serif}
+  .gmaps-btn:hover,.gmaps-btn:active{background:rgba(46,125,160,.28)}
+  .gmaps-btn::after{content:"↗";font-size:.72rem;letter-spacing:0}
+  .leaflet-popup-content .gmaps-btn{margin-top:.3rem;width:100%;justify-content:center}
+
   .map-status{position:absolute;top:10px;left:50%;transform:translateX(-50%);z-index:1000;background:rgba(255,252,245,.96);border:1px solid #E5DCC8;border-radius:99px;padding:.35rem .85rem;font-size:.72rem;color:#5C5448;box-shadow:0 4px 12px rgba(0,0,0,.08);font-family:Inter,sans-serif;letter-spacing:.04em;transition:opacity .8s}
 
   /* Image popover (hover/tap on bolded place names) */
@@ -910,10 +915,11 @@ function popupHtml(wp, dayIdx){
   const p4nBtn = wp.p4n
     ? `<a class="p4n-btn" href="${wp.p4n}" target="_blank" rel="noopener">Open this spot on Park4Night</a>`
     : (wp.type === 'sleep' ? `<a class="p4n-btn" href="https://park4night.com/en/search?lat=${wp.coords[0]}&lng=${wp.coords[1]}&z=12" target="_blank" rel="noopener">Open in Park4Night</a>` : '');
+  const gmapsBtn = `<a class="gmaps-btn" href="https://www.google.com/maps?q=${wp.coords[0]},${wp.coords[1]}" target="_blank" rel="noopener">See on Google Maps</a>`;
   const photoFrame = (wp.type === 'sleep' || wp.type === 'visit' || wp.type === 'pass' || wp.type === 'lunch')
     ? `<div class="popup-img-wrap"><img class="popup-img" data-query="${wp.name.replace(/"/g,'&quot;').replace(/\s*[·(].*$/,'').trim()}" alt="" /><div class="popup-img-loader">Loading photo…</div></div>`
     : '';
-  return `<div class="popup-visit">${photoFrame}<b>${wp.name}</b><span class="popup-meta">${meta}</span>${wp.note ? `<span class="popup-note">${wp.note}</span>` : ''}${battery}${p4nBtn}</div>`;
+  return `<div class="popup-visit">${photoFrame}<b>${wp.name}</b><span class="popup-meta">${meta}</span>${wp.note ? `<span class="popup-note">${wp.note}</span>` : ''}${battery}${p4nBtn}${gmapsBtn}</div>`;
 }
 
 // Build per-day layer groups
