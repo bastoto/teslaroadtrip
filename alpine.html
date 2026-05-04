@@ -69,16 +69,21 @@
   #map{height:55vh;min-height:340px;width:100%}
   @media (min-width:1024px){
     .trip-section{padding:2rem 4vw 4rem;max-width:1500px}
-    .trip-grid{grid-template-columns:minmax(0,1.05fr) minmax(420px,.95fr);gap:2rem;align-items:start}
-    .trip-cards-col{order:1;min-width:0}
-    .trip-map-col{order:2;position:sticky;top:1rem;height:calc(100vh - 2rem);max-height:900px}
+    .trip-grid{grid-template-columns:minmax(0,1.05fr) minmax(420px,.95fr);gap:2rem;align-items:stretch}
+    .trip-cards-col{order:1;min-width:0;display:flex;flex-direction:column}
+    .trip-map-col{order:2;position:sticky;top:1rem;align-self:start;height:calc(100vh - 2rem);max-height:900px}
     .trip-map-col .map-wrap{height:100%}
     .trip-map-col #map{height:100% !important;min-height:0}
   }
 
-  .section-head{margin-bottom:1.5rem;max-width:780px}
+  .section-head{margin-bottom:1.2rem;max-width:900px}
   .section-head .kicker{margin-bottom:.5rem}
   .section-head p{font-size:.92rem;color:var(--ink-soft)}
+  @media (min-width:1024px){
+    .section-head{margin-bottom:1rem}
+    .section-head h2{font-size:1.7rem}
+    .section-head p{font-size:.88rem;max-width:780px}
+  }
 
   .day-nav{
     position:sticky; top:.5rem; z-index:50;
@@ -334,6 +339,25 @@
 </div>
 
 <section class="trip-section">
+
+  <div class="section-head">
+    <div class="kicker">Day-by-day · use arrows to flip through</div>
+    <h2>Hour-by-hour, with battery forecast.</h2>
+    <p>One day at a time. Lightning markers are charge stops, <b>Zz</b> circles are sleep spots, forks are lunch stops, triangles are passes — each labeled with the battery percentage. Use the arrows or pills to switch days; the map updates automatically.</p>
+  </div>
+
+  <nav class="day-nav" aria-label="Day navigation">
+    <button class="day-nav-arrow" id="prev-day" aria-label="Previous day">&lsaquo;</button>
+    <div class="day-pills" role="tablist">
+      <button class="day-pill active" data-day-id="d1" role="tab">D 01</button>
+      <button class="day-pill" data-day-id="d2" role="tab">D 02</button>
+      <button class="day-pill" data-day-id="d3" role="tab">D 03</button>
+      <button class="day-pill" data-day-id="d4" role="tab">D 04</button>
+      <button class="day-pill" data-day-id="d5" role="tab">D 05</button>
+    </div>
+    <button class="day-nav-arrow" id="next-day" aria-label="Next day">&rsaquo;</button>
+  </nav>
+
   <div class="trip-grid">
 
     <aside class="trip-map-col">
@@ -343,23 +367,6 @@
     </aside>
 
     <main class="trip-cards-col">
-      <div class="section-head">
-        <div class="kicker">Day-by-day · use arrows to flip through</div>
-        <h2>Hour-by-hour, with battery forecast.</h2>
-        <p>One day at a time. Lightning markers are charge stops, <b>Zz</b> circles are sleep spots, forks are lunch stops, triangles are passes — each labeled with the battery percentage. Use the arrows or pills to switch days; the map updates automatically.</p>
-      </div>
-
-      <nav class="day-nav" aria-label="Day navigation">
-        <button class="day-nav-arrow" id="prev-day" aria-label="Previous day">&lsaquo;</button>
-        <div class="day-pills" role="tablist">
-          <button class="day-pill active" data-day-id="d1" role="tab">D 01</button>
-          <button class="day-pill" data-day-id="d2" role="tab">D 02</button>
-          <button class="day-pill" data-day-id="d3" role="tab">D 03</button>
-          <button class="day-pill" data-day-id="d4" role="tab">D 04</button>
-          <button class="day-pill" data-day-id="d5" role="tab">D 05</button>
-        </div>
-        <button class="day-nav-arrow" id="next-day" aria-label="Next day">&rsaquo;</button>
-      </nav>
 
       <!-- ===== PHASE 1 ===== -->
       <div class="phase active" id="phase-1">
