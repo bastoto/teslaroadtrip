@@ -1,0 +1,1492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1F8A8C">
+<title>Tesla Model Y · Italian great lakes + Venice · 7 days from Chambéry</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<style>
+  :root{
+    --bg:#F0EFE3;
+    --bg-card:#FFFCF5;
+    --ink:#2A2520;
+    --ink-soft:#5C5448;
+    --line:#D8D5C2;
+    --sea:#1F8A8C;
+    --sea-deep:#0E5A63;
+    --terra:#D9722C;
+    --olive:#5E6B3A;
+    --gold:#B7873A;
+    --plum:#5B3A57;
+    --shadow:0 1px 2px rgba(42,37,32,.06), 0 8px 24px rgba(42,37,32,.06);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0;overflow-x:hidden}
+  body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--ink);line-height:1.55;font-weight:400;-webkit-font-smoothing:antialiased}
+
+  /* ===== APP MODE — full-viewport tablet UI ===== */
+  body.app-mode{height:100vh;overflow:hidden;display:flex;flex-direction:column}
+  body.app-mode > .topnav,
+  body.app-mode > .hero,
+  body.app-mode > .highlights,
+  body.app-mode > .tips,
+  body.app-mode > footer{display:none}
+
+  .app-bar{
+    flex-shrink:0;display:flex;align-items:center;gap:.5rem;
+    padding:.5rem .8rem;height:54px;
+    background:var(--bg-card);border-bottom:1px solid var(--line);
+    box-shadow:0 1px 3px rgba(42,37,32,.06);z-index:20;
+  }
+  .app-bar-btn{
+    width:40px;height:40px;border-radius:50%;flex-shrink:0;
+    background:var(--bg);border:1px solid var(--line);
+    color:var(--ink);text-decoration:none;cursor:pointer;
+    font-size:1.15rem;line-height:1;font-family:inherit;
+    display:flex;align-items:center;justify-content:center;
+    transition:background .15s, color .15s;
+  }
+  .app-bar-btn:hover{background:var(--line);color:var(--sea-deep)}
+  .app-bar-btn:active{transform:scale(.94)}
+  .app-bar-title{
+    flex:1;min-width:0;text-align:center;
+    font-family:'Cormorant Garamond',serif;font-weight:700;
+    font-size:1.05rem;color:var(--sea-deep);
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  }
+  .app-bar-title small{display:block;font-size:.62rem;letter-spacing:.13em;
+    text-transform:uppercase;color:var(--terra);font-weight:700;
+    font-family:'Inter',sans-serif;line-height:1;margin-bottom:.15rem}
+
+  /* Info drawer — slides in from right */
+  .info-drawer{
+    position:fixed;inset:0;z-index:900;
+    background:rgba(42,37,32,.4);backdrop-filter:blur(2px);
+    opacity:0;visibility:hidden;
+    transition:opacity .25s ease, visibility 0s linear .25s;
+  }
+  .info-drawer[aria-hidden="false"]{opacity:1;visibility:visible;transition:opacity .25s ease}
+  .info-drawer-panel{
+    position:absolute;top:0;right:0;bottom:0;
+    width:min(540px,100%);
+    background:var(--bg);
+    box-shadow:-12px 0 40px rgba(42,37,32,.18);
+    transform:translateX(100%);transition:transform .3s ease;
+    display:flex;flex-direction:column;
+  }
+  .info-drawer[aria-hidden="false"] .info-drawer-panel{transform:none}
+  .info-drawer-bar{
+    flex-shrink:0;display:flex;align-items:center;justify-content:space-between;
+    padding:.7rem .9rem;background:var(--bg-card);border-bottom:1px solid var(--line);
+  }
+  .info-drawer-bar h2{font-size:1.2rem;color:var(--sea-deep);margin:0}
+  .info-drawer-body{flex:1;overflow-y:auto;padding:0;-webkit-overflow-scrolling:touch}
+  /* Reset moved sections inside drawer so they look like cards */
+  .info-drawer-body .hero{padding:1.25rem 1.25rem 1.5rem;background:none;border:none}
+  .info-drawer-body .hero h1{font-size:1.8rem;line-height:1.1}
+  .info-drawer-body .hero p.lede{font-size:.95rem;margin-top:.7rem}
+  .info-drawer-body .hero-stats{margin-top:1.2rem;grid-template-columns:repeat(2,1fr) !important;gap:.5rem}
+  .info-drawer-body .highlights{padding:0 1.25rem;margin-top:.5rem;grid-template-columns:1fr !important}
+  .info-drawer-body .tips{padding:1.5rem 1.25rem 2rem;background:none;border:none}
+  .info-drawer-body .tips-grid{grid-template-columns:1fr !important}
+  .info-drawer-body footer{display:block;background:var(--sea-deep);padding:1.5rem 1.25rem;text-align:left}
+
+  /* Trip section becomes the main app surface */
+  body.app-mode .trip-section{
+    flex:1;min-height:0;
+    padding:0 !important;max-width:none !important;margin:0;
+    display:flex;flex-direction:column;overflow:hidden;
+  }
+  body.app-mode .section-head{display:none}
+  body.app-mode .day-nav{
+    position:static !important;
+    margin:.6rem .8rem .4rem;
+    border-radius:99px;flex-shrink:0;
+  }
+  body.app-mode .trip-grid{
+    flex:1;min-height:0;
+    padding:0 .8rem .8rem;
+    grid-template-columns:1fr;grid-template-rows:42% 58%;gap:.6rem;
+    height:100%;
+  }
+  body.app-mode .trip-map-col{order:1;height:100%;position:static !important;max-height:none !important;align-self:stretch !important}
+  body.app-mode .trip-cards-col{order:2;height:100% !important;max-height:none !important;overflow:hidden;display:flex;flex-direction:column}
+  body.app-mode .map-wrap{height:100%;border-radius:12px}
+  body.app-mode #map{height:100% !important;min-height:0}
+  @media (min-width:1024px){
+    body.app-mode .trip-grid{
+      grid-template-columns:minmax(0,1fr) minmax(420px,.85fr);
+      grid-template-rows:1fr;gap:.8rem;
+      padding:.6rem .8rem .8rem;
+    }
+    body.app-mode .trip-map-col{order:2}
+    body.app-mode .trip-cards-col{order:1}
+  }
+  h1,h2,h3,h4{font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;letter-spacing:-.01em;margin:0}
+  h1{font-size:clamp(1.85rem,7vw,3.6rem);line-height:1.05}
+  h2{font-size:clamp(1.4rem,5vw,2.4rem);line-height:1.15;margin-bottom:.3em}
+  h3{font-size:1.25rem;line-height:1.2}
+  h4{font-size:1.05rem;font-weight:700}
+  p{margin:.4em 0}
+  a{color:var(--sea);text-decoration:none;border-bottom:1px solid rgba(31,138,140,.25)}
+  a:hover{border-bottom-color:var(--sea)}
+
+  .topnav{background:var(--bg-card);border-bottom:1px solid var(--line);padding:.7rem 5vw;font-size:.82rem}
+  .topnav a{color:var(--ink-soft);border:none}
+
+  .hero{position:relative;padding:2.5rem 5vw 2rem;background:radial-gradient(ellipse at 80% 0%, rgba(31,138,140,.16), transparent 55%),radial-gradient(ellipse at 0% 100%, rgba(183,135,58,.12), transparent 50%),linear-gradient(180deg,#F4F0E2 0%, #F0EFE3 100%);border-bottom:1px solid var(--line)}
+  .hero-inner{position:relative;max-width:1280px;margin:0 auto}
+  .kicker{font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--terra);font-weight:700;margin-bottom:.9rem}
+  .hero h1 em{font-style:italic;color:var(--sea-deep)}
+  .hero p.lede{margin-top:1rem;max-width:720px;font-size:1.02rem;color:var(--ink-soft)}
+  .hero-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:.6rem;margin-top:1.5rem}
+  .stat{background:var(--bg-card);border:1px solid var(--line);border-radius:12px;padding:.75rem .85rem;box-shadow:var(--shadow)}
+  .stat .num{font-family:'Cormorant Garamond',serif;font-size:1.55rem;font-weight:700;line-height:1;color:var(--sea-deep)}
+  .stat .lbl{font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);margin-top:.25rem}
+  @media (min-width:540px){.hero{padding:4rem 6vw 3rem}.hero-stats{grid-template-columns:repeat(3,1fr)}}
+  @media (min-width:780px){.hero-stats{grid-template-columns:repeat(5,1fr)}}
+  @media (min-width:900px){.hero{padding:5rem 6vw 3.5rem}.hero p.lede{font-size:1.15rem}.hero-stats{max-width:1100px}}
+
+  .highlights{max-width:1280px;margin:0 auto;padding:1.4rem 5vw 0;display:grid;grid-template-columns:1fr;gap:.6rem}
+  @media (min-width:780px){.highlights{grid-template-columns:repeat(3,1fr);padding:2rem 5vw 0;gap:.8rem}}
+  .hl{display:flex;align-items:center;gap:.75rem;padding:.85rem 1rem;background:var(--bg-card);border:1px solid var(--line);border-radius:12px}
+  .hl .num{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:700;color:var(--sea);font-style:italic;line-height:.85;flex-shrink:0}
+  .hl .meta{display:flex;flex-direction:column}
+  .hl .lbl{font-size:.62rem;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-soft);font-weight:700}
+  .hl .name{font-family:'Cormorant Garamond',serif;font-size:1.08rem;color:var(--sea-deep);font-weight:600;line-height:1.2}
+
+  /* TRIP GRID — desktop side-by-side, mobile stacked */
+  .trip-section{padding:1.5rem 4vw 3rem;max-width:1400px;margin:0 auto}
+  .trip-grid{display:grid;grid-template-columns:1fr;gap:1.5rem}
+  .trip-map-col{position:relative}
+  .map-wrap{position:relative;border-radius:14px;overflow:hidden;box-shadow:0 1px 2px rgba(42,37,32,.06),0 12px 32px rgba(42,37,32,.10);border:1px solid var(--line);background:#dfeaf0}
+  #map{height:55vh;min-height:340px;width:100%}
+  @media (min-width:1024px){
+    .trip-section{padding:2rem 4vw 4rem;max-width:1500px}
+    .trip-grid{grid-template-columns:minmax(0,1.05fr) minmax(420px,.95fr);gap:2rem;align-items:stretch}
+    .trip-cards-col{order:1;min-width:0;display:flex;flex-direction:column}
+    .trip-map-col{order:2;position:sticky;top:1rem;align-self:start;height:calc(100vh - 2rem);max-height:900px}
+    .trip-map-col .map-wrap{height:100%}
+    .trip-map-col #map{height:100% !important;min-height:0}
+  }
+
+  .section-head{margin-bottom:1.2rem;max-width:900px}
+  .section-head .kicker{margin-bottom:.5rem}
+  .section-head p{font-size:.92rem;color:var(--ink-soft)}
+  @media (min-width:1024px){
+    .section-head{margin-bottom:1rem}
+    .section-head h2{font-size:1.7rem}
+    .section-head p{font-size:.88rem;max-width:780px}
+  }
+
+  .day-nav{
+    position:sticky; top:.5rem; z-index:50;
+    display:flex; align-items:center; gap:.4rem;
+    padding:.45rem .55rem;
+    background:rgba(255,252,245,.96); backdrop-filter:saturate(180%) blur(6px);
+    border:1px solid var(--line); border-radius:99px;
+    box-shadow:0 2px 8px rgba(42,37,32,.08), 0 12px 28px rgba(42,37,32,.06);
+    margin-bottom:1.5rem; flex-wrap:nowrap;
+  }
+  .day-nav-arrow{
+    width:34px;height:34px;border-radius:50%;flex-shrink:0;
+    background:var(--sea);color:#fff;border:none;
+    font-size:1.15rem;line-height:1;cursor:pointer;font-family:inherit;
+    display:flex;align-items:center;justify-content:center;
+    transition:background .15s ease, transform .15s ease;
+  }
+  .day-nav-arrow:hover:not(:disabled){background:var(--sea-deep)}
+  .day-nav-arrow:active:not(:disabled){transform:scale(.94)}
+  .day-nav-arrow:disabled{background:var(--line);color:var(--ink-soft);opacity:.55;cursor:default}
+  .day-pills{display:flex;gap:.25rem;flex:1;justify-content:center;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+  .day-pills::-webkit-scrollbar{display:none}
+  .day-pill{
+    padding:.4rem .7rem;flex-shrink:0;
+    border:1px solid var(--line);background:var(--bg);
+    border-radius:99px;font-size:.7rem;letter-spacing:.07em;font-weight:700;
+    color:var(--ink-soft);cursor:pointer;font-family:inherit;
+    transition:background .15s, color .15s, border-color .15s;
+  }
+  .day-pill.active{background:var(--sea);color:#fff;border-color:var(--sea-deep);box-shadow:0 2px 6px rgba(31,138,140,.3)}
+  .day-pill:hover:not(.active){background:var(--line);color:var(--sea-deep)}
+  @media (max-width:540px){
+    .day-pill{padding:.35rem .55rem;font-size:.65rem;letter-spacing:.04em}
+    .day-nav{gap:.3rem;padding:.4rem}
+    .day-nav-arrow{width:30px;height:30px;font-size:1rem}
+  }
+
+  .phase{margin:0;scroll-margin-top:5rem;display:none;flex-direction:column;animation:fadeIn .25s ease}
+  .phase.active{display:flex}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+  /* Reorder children so the day card timeline appears right after tabs */
+  .phase > .phase-header{order:1;flex-shrink:0}
+  .phase > .phase-tabs{order:2;flex-shrink:0}
+  .phase > .days{order:3;min-height:0}
+  .phase > .phase-intro{order:4}
+
+  /* Tabs */
+  .phase-tabs{display:flex;gap:.3rem;border-bottom:1px solid var(--line);margin-bottom:1rem}
+  .phase-tab{
+    padding:.65rem 1rem;border:none;background:none;
+    font-family:inherit;font-size:.72rem;letter-spacing:.1em;
+    text-transform:uppercase;font-weight:700;color:var(--ink-soft);
+    cursor:pointer;border-bottom:2px solid transparent;
+    margin-bottom:-1px;transition:color .15s, border-color .15s;
+  }
+  .phase-tab.active{color:var(--sea-deep);border-bottom-color:var(--sea)}
+  .phase-tab:hover:not(.active){color:var(--ink)}
+
+  /* Tab content visibility */
+  .phase[data-tab="steps"] > .phase-intro{display:none}
+  .phase[data-tab="about"] > .days{display:none}
+  .phase[data-tab="about"] > .phase-intro:first-of-type{margin-top:0}
+
+  /* Desktop: lock cards column to map height with internal scroll */
+  @media (min-width:1024px){
+    .trip-cards-col{
+      height:calc(100vh - 2rem);
+      max-height:900px;
+      overflow:hidden;
+    }
+    .phase.active{flex:1;min-height:0;height:100%}
+    .phase > .days{flex:1;overflow-y:auto;padding-right:.4rem;scrollbar-gutter:stable}
+    .phase > .days::-webkit-scrollbar{width:8px}
+    .phase > .days::-webkit-scrollbar-thumb{background:var(--line);border-radius:99px}
+    .phase > .days::-webkit-scrollbar-track{background:transparent}
+  }
+  .phase-header{display:flex;align-items:flex-end;gap:.8rem;flex-wrap:wrap;padding-bottom:.7rem;margin-bottom:.4rem;border-bottom:1px solid var(--line)}
+  .phase-header .num{font-family:'Cormorant Garamond',serif;font-size:2.4rem;font-weight:700;line-height:.85;color:var(--sea);font-style:italic}
+  .phase-header h2{flex:1;min-width:200px;font-size:clamp(1.3rem,4.5vw,2rem)}
+  .phase-header .meta{font-size:.78rem;color:var(--ink-soft);width:100%;margin-top:.3rem}
+  @media (min-width:540px){.phase-header .meta{width:auto;text-align:right;margin-top:0}}
+  .phase-intro{color:var(--ink-soft);max-width:720px;margin-bottom:1.4rem;font-size:.94rem;line-height:1.55}
+  .phase-intro.battery-callout{font-size:.82rem;background:rgba(31,138,140,.08);border-left:3px solid var(--sea);padding:.6rem .8rem;border-radius:6px;margin-bottom:1rem}
+
+  .days{display:grid;grid-template-columns:1fr;gap:1rem}
+  .day{
+    background:var(--bg-card);border:1px solid var(--line);border-radius:14px;
+    padding:1.1rem 1.1rem 1rem;box-shadow:var(--shadow);
+    display:flex;flex-direction:column;gap:.5rem;
+    cursor:pointer;
+    transition:border-color .15s ease, box-shadow .15s ease, transform .15s ease;
+  }
+  .day:hover{border-color:var(--sea);box-shadow:0 4px 8px rgba(42,37,32,.08),0 16px 32px rgba(42,37,32,.10)}
+  .day.active{border-color:var(--sea);border-width:2px;box-shadow:0 4px 16px rgba(31,138,140,.18),0 16px 40px rgba(31,138,140,.18);transform:translateY(-1px)}
+  .day.dimmed{opacity:.45;filter:saturate(.5)}
+  .day-tag{display:inline-block;font-size:.62rem;letter-spacing:.13em;text-transform:uppercase;color:var(--olive);font-weight:700}
+  .day-tag.tag-rest{color:var(--gold)}
+  .day-tag.tag-drive{color:var(--terra)}
+  .day-tag.tag-pass{color:var(--sea-deep);background:rgba(31,138,140,.14);padding:.18rem .4rem;border-radius:4px;letter-spacing:.1em}
+  .day-tag.tag-lake{color:var(--sea);background:rgba(31,138,140,.14);padding:.18rem .4rem;border-radius:4px;letter-spacing:.1em}
+  .day-tag.tag-city{color:var(--plum);background:rgba(91,58,87,.12);padding:.18rem .4rem;border-radius:4px;letter-spacing:.1em}
+  .day-top{display:flex;align-items:baseline;gap:.55rem;flex-wrap:wrap}
+  .day-num{font-family:'Cormorant Garamond',serif;font-size:.95rem;font-weight:600;color:#fff;background:var(--sea);padding:.15rem .55rem;border-radius:6px;letter-spacing:.04em;flex-shrink:0}
+  .day h4{font-size:1.08rem;line-height:1.25;flex:1;min-width:0}
+  .day .km{font-size:.74rem;color:var(--ink-soft);font-variant-numeric:tabular-nums}
+
+  .timeline{list-style:none;margin:.5rem 0 0;padding:0}
+  .step{display:grid;grid-template-columns:42px 64px 1fr;gap:.4rem;padding:.45rem 0;align-items:baseline;border-bottom:1px dashed var(--line)}
+  .step:last-child{border-bottom:none}
+  .step .t{font-variant-numeric:tabular-nums;font-weight:700;color:var(--ink);font-size:.74rem}
+  .step .lbl{font-size:.58rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;align-self:center;padding:.15rem 0}
+  .step .desc{color:var(--ink);font-size:.84rem;line-height:1.4}
+  .step .desc b{font-weight:600;color:var(--sea-deep)}
+  @media (min-width:540px){.step{grid-template-columns:48px 76px 1fr;gap:.55rem}.step .t{font-size:.78rem}.step .lbl{font-size:.62rem;letter-spacing:.12em}.step .desc{font-size:.88rem}}
+  .step-wake .lbl{color:#9b6d2c}
+  .step-depart .lbl{color:var(--terra)}
+  .step-drive .lbl{color:var(--terra)}
+  .step-charge .lbl{color:var(--sea);background:rgba(31,138,140,.1);border-radius:4px;padding:.15rem .35rem}
+  .step-arrive .lbl{color:var(--sea)}
+  .step-visit .lbl{color:var(--plum)}
+  .step-hike .lbl{color:var(--olive)}
+  .step-swim .lbl{color:var(--sea)}
+  .step-swim .lbl::before{content:"≈ ";font-weight:700}
+  .step-bike .lbl{color:var(--olive)}
+  .step-eat .lbl{color:#7a5226}
+  .step-eat .lbl::before{content:"🍴 ";font-size:.95em;letter-spacing:0}
+  .step-relax .lbl{color:#9d8a52}
+  .step-sunset .lbl{color:#c4671b}
+  .step-pass .lbl{color:#0E5A63;background:rgba(14,90,99,.1);border-radius:4px;padding:.15rem .35rem}
+  .step-sleep .lbl{color:#fff;background:var(--sea-deep);border-radius:4px;padding:.18rem .4rem;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:.78rem;letter-spacing:.04em}
+  .step-sleep .lbl::before{content:"Zz ";font-style:italic;font-weight:700}
+
+  .tips{background:linear-gradient(180deg,#E8E5D2 0%,#DCD7BC 100%);border-top:1px solid var(--line);padding:2.5rem 5vw}
+  @media (min-width:900px){.tips{padding:5rem 5vw}}
+  .tips-inner{max-width:1280px;margin:0 auto}
+  .tips-grid{display:grid;grid-template-columns:1fr;gap:.9rem;margin-top:1.5rem}
+  @media (min-width:680px){.tips-grid{grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem}}
+  .tip{background:var(--bg-card);border-radius:12px;padding:1.2rem;border:1px solid var(--line);box-shadow:var(--shadow)}
+  .tip h4{margin-bottom:.4rem;color:var(--sea-deep);font-size:1.05rem}
+  .tip ul{margin:.4rem 0 0;padding-left:1rem;font-size:.86rem;color:var(--ink)}
+  .tip ul li{margin:.25rem 0}
+  .tip .icon{display:inline-block;width:32px;height:32px;border-radius:50%;background:var(--sea);color:#fff;font-weight:700;text-align:center;line-height:32px;margin-bottom:.5rem;font-size:.85rem}
+  .tip:nth-child(2) .icon{background:var(--terra)}
+  .tip:nth-child(3) .icon{background:var(--olive)}
+  .tip:nth-child(4) .icon{background:var(--gold)}
+  .tip:nth-child(5) .icon{background:var(--plum)}
+
+  footer{background:var(--sea-deep);color:#dfeaf0;padding:2rem 5vw;text-align:center;font-size:.88rem}
+  footer h3{color:#fff;margin-bottom:.5rem;font-size:1.2rem}
+  footer p{max-width:680px;margin:.4rem auto;color:#bcd2da}
+  footer .sig{margin-top:1.2rem;font-style:italic;color:#90a8b1;font-size:.78rem}
+
+  /* MAP MARKERS */
+  .num-marker{background:#fff;border:3px solid var(--sea);color:var(--sea-deep);border-radius:50%;width:30px!important;height:30px!important;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.74rem;font-family:'Inter',sans-serif;box-shadow:0 2px 6px rgba(0,0,0,.25);margin-left:-15px!important;margin-top:-15px!important}
+  .num-marker.cap{font-family:'Inter',sans-serif;font-weight:700;font-size:.62rem;letter-spacing:.06em;text-transform:uppercase;background:var(--sea-deep);color:#fff!important;width:36px!important;border-radius:14px}
+
+  /* Sleep marker · Zz on dark teal circle */
+  .sleep-marker{
+    width:34px!important;height:34px!important;
+    background:var(--sea-deep);border:2px solid #fff;
+    color:#fff;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Cormorant Garamond',serif;font-weight:700;
+    font-size:1rem;letter-spacing:.02em;
+    box-shadow:0 2px 8px rgba(0,0,0,.3),0 0 0 3px rgba(14,90,99,.18);
+    margin-left:-17px!important;margin-top:-17px!important;
+  }
+  .sleep-marker .zz-big{font-size:1.05rem;line-height:1}
+  .sleep-marker .zz-small{font-size:.72rem;line-height:1;margin-left:-.05rem;margin-top:-.2rem}
+
+  /* Lunch marker · fork & knife */
+  .lunch-marker{
+    width:30px!important;height:30px!important;
+    background:#7a5226;border:2px solid #fff;
+    border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 2px 6px rgba(0,0,0,.3),0 0 0 3px rgba(122,82,38,.18);
+    margin-left:-15px!important;margin-top:-15px!important;
+  }
+  .lunch-marker svg{width:16px;height:16px;color:#fff;fill:currentColor}
+
+  /* Swim marker · water drop */
+  .swim-marker{
+    width:30px!important;height:30px!important;
+    background:var(--sea);border:2px solid #fff;
+    border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    color:#fff;font-weight:700;font-size:.95rem;line-height:1;
+    box-shadow:0 2px 6px rgba(0,0,0,.3),0 0 0 3px rgba(31,138,140,.2);
+    margin-left:-15px!important;margin-top:-15px!important;
+  }
+
+  /* Charge marker · lightning bolt */
+  .charge-marker{
+    width:32px!important;height:32px!important;
+    background:#FFD93D;border:2px solid #B58E0B;
+    border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 2px 8px rgba(0,0,0,.3),0 0 0 4px rgba(255,217,61,.25);
+    margin-left:-16px!important;margin-top:-16px!important;
+  }
+  .charge-marker svg{width:18px;height:18px;color:#5C3D00;fill:currentColor}
+
+  /* Pass marker · triangle */
+  .pass-marker{
+    width:0!important;height:0!important;
+    border-left:13px solid transparent;border-right:13px solid transparent;
+    border-bottom:22px solid #0E5A63;
+    margin-left:-13px!important;margin-top:-22px!important;
+    filter:drop-shadow(0 2px 4px rgba(0,0,0,.3));
+  }
+
+  /* City marker · for Venice */
+  .city-marker{
+    width:34px!important;height:34px!important;
+    background:var(--plum);border:2px solid #fff;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    color:#fff;font-size:1rem;line-height:1;
+    box-shadow:0 2px 8px rgba(0,0,0,.3),0 0 0 3px rgba(91,58,87,.2);
+    margin-left:-17px!important;margin-top:-17px!important;
+  }
+
+  /* Battery label · permanent tooltip beside marker */
+  .leaflet-tooltip.battery-label{
+    background:rgba(255,252,245,.96);
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding:.15rem .4rem;
+    font-family:'Inter',sans-serif;
+    font-size:.7rem;
+    font-weight:700;
+    color:var(--sea-deep);
+    box-shadow:0 2px 6px rgba(0,0,0,.15);
+    white-space:nowrap;
+  }
+  .leaflet-tooltip.battery-label::before{display:none}
+  .leaflet-tooltip.battery-label.charge-tooltip{color:#5C3D00;background:#FFF6CC;border-color:#B58E0B}
+  .leaflet-tooltip.battery-label.pass-tooltip{color:#fff;background:#0E5A63;border-color:#073a40}
+  .leaflet-tooltip.battery-label.sleep-tooltip{color:#fff;background:var(--sea-deep);border-color:#073a40}
+
+  /* Active vs dimmed map elements */
+  .leaflet-marker-icon.dim{opacity:.25;filter:saturate(.3)}
+  .leaflet-tooltip.dim{opacity:.25}
+
+  .leaflet-popup-content-wrapper{border-radius:10px}
+  .leaflet-popup-content{font-family:'Inter',sans-serif;font-size:.85rem;margin:.7rem .9rem;line-height:1.45}
+  .leaflet-popup-content b{font-family:'Cormorant Garamond',serif;font-weight:700;font-size:1rem;color:var(--sea-deep);display:block;margin-bottom:.1rem}
+  .popup-visit{display:block}
+  .popup-visit .popup-meta{display:block;font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--terra);font-weight:700;margin-bottom:.25rem}
+  .popup-visit .popup-note{display:block;color:var(--ink-soft);font-size:.82rem}
+  .popup-visit .popup-batt{display:block;color:var(--sea-deep);font-size:.78rem;font-weight:600;margin-top:.3rem}
+  .popup-img-wrap{width:100%;aspect-ratio:4/3;background:linear-gradient(135deg,#EFE6CF 0%,#dfeaf0 100%);border-radius:8px;overflow:hidden;position:relative;margin-bottom:.5rem}
+  .popup-img{width:100%;height:100%;object-fit:cover;display:block;opacity:0;transition:opacity .25s}
+  .popup-img-loader{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:.7rem;color:var(--ink-soft);text-align:center;padding:.5rem;letter-spacing:.04em}
+  .p4n-btn{display:inline-flex;align-items:center;gap:.3rem;padding:.22rem .6rem;background:rgba(214,155,58,.14);border:1px solid rgba(214,155,58,.4);border-radius:99px;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:#8a5a14;text-decoration:none;margin-top:.4rem;white-space:nowrap;font-family:'Inter',sans-serif}
+  .p4n-btn:hover,.p4n-btn:active{background:rgba(214,155,58,.28)}
+  .p4n-btn::after{content:"↗";font-size:.72rem;letter-spacing:0}
+  .step-sleep .desc .p4n-btn{margin-top:.5rem}
+  .sleep-pick{display:flex;flex-wrap:wrap;align-items:center;gap:.3rem;margin:.4rem 0 .15rem}
+  .sleep-pick .sp-btn{font-family:Inter,sans-serif;font-size:.72rem;cursor:pointer;border:1px solid var(--line);background:#fff;color:#2a2520;border-radius:99px;padding:.2rem .6rem;transition:background .15s,border-color .15s,color .15s}
+  .sleep-pick .sp-btn:hover{border-color:var(--sea)}
+  .sleep-pick .sp-btn.is-active{background:var(--sea-deep);color:#fff;border-color:var(--sea-deep)}
+  .leaflet-popup-content .p4n-btn{margin-top:.35rem;width:100%;justify-content:center}
+
+  .gmaps-btn{display:inline-flex;align-items:center;gap:.3rem;padding:.22rem .6rem;background:rgba(31,138,140,.14);border:1px solid rgba(31,138,140,.4);border-radius:99px;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--sea-deep);text-decoration:none;margin-top:.35rem;white-space:nowrap;font-family:'Inter',sans-serif}
+  .gmaps-btn:hover,.gmaps-btn:active{background:rgba(31,138,140,.28)}
+  .gmaps-btn::after{content:"↗";font-size:.72rem;letter-spacing:0}
+  .leaflet-popup-content .gmaps-btn{margin-top:.3rem;width:100%;justify-content:center}
+
+  .map-status{position:absolute;top:10px;left:50%;transform:translateX(-50%);z-index:1000;background:rgba(255,252,245,.96);border:1px solid #E5DCC8;border-radius:99px;padding:.35rem .85rem;font-size:.72rem;color:#5C5448;box-shadow:0 4px 12px rgba(0,0,0,.08);font-family:Inter,sans-serif;letter-spacing:.04em;transition:opacity .8s}
+  .map-legend{position:absolute;left:10px;bottom:10px;z-index:1000;display:flex;align-items:center;gap:.3rem;background:rgba(255,252,245,.96);border:1px solid #E5DCC8;border-radius:99px;padding:.3rem .7rem;font-size:.66rem;color:#5C5448;font-family:Inter,sans-serif;letter-spacing:.03em;box-shadow:0 4px 12px rgba(0,0,0,.08)}
+  .map-legend .lg{display:inline-block;width:20px;height:0;border-top:3px solid #1F8A8C;vertical-align:middle}
+  .map-legend .lg-foot{border-top-style:dashed;margin-left:.45rem}
+
+  /* Image popover (hover/tap on bolded place names) */
+  .hoverable-place{cursor:pointer;border-bottom:1px dotted rgba(31,138,140,.45);transition:border-color .15s,color .15s}
+  .hoverable-place:active{border-bottom-color:var(--terra);color:var(--terra)}
+  #img-popover{position:fixed;left:50%;bottom:0;transform:translate(-50%,100%);width:min(440px,calc(100vw - 16px));background:#fff;border:1px solid var(--line);border-top-left-radius:18px;border-top-right-radius:18px;box-shadow:0 -8px 32px rgba(0,0,0,.18);z-index:9999;padding:.85rem .9rem .7rem;font-family:'Inter',sans-serif;pointer-events:none;opacity:0;visibility:hidden;transition:transform .25s ease,opacity .2s ease,visibility 0s linear .25s}
+  #img-popover.show{transform:translate(-50%,0);pointer-events:auto;opacity:1;visibility:visible;transition:transform .25s ease,opacity .2s ease,visibility 0s}
+  @media (min-width:680px){#img-popover{position:absolute;bottom:auto;border-radius:14px;transform:translateY(8px);box-shadow:0 12px 40px rgba(0,0,0,.18),0 2px 8px rgba(0,0,0,.06)}#img-popover.show{transform:translateY(0)}}
+  .ipop-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem;padding:0 .15rem;gap:.5rem}
+  .ipop-title{font-family:'Cormorant Garamond',serif;font-weight:700;font-size:1.1rem;color:var(--sea-deep);line-height:1.2;flex:1;min-width:0}
+  .ipop-counter{font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);font-weight:600;white-space:nowrap}
+  .ipop-close{background:none;border:none;font-size:1.5rem;line-height:1;color:var(--ink-soft);width:32px;height:32px;border-radius:50%;cursor:pointer;flex-shrink:0;padding:0;display:flex;align-items:center;justify-content:center}
+  .ipop-close:active{background:var(--line)}
+  .ipop-body{display:flex;align-items:stretch;gap:.4rem}
+  .ipop-btn{flex:0 0 38px;background:var(--bg);border:1px solid var(--line);border-radius:10px;font-size:1.4rem;color:var(--sea-deep);cursor:pointer;font-family:inherit;line-height:1;padding:0}
+  .ipop-btn:active{background:var(--line)}
+  .ipop-btn:disabled{opacity:.35}
+  .ipop-frame{flex:1;position:relative;aspect-ratio:4/3;background:linear-gradient(135deg,#EFE6CF 0%,#dfeaf0 100%);border-radius:10px;overflow:hidden}
+  .ipop-img{width:100%;height:100%;object-fit:cover;display:block;transition:opacity .25s}
+  .ipop-loader{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:.82rem;color:var(--ink-soft);text-align:center;padding:1rem}
+  .ipop-attr{margin-top:.4rem;font-size:.62rem;text-align:right;color:var(--ink-soft);letter-spacing:.04em;padding:0 .2rem}
+  .ipop-attr a{color:var(--ink-soft);border-bottom:none}
+</style>
+</head>
+<body class="app-mode">
+
+<header class="app-bar">
+  <a href="index.html" class="app-bar-btn" aria-label="Back to all trips" title="Back">‹</a>
+  <div class="app-bar-title">
+    <small>Italian Lakes · 7 days</small>
+    Maggiore · Como · Garda · Venice
+  </div>
+  <button class="app-bar-btn" id="info-btn" aria-label="Trip details" title="Trip details">i</button>
+</header>
+
+<div class="info-drawer" id="info-drawer" aria-hidden="true">
+  <div class="info-drawer-panel">
+    <div class="info-drawer-bar">
+      <h2>About this trip</h2>
+      <button class="app-bar-btn" id="info-close" aria-label="Close">&times;</button>
+    </div>
+    <div class="info-drawer-body" id="info-drawer-body"></div>
+  </div>
+</div>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="kicker">Italian Lakes · Tesla Model Y · No tolls · Summer from Chambéry</div>
+    <h1>Seven days, three great lakes,<br>and one <em>floating city</em>.</h1>
+    <p class="lede">A not-rushed 7-day loop from Chambéry over a toll-free Alpine pass to the great lakes of the north — <b>Maggiore</b>, two days on <b>Como</b>, and <b>Garda</b> — chasing quiet free swims and big lake views away from the honeypots, then <b>Venice</b> — the best part of two days in the city, a night at Hotel Casa W (San Polo), and a lakeside last night on Lake Garda. The map on the right tracks every stop and charge with battery forecasts; tap a day card to focus its segment. Mon 13 → Sun 19 July.</p>
+    <div class="hero-stats">
+      <div class="stat"><div class="num">7</div><div class="lbl">days</div></div>
+      <div class="stat"><div class="num">~1,540</div><div class="lbl">km</div></div>
+      <div class="stat"><div class="num">3</div><div class="lbl">great lakes</div></div>
+      <div class="stat"><div class="num">2</div><div class="lbl">countries · FR · IT</div></div>
+      <div class="stat"><div class="num">2,188m</div><div class="lbl">pass · Petit-St-Bernard</div></div>
+      <div class="stat"><div class="num">€0</div><div class="lbl">tolls · no vignette</div></div>
+      <div class="stat"><div class="num">~15</div><div class="lbl">fast-charge stops</div></div>
+      <div class="stat"><div class="num">~€260</div><div class="lbl">charging · ~460 kWh</div></div>
+      <div class="stat"><div class="num">~€1,235</div><div class="lbl">all-in · for two</div></div>
+      <div class="stat"><div class="num">1</div><div class="lbl">hotel night · Venice</div></div>
+    </div>
+  </div>
+</header>
+
+<div class="highlights">
+  <div class="hl"><div class="num">01</div><div class="meta"><div class="lbl">Borromeo castle over south Maggiore</div><div class="name">Rocca di Angera</div></div></div>
+  <div class="hl"><div class="num">02</div><div class="meta"><div class="lbl">Where the lake forks in three</div><div class="name">Bellagio · Punta Spartivento</div></div></div>
+  <div class="hl"><div class="num">03</div><div class="meta"><div class="lbl">Sleep in the city, not the car</div><div class="name">Venice · Hotel Casa W, San Polo</div></div></div>
+</div>
+
+<section class="trip-section">
+
+  <div class="section-head">
+    <div class="kicker">Day-by-day · use arrows to flip through</div>
+    <h2>Hour-by-hour, with battery forecast.</h2>
+    <p>One day at a time. Lightning markers are charge stops, <b>Zz</b> circles are sleep spots, water drops are swims, forks are lunch stops, triangles are passes — each labeled with the battery percentage. Use the arrows or pills to switch days; the map updates automatically. Sleep spots are left as <b>Park4Night placeholders</b> — pick your own free spot near each suggested town.</p>
+  </div>
+
+  <nav class="day-nav" aria-label="Day navigation">
+    <button class="day-nav-arrow" id="prev-day" aria-label="Previous day">&lsaquo;</button>
+    <div class="day-pills" role="tablist">
+      <button class="day-pill active" data-day-id="d1" role="tab">D 01</button>
+      <button class="day-pill" data-day-id="d2" role="tab">D 02</button>
+      <button class="day-pill" data-day-id="d3" role="tab">D 03</button>
+      <button class="day-pill" data-day-id="d4" role="tab">D 04</button>
+      <button class="day-pill" data-day-id="d5" role="tab">D 05</button>
+      <button class="day-pill" data-day-id="d6" role="tab">D 06</button>
+      <button class="day-pill" data-day-id="d7" role="tab">D 07</button>
+    </div>
+    <button class="day-nav-arrow" id="next-day" aria-label="Next day">&rsaquo;</button>
+  </nav>
+
+  <div class="trip-grid">
+
+    <aside class="trip-map-col">
+      <div class="map-wrap">
+        <div id="map"></div>
+        <div class="map-legend"><span class="lg lg-drive"></span><span>Drive</span><span class="lg lg-foot"></span><span>On foot</span></div>
+      </div>
+    </aside>
+
+    <main class="trip-cards-col">
+
+      <!-- ===== PHASE 1 ===== -->
+      <div class="phase active" id="phase-1">
+        <div class="phase-header"><div class="num">01</div><h2>The crossing · Chambéry → Lago Maggiore</h2><div class="meta">Mon 13 Jul · ~340 km · Alpine pass</div></div>
+        <p class="phase-intro">The big driving day. Climb the Tarentaise and cross the <b>Col du Petit-Saint-Bernard</b> (2,188 m) — a toll-free Alpine pass, no tunnel fee — then drop into the <b>Aosta valley</b> and run across the Piedmont plain (no autostrada) to the south end of <b>Lago Maggiore</b>. Top up at the <b>Busto Arsizio</b> Supercharger, spend the evening in <b>Angera</b> under its Borromeo castle, then sleep ~4 km up the shore at <b>Ispra</b>. Start early.</p>
+        <p class="phase-intro battery-callout"><b>Battery plan</b> · leave Chambéry at 80% · quick top at <b>SC Albertville</b> before the climb · charge to 80% at <b>SC Aosta</b> after the descent (regen helps) · last top at <b>SC Busto Arsizio</b> by the base so you <b>sleep at ~72%</b> — a car-camp night drains ~15–20% (Camp-mode AC), so you wake at <b>~52%</b>. Lowest driving state ~24% at Aosta.</p>
+        <div class="days">
+          <div class="day" data-day-id="d1">
+            <div class="day-tag tag-pass">Alpine pass · toll-free crossing</div>
+            <div class="day-top"><span class="day-num">D 01</span><h4>Chambéry → Angera · Lago Maggiore</h4></div>
+            <div class="km">~340 km · ~8–9 h elapsed with charges &amp; pass</div>
+            <ol class="timeline">
+              <li class="step step-wake"><span class="t">07:30</span><span class="lbl">Wake</span><span class="desc">Pack up in Chambéry · battery 80%</span></li>
+              <li class="step step-depart"><span class="t">08:00</span><span class="lbl">Depart</span><span class="desc">N90 toward <b>Albertville</b> (toll-free)</span></li>
+              <li class="step step-charge"><span class="t">08:45</span><span class="lbl">Charge</span><span class="desc">SC <b>Albertville</b> · quick top before the climb · arrive 62%, leave 80%</span></li>
+              <li class="step step-drive"><span class="t">09:15</span><span class="lbl">Drive</span><span class="desc">Up the Tarentaise via <b>Bourg-Saint-Maurice</b></span></li>
+              <li class="step step-pass"><span class="t">10:30</span><span class="lbl">Pass</span><span class="desc">Cross the <b>Col du Petit-Saint-Bernard</b> (2,188 m) · toll-free border into Italy</span></li>
+              <li class="step step-drive"><span class="t">11:15</span><span class="lbl">Drive</span><span class="desc">Descend toward the <b>Aosta</b> valley · strong regen on the way down</span></li>
+              <li class="step step-charge"><span class="t">11:45</span><span class="lbl">Charge</span><span class="desc">SC <b>Aosta</b> · Pollein · lunch · arrive 24%, leave 80% (toll-free SS26, not the A5)</span></li>
+              <li class="step step-drive"><span class="t">13:00</span><span class="lbl">Drive</span><span class="desc">Down the valley and across the Novara plain toward the lake — no autostrada</span></li>
+              <li class="step step-charge"><span class="t">15:45</span><span class="lbl">Charge</span><span class="desc">SC <b>Busto Arsizio</b> · Mizar Park · arrive 33%, leave 80% — top up by the base</span></li>
+              <li class="step step-visit"><span class="t">16:30</span><span class="lbl">Visit</span><span class="desc"><b>Rocca di Angera</b> · drive up the bluff for the free lake panorama &amp; the castle exterior · free parking at Via Rocca Castello (foot of the rocca)<br><small style="color:var(--ink-soft);font-size:.75rem">Going inside (frescoed halls + Doll Museum + medieval-garden view) is €18pp · 10:00–18:00, last entry 17:00 — if you want it, do it Day 2 at the 10:00 opening, not rushed</small></span></li>
+              <li class="step step-arrive"><span class="t">17:15</span><span class="lbl">Arrive</span><span class="desc"><b>Angera</b> · quiet south-shore town with a lakefront promenade</span></li>
+              <li class="step step-swim"><span class="t">17:30</span><span class="lbl">Swim</span><span class="desc"><b>Spiaggia di Angera</b> · the town's free lungolago beach — sand &amp; pebble, gradual entry, views across to Arona (water shoes)</span></li>
+              <li class="step step-eat"><span class="t">19:30</span><span class="lbl">Eat</span><span class="desc">Dinner in <b>Angera</b> · <b>Pizzeria De Vita</b> — real Neapolitan pizza · ★4.9 (TripAdvisor) · ~€12–18pp<br><small style="color:var(--ink-soft);font-size:.75rem">Open Mon eve (closed Tue) — the right call for your Monday arrival · the top trattoria <b>Del Torchio al Tavolo</b> (regional, ★4.9 Google, ~€20–30pp) is closed Sun &amp; Mon, so save it for another night</small></span></li>
+              <li class="step step-sleep"><span class="t">21:00</span><span class="lbl">Sleep</span><span class="desc"><b>Ispra</b> · Via Luigi Cadorna (Park4Night) · sleep 72% → wake ~52% (−20% overnight)<br><small style="color:var(--ink-soft);font-size:.75rem">Your chosen spot, ~4 km up the east shore from Angera — hop here after dinner</small></span></li>
+            </ol>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== PHASE 2 ===== -->
+      <div class="phase" id="phase-2">
+        <div class="phase-header"><div class="num">02</div><h2>Lago Maggiore → Lago di Como</h2><div class="meta">Tue 14 Jul · ~110 km · onto Como</div></div>
+        <p class="phase-intro">With Lugano skipped, a short morning on Maggiore then straight to <b>Lake Como</b> — the trip's centrepiece — for the first of two days. The drive stays in Italy via Varese (no Switzerland, no vignette). Charge at the <b>Grandate</b> Supercharger by Como, swim and stroll the <b>Cernobbio</b> lakefront (gateway to the postcard central lake), then settle for the night by <b>Como</b> on Via San Giacomo.</p>
+        <p class="phase-intro battery-callout"><b>Battery plan</b> · wake at <b>~52%</b> · charge to 80% at <b>SC Grandate</b> (arrive ~34%) · just ~8 km to the Como base, so you <b>sleep at ~77%</b> → wake ~57% tomorrow. Lowest state ~34%.</p>
+        <div class="days">
+          <div class="day" data-day-id="d2">
+            <div class="day-tag tag-lake">Onto Lake Como · west shore</div>
+            <div class="day-top"><span class="day-num">D 02</span><h4>Angera → Como · Lago di Como</h4></div>
+            <div class="km">~110 km · a Maggiore morning, then onto Como</div>
+            <ol class="timeline">
+              <li class="step step-wake"><span class="t">08:30</span><span class="lbl">Wake</span><span class="desc">Ispra · battery 52%</span></li>
+              <li class="step step-swim"><span class="t">09:00</span><span class="lbl">Swim</span><span class="desc">Morning dip at the <b>Spiaggia di Angera</b> · sand &amp; pebble, calm &amp; shallow</span></li>
+              <li class="step step-depart"><span class="t">10:30</span><span class="lbl">Depart</span><span class="desc">East via <b>Varese</b> toward Como (stays in Italy — no vignette)</span></li>
+              <li class="step step-charge"><span class="t">12:00</span><span class="lbl">Charge</span><span class="desc">SC <b>Grandate</b> · Como · lunch · arrive 34%, leave 80% (Como's Supercharger)</span></li>
+              <li class="step step-drive"><span class="t">13:00</span><span class="lbl">Drive</span><span class="desc">8 km up the west shore to <b>Cernobbio</b></span></li>
+              <li class="step step-swim"><span class="t">14:30</span><span class="lbl">Swim</span><span class="desc"><b>Lido di Cernobbio</b> · grassy lakefront lido with pool &amp; views to Como — paid entry; for a free dip use the public lakefront just up-shore (Como is pebble — water shoes)</span></li>
+              <li class="step step-relax"><span class="t">17:00</span><span class="lbl">Relax</span><span class="desc">Cernobbio lakefront &amp; Villa d'Este views · optional Brunate funicular over Como</span></li>
+              <li class="step step-eat"><span class="t">19:30</span><span class="lbl">Eat</span><span class="desc">Dinner in <b>Cernobbio</b> · <b>Federico Cernobbio</b> — local pizzeria &amp; cucina · ★4.7 (Google) · ~€15–25pp<br><small style="color:var(--ink-soft);font-size:.75rem">A locals' spot, not a view-tax trap (open Tue) · for the classic perch risotto instead: Hostaria Cernobbio (★4.6) — pricier, order one course; closed Tue</small></span></li>
+              <li class="step step-sleep"><span class="t">21:00</span><span class="lbl">Sleep</span><span class="desc"><b>Como</b> · Via San Giacomo (Park4Night) · sleep 77% → wake ~57% (−20% overnight)<br><small style="color:var(--ink-soft);font-size:.75rem">Your chosen spot, ~3.5 km SW of Cernobbio — drop down here after dinner</small></span></li>
+            </ol>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== PHASE 3 ===== -->
+      <div class="phase" id="phase-3">
+        <div class="phase-header"><div class="num">03</div><h2>Lake Como grand loop → Lecco</h2><div class="meta">Wed 15 Jul · ~120 km · no ferry</div></div>
+        <p class="phase-intro">Today you drive the whole shoreline. From <b>Como</b>, head up the <b>west shore</b> past <b>Villa del Balbianello</b> and the Tremezzina villas, on to the wild <b>north tip at Colico</b>, then back down the <b>east shore</b> — the <b>Orrido di Bellano</b> gorge, <b>Varenna</b>, and a swim at <b>Lierna</b> — to <b>Lecco</b>, at the foot of the eastern branch, for the night. The road wraps right around the top of the lake — no ferry needed.</p>
+        <p class="phase-intro battery-callout"><b>Battery plan</b> · wake at <b>~57%</b> · charge to 80% at <b>SC Grandate</b> before setting off · the ~120 km loop runs it down, so top up at a <b>Lecco CCS fast charger</b> — the one non-Tesla stop, since no Supercharger serves the east/north shore — then <b>sleep right there in Lecco at ~78%</b> → wake ~58% for Day 4. Pick the cheapest fast charger in the app (Atlante / Enel X / Be Charge).</p>
+        <div class="days">
+          <div class="day" data-day-id="d3">
+            <div class="day-tag tag-lake">Lake Como · the grand loop</div>
+            <div class="day-top"><span class="day-num">D 03</span><h4>Como → Lecco · the full loop</h4></div>
+            <div class="km">~120 km around the lake · no ferry · sleep Lecco</div>
+            <ol class="timeline">
+              <li class="step step-wake"><span class="t">08:30</span><span class="lbl">Wake</span><span class="desc">Como · Via San Giacomo · battery 57%</span></li>
+              <li class="step step-charge"><span class="t">09:00</span><span class="lbl">Charge</span><span class="desc">SC <b>Grandate</b> · Como · top up before the loop · arrive 54%, leave 80%</span></li>
+              <li class="step step-drive"><span class="t">09:45</span><span class="lbl">Drive</span><span class="desc">Up the <b>west shore</b> (SS340 Regina) through the Tremezzina</span></li>
+              <li class="step step-visit"><span class="t">10:30</span><span class="lbl">Visit</span><span class="desc"><b>Villa del Balbianello</b>, Lenno · the lake's most photogenic villa (+ Villa Carlotta at Tremezzo)</span></li>
+              <li class="step step-drive"><span class="t">12:00</span><span class="lbl">Drive</span><span class="desc">North through Menaggio &amp; Gravedona to the head of the lake</span></li>
+              <li class="step step-visit"><span class="t">12:45</span><span class="lbl">Visit</span><span class="desc"><b>Colico</b> · the wild, breezy north tip — round the top onto the east shore (no ferry)</span></li>
+              <li class="step step-visit"><span class="t">13:30</span><span class="lbl">Visit</span><span class="desc"><b>Orrido di Bellano</b> · gorge walkway over the Pioverna falls — east shore, by the parish church in Bellano · ~€7pp (€5 ages 6–14, free under 5) · ~45 min on the footbridges<br><small style="color:var(--ink-soft);font-size:.75rem">Park: <b>Bellano station lot</b> — most reliable &amp; cheapest, €0.50/h (free 20:00–08:00), ~8 min flat walk · free alt: Piazza Verdi (needs a parking disc) · the small church/Via Roma lot is closest (~2 min) but only ~20 spaces and fills early — fallback only</small></span></li>
+              <li class="step step-visit"><span class="t">14:15</span><span class="lbl">Visit</span><span class="desc"><b>Varenna</b> · Vezio Castle &amp; Villa Monastero, above the crowds</span></li>
+              <li class="step step-swim"><span class="t">15:30</span><span class="lbl">Swim</span><span class="desc"><b>Spiaggia di Lierna · Riva Bianca</b> · white-pebble + grass beach by the old Castello, clear water — one of Como's best swims<br><small style="color:var(--ink-soft);font-size:.75rem">Free beach; park along the old lake road by Castello (~30 cars, €1.50/h or €10/day) — arrive early · water shoes</small></span></li>
+              <li class="step step-charge"><span class="t">17:30</span><span class="lbl">Charge</span><span class="desc"><b>Lecco</b> · CCS fast charge · arrive 34%, leave 80% (no Tesla SC on this shore — pick the cheapest: Atlante / Enel X / Be Charge)</span></li>
+              <li class="step step-arrive"><span class="t">18:00</span><span class="lbl">Arrive</span><span class="desc"><b>Lecco</b> · lively lakefront town at the foot of the eastern branch</span></li>
+              <li class="step step-eat"><span class="t">19:30</span><span class="lbl">Eat</span><span class="desc">Dinner near <b>Lecco</b> · <b>Osteria Sali e Tabacchi</b>, Mandello (~20 min N) — Lario lake fish &amp; missoltini, Slow Food 2026 · ★4.5 (Google) · ~€25–30pp<br><small style="color:var(--ink-soft);font-size:.75rem">Open Wed dinner · higher-rated alt up the Valsassina valley: Trattoria Crotto Alpino (★4.5 TA/RG, ~€20–30pp) — phone ahead, no weekday dinner without a booking</small></span></li>
+              <li class="step step-sleep"><span class="t">21:00</span><span class="lbl">Sleep</span><span class="desc"><b>Lecco</b> · sleep 78% → wake ~58% (−20% overnight) — pick your overnight spot:<span class="sleep-pick"><button type="button" class="sp-btn is-active" data-day="d3" data-idx="0">By the CCS charge</button><button type="button" class="sp-btn" data-day="d3" data-idx="1">Via Provinciale (paid)</button></span><small style="color:var(--ink-soft);font-size:.75rem">Tap one — the map marker &amp; route move to your choice (~0.9 km vs ~1.3 km from the charge; both sleep ~78%)</small></span></li>
+            </ol>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== PHASE 4 ===== -->
+      <div class="phase" id="phase-4">
+        <div class="phase-header"><div class="num">04</div><h2>Lago di Como → Garda swim → near Venice</h2><div class="meta">Thu 16 Jul · ~295 km · the long transfer</div></div>
+        <p class="phase-intro">The trip's longest transfer, flat the whole way (no A4) — but with a proper <b>Garda</b> swim in the middle. Charge + lunch at the <b>Bergamo Dalmine</b> Supercharger, a midday swim on a rare <b>sandy</b> beach at <b>Pacengo</b> (south Garda, right by your Peschiera charge — no detour north), then on across the Veneto to a free spot <b>~30 min from Venice</b> to sleep in the car — so tomorrow is a fresh, full day in the city. <em>(Garda is a stop today, not an overnight: with one night near Venice plus the Venice hotel, the 7-day budget gives Garda a swim rather than a bed.)</em></p>
+        <p class="phase-intro battery-callout"><b>Battery plan</b> · wake at <b>~58%</b> · charge + lunch to 80% at <b>SC Bergamo Dalmine</b> (arrive ~42%) · Garda swim · charge to 80% at <b>SC Peschiera</b> leaving the lake · top up at <b>SC Mestre</b> so you <b>sleep at ~76%</b> → wake ~56% after the camp-mode AC drain. Lowest state ~30% at Mestre.</p>
+        <div class="days">
+          <div class="day" data-day-id="d4">
+            <div class="day-tag tag-drive">Long transfer · Garda swim → Venice</div>
+            <div class="day-top"><span class="day-num">D 04</span><h4>Lecco → Garda swim → near Venice</h4></div>
+            <div class="km">~295 km · the longest day (no pass) · start early</div>
+            <ol class="timeline">
+              <li class="step step-wake"><span class="t">08:00</span><span class="lbl">Wake</span><span class="desc">Lecco · battery 58%</span></li>
+              <li class="step step-depart"><span class="t">08:30</span><span class="lbl">Depart</span><span class="desc">East across the foothills toward Bergamo (avoid the A4 toll)</span></li>
+              <li class="step step-charge"><span class="t">10:00</span><span class="lbl">Charge</span><span class="desc">SC <b>Bergamo Dalmine</b> · lunch + charge · arrive 42%, leave 80% (the walled Città Alta is a short detour)</span></li>
+              <li class="step step-drive"><span class="t">12:00</span><span class="lbl">Drive</span><span class="desc">Across to Brescia, then the SR249 Gardesana to the east shore</span></li>
+              <li class="step step-swim"><span class="t">13:30</span><span class="lbl">Swim</span><span class="desc"><b>Pacengo · Spiaggia della Guglia</b> · a rare <b>sandy</b> free beach on south Garda, right by Peschiera (no detour north)<br><small style="color:var(--ink-soft);font-size:.75rem">Free parking at the Breara lot (start of Via Porto) · Lazise La Marra (large lot, €2/h) is the bigger sandy alternative</small></span></li>
+              <li class="step step-charge"><span class="t">16:00</span><span class="lbl">Charge</span><span class="desc">SC <b>Castelnuovo del Garda</b> · Peschiera (V4) · arrive 42%, leave 80%</span></li>
+              <li class="step step-drive"><span class="t">16:45</span><span class="lbl">Drive</span><span class="desc">SS11 across the Veneto via Verona &amp; Vicenza (no A4)</span></li>
+              <li class="step step-charge"><span class="t">18:45</span><span class="lbl">Charge</span><span class="desc">SC <b>Mestre</b> · Porte di Mestre · arrive 30%, leave 80% (fill up for an AC night)</span></li>
+              <li class="step step-arrive"><span class="t">19:15</span><span class="lbl">Arrive</span><span class="desc">A free spot on the <b>Riviera del Brenta</b> · ~30 min from Venice</span></li>
+              <li class="step step-sleep"><span class="t">21:00</span><span class="lbl">Sleep</span><span class="desc">Sleep in the car <b>~30 min from Venice</b> · sleep 76% → wake ~56% (−20% overnight)<br><small style="color:var(--ink-soft);font-size:.75rem">Placeholder — choose your Park4Night spot near here (Riviera del Brenta / Mestre)</small></span></li>
+            </ol>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== PHASE 5 ===== -->
+      <div class="phase" id="phase-5">
+        <div class="phase-header"><div class="num">05</div><h2>A full day in Venice</h2><div class="meta">Fri 17 Jul · car-free · Hotel Casa W, San Polo</div></div>
+        <p class="phase-intro">A whole fresh day in the city — and the car never moves. Leave it at your <b>Mira</b> spot and ride the <b>ACTV bus 53E</b> (~45 min, ~€3.50–4.50) straight to <b>Venezia Piazzale Roma</b>, then a vaporetto (Line 1/2) down the Grand Canal to <b>San Tomà</b> by your San Polo hotel, <b>Hotel Casa W</b>. Then the four key points unhurried — <b>Piazza San Marco</b>, the <b>Rialto</b>, the calm <b>Zattere / Dorsoduro</b>, and the <b>Frari &amp; San Rocco</b> right by the hotel — capped with a San Polo bacari crawl at dusk.</p>
+        <p class="phase-intro battery-callout"><b>Battery plan</b> · wake at <b>~56%</b> in the car at <b>Mira</b> · you leave it parked here and bus in, so it doesn't charge today. <b>Sentry mode</b> (the security cameras) draws <b>~7–14% per 24 h</b>, so over the ~2-day Venice park it slips from ~56% to <b>~41%</b> by Day 6 — still well above the floor; you top up on the Day-6 drive out. <b>Transport:</b> the 53E bus (~€3.50–4.50 each way) + vaporetti — a Venezia Unica pass can cover the vaporetti (singles ~€9.50).</p>
+        <div class="days">
+          <div class="day" data-day-id="d5">
+            <div class="day-tag tag-city">Venice · the full day</div>
+            <div class="day-top"><span class="day-num">D 05</span><h4>A full day in Venice · Hotel Casa W</h4></div>
+            <div class="km">no driving — bus 53E from Mira, then car-free by vaporetto</div>
+            <ol class="timeline">
+              <li class="step step-wake"><span class="t">07:30</span><span class="lbl">Wake</span><span class="desc">In the car at <b>Mira</b> · Via Romagna · battery 56%</span></li>
+              <li class="step step-drive"><span class="t">08:30</span><span class="lbl">Bus</span><span class="desc">Leave the car at the spot · walk to the nearby <b>53E</b> stop</span></li>
+              <li class="step step-drive"><span class="t">08:45</span><span class="lbl">Bus</span><span class="desc"><b>ACTV 53E · Mira → Venezia Piazzale Roma</b> · ~45 min, ~€3.50–4.50 (buy on the AVM app / tabacchi, validate on board)</span></li>
+              <li class="step step-arrive"><span class="t">09:45</span><span class="lbl">Arrive</span><span class="desc"><b>Piazzale Roma</b> → vaporetto Line 1/2 down the Grand Canal to <b>San Tomà</b> → <b>Hotel Casa W</b> (San Polo), drop bags</span></li>
+              <li class="step step-visit"><span class="t">10:45</span><span class="lbl">Visit</span><span class="desc"><b>Piazza San Marco</b> &amp; Basilica · vaporetto Line 1/2 down the Grand Canal (skip the rip-off square cafés)</span></li>
+              <li class="step step-visit"><span class="t">12:15</span><span class="lbl">Visit</span><span class="desc"><b>Rialto</b> Bridge &amp; market · 7 min from the hotel · cicchetti lunch at <b>All'Arco</b> (★4.6 TA, ~€15–20pp) behind the market<br><small style="color:var(--ink-soft);font-size:.75rem">Gold-standard bacaro, lunch-only — arrive ~11:30 to beat the queue (closed Wed) · all-day fallback: Ostaria dai Zemei (★4.5)</small></span></li>
+              <li class="step step-visit"><span class="t">14:30</span><span class="lbl">Walk</span><span class="desc"><b>Zattere</b> &amp; <b>Dorsoduro</b> · Accademia, Punta della Dogana, gelato at Nico — just south of San Polo</span></li>
+              <li class="step step-visit"><span class="t">16:30</span><span class="lbl">Visit</span><span class="desc"><b>Frari</b> (Titian's Assumption) &amp; <b>Scuola Grande di San Rocco</b> (Tintoretto) · steps from the hotel</span></li>
+              <li class="step step-eat"><span class="t">19:00</span><span class="lbl">Dinner</span><span class="desc"><b>Cantina Arnaldi</b> · Venetian bacaro — cicchetti + natural wine · ★4.7 (TA) / 4.8 (RG) · ~€20–28pp<br><small style="color:var(--ink-soft);font-size:.75rem">3–5 min from the Frari, off the tourist drag · open eve, closed Wed (your Fri is fine) · book ahead · classic crawl alt: Osteria al Squero (★4.6, cheap) — but it shuts ~20:30, go early</small></span></li>
+              <li class="step step-sleep"><span class="t">22:00</span><span class="lbl">Sleep</span><span class="desc"><b>Hotel Casa W</b> · San Polo · car parked at your Mira spot, ~56% &amp; slowly Sentry-draining (you bussed in — see Day 6)<br><small style="color:var(--ink-soft);font-size:.75rem">Overnight guests are exempt from the day-tripper Access Fee — register the exemption QR (see field manual)</small></span></li>
+            </ol>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== PHASE 6 ===== -->
+      <div class="phase" id="phase-6">
+        <div class="phase-header"><div class="num">06</div><h2>A full day in Venice → Garda</h2><div class="meta">Sat 18 Jul · car-free in Venice · ~140 km to Peschiera</div></div>
+        <p class="phase-intro">A whole extra day in Venice. Start at the empty <b>Rialto market</b> by your hotel, take a <b>lagoon morning</b> to colourful <b>Burano</b> (and Torcello), then the quarters you skipped on Friday — the <b>Cannaregio Ghetto</b> and quiet <b>Castello</b>. Late afternoon, collect your bags, take the <b>53E bus back to the car at Mira</b>, then drive west — topping up at the <b>Padova North</b> Supercharger en route — straight on to sleep <b>lakeside at Peschiera del Garda</b>, with a relaxed dinner right by your spot. It puts you on the water for the night and 25 km nearer home for Day 7.</p>
+        <p class="phase-intro battery-callout"><b>Battery plan</b> · the car waited ~2 days at Mira — <b>Sentry</b> (~7–14%/24 h) drew it from ~56% down to <b>~41%</b> · bus back, collect it, charge at <b>SC Padova North</b> (arrive ~32%), then straight on to Peschiera and top to 80% at the <b>Castelnuovo/Peschiera SC</b> so you <b>sleep at ~78%</b> → wake ~58% for Day 7. Lowest state <b>~32%</b> at Padova.</p>
+        <div class="days">
+          <div class="day" data-day-id="d6">
+            <div class="day-tag tag-city">Full Venice day · then Garda</div>
+            <div class="day-top"><span class="day-num">D 06</span><h4>Venice (full day) → Peschiera (Garda)</h4></div>
+            <div class="km">car-free in Venice all day · then ~140 km to Peschiera (via Padova)</div>
+            <ol class="timeline">
+              <li class="step step-wake"><span class="t">07:30</span><span class="lbl">Wake</span><span class="desc"><b>Hotel Casa W</b>, San Polo · car waiting at your Mira spot ~41% (Sentry drew ~15% over the 2-day park)</span></li>
+              <li class="step step-relax"><span class="t">08:00</span><span class="lbl">Dawn</span><span class="desc">The <b>Rialto market</b> (Pescheria) by the hotel — 7 min away, nearly empty</span></li>
+              <li class="step step-visit"><span class="t">09:30</span><span class="lbl">Lagoon</span><span class="desc">Vaporetto to <b>Burano</b> (+ optional Torcello) · colourful houses, lace · seafood lunch at <b>Trattoria alla Maddalena</b> (★4.5 TA, ~€25pp)<br><small style="color:var(--ink-soft);font-size:.75rem">Over the footbridge on Mazzorbo — the locals' choice, cheaper than Burano (closed Thu; your Sat is fine) · order a single seafood course to stay ≤€30pp</small></span></li>
+              <li class="step step-visit"><span class="t">13:30</span><span class="lbl">Walk</span><span class="desc"><b>Cannaregio Ghetto</b> (Europe's oldest) &amp; quiet <b>Castello</b> / via Garibaldi — the local Venice</span></li>
+              <li class="step step-relax"><span class="t">16:30</span><span class="lbl">Bags</span><span class="desc">Collect luggage from the hotel · vaporetto to <b>Piazzale Roma</b></span></li>
+              <li class="step step-drive"><span class="t">17:00</span><span class="lbl">Bus</span><span class="desc"><b>53E · Piazzale Roma → Mira</b> (~45 min) · pick up the car (~41%)</span></li>
+              <li class="step step-charge"><span class="t">18:10</span><span class="lbl">Charge</span><span class="desc">SC <b>Padova North</b> · Limena (en route, ~20 min W) · arrive 32%, leave 70% — enough to reach Garda</span></li>
+              <li class="step step-drive"><span class="t">18:45</span><span class="lbl">Drive</span><span class="desc">SS11 west to <b>Peschiera del Garda</b> (past Verona, no A4) · ~1.5 h</span></li>
+              <li class="step step-charge"><span class="t">20:15</span><span class="lbl">Charge</span><span class="desc">SC <b>Castelnuovo</b> · Peschiera · arrive 35%, leave 80% — top up by the lake (~4 km from the spot)</span></li>
+              <li class="step step-eat"><span class="t">21:00</span><span class="lbl">Eat</span><span class="desc">Dinner at <b>Trattoria al Combattente</b> · Str. Bergamini 60 — <b>right by your spot</b>, lake fish since 1977 · ★4.5 (RG) / 4.4 (TA) · ~€30–40pp<br><small style="color:var(--ink-soft);font-size:.75rem">Open Sat (closed Mon), kitchen to 22:30 — a relaxed evening now that Verona's skipped · one course + a glass keeps it near €30 · book ahead</small></span></li>
+              <li class="step step-sleep"><span class="t">22:30</span><span class="lbl">Sleep</span><span class="desc"><b>Peschiera del Garda</b> · Strada Bergamini · sleep 78% → wake ~58% (−20% overnight)<br><small style="color:var(--ink-soft);font-size:.75rem">Your chosen lakeside spot — dinner is next door at Al Combattente</small></span></li>
+            </ol>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== PHASE 7 ===== -->
+      <div class="phase" id="phase-7">
+        <div class="phase-header"><div class="num">07</div><h2>The long way home · Garda → Chambéry</h2><div class="meta">Sun 19 Jul · ~495 km · pass · arrive ~20:30</div></div>
+        <p class="phase-intro">The big one — but it starts by the lake. A relaxed <b>Peschiera</b> morning (a lakefront stroll or a last Garda dip), then ~495 km west across the Po plain (no autostrada), up the Aosta valley, and back over the <b>Col du Petit-Saint-Bernard</b> before the long French descent into Savoie. Four charge stops; the earlier start from Garda gets you home <b>mid-evening</b> (~20:30).</p>
+        <p class="phase-intro battery-callout"><b>Battery plan</b> · wake at <b>~58%</b> at Garda · charge to 80% at <b>SC Bergamo Dalmine</b> (arrive ~34% — Peschiera is closer than Verona), again at <b>SC Cavaglia</b>, then <b>SC Aosta</b> before the climb (non-negotiable) · regen down the French side to <b>SC Albertville</b> · home at <b>~42%</b>. Lowest state ~30% at Albertville. Watch for storms on the pass.</p>
+        <div class="days">
+          <div class="day" data-day-id="d7">
+            <div class="day-tag tag-pass">Long return · Alpine pass</div>
+            <div class="day-top"><span class="day-num">D 07</span><h4>Garda → Chambéry · home</h4></div>
+            <div class="km">~495 km + the pass · ~10 h with charges · arrive ~20:30</div>
+            <ol class="timeline">
+              <li class="step step-wake"><span class="t">08:00</span><span class="lbl">Wake</span><span class="desc"><b>Peschiera del Garda</b> · battery 58%</span></li>
+              <li class="step step-relax"><span class="t">08:45</span><span class="lbl">Garda</span><span class="desc">A last <b>Garda morning</b> — the Peschiera lakefront, or a quiet dip on the south shore before the haul</span></li>
+              <li class="step step-depart"><span class="t">10:30</span><span class="lbl">Depart</span><span class="desc">West across the Po plain (no A4)</span></li>
+              <li class="step step-charge"><span class="t">11:30</span><span class="lbl">Charge</span><span class="desc">SC <b>Bergamo Dalmine</b> · lunch + charge · arrive 34%, leave 80% (a quick on-the-road lunch, ~€15pp)</span></li>
+              <li class="step step-charge"><span class="t">13:30</span><span class="lbl">Charge</span><span class="desc">SC <b>Cavaglia</b> · Golf Club · coffee · arrive 41%, leave 80%</span></li>
+              <li class="step step-charge"><span class="t">15:30</span><span class="lbl">Charge</span><span class="desc">SC <b>Aosta</b> · Pollein · coffee/snack · arrive 44%, leave 80% — fill before the climb</span></li>
+              <li class="step step-pass"><span class="t">17:00</span><span class="lbl">Pass</span><span class="desc"><b>Col du Petit-Saint-Bernard</b> (2,188 m) · afternoon at altitude · toll-free into France</span></li>
+              <li class="step step-charge"><span class="t">18:30</span><span class="lbl">Charge</span><span class="desc">SC <b>Albertville</b> · after the regen descent · arrive 30%, leave 60%</span></li>
+              <li class="step step-drive"><span class="t">19:15</span><span class="lbl">Drive</span><span class="desc">N90 back to Chambéry (~50 km)</span></li>
+              <li class="step step-arrive"><span class="t">20:30</span><span class="lbl">Arrive</span><span class="desc"><b>Chambéry · home</b><br><small style="color:var(--ink-soft);font-size:.75rem">Battery on arrival ~42% · ~1,540 km done · home mid-evening</small></span></li>
+            </ol>
+          </div>
+        </div>
+      </div>
+
+    </main>
+
+  </div>
+</section>
+
+<section class="tips">
+  <div class="tips-inner">
+    <div class="kicker" style="color:var(--terra)">Field manual</div>
+    <h2>What you actually need to know.</h2>
+    <div class="tips-grid">
+      <div class="tip">
+        <div class="icon">01</div>
+        <h4>Toll-free the whole way</h4>
+        <ul>
+          <li><b>The pass:</b> Col du Petit-Saint-Bernard (2,188 m) is toll-free and open in summer (reopened 22 May 2026; usually closes ~early Nov). Single-lane alternating sections — pad time.</li>
+          <li><b>Avoid the tunnels:</b> Fréjus and Mont Blanc tunnels are ~€56 each way. The A43/A32 autoroute–autostrade are tolled. Stay on D / SS / SP roads.</li>
+          <li><b>Italy:</b> only "A"-numbered autostrade (A4, A22…) are tolled. SS11 and the lakeside SS roads are free — slower, but scenic.</li>
+          <li><b>No Switzerland:</b> with Lugano dropped, the route stays in France &amp; Italy — so there's no Swiss motorway vignette to worry about at all.</li>
+        </ul>
+      </div>
+      <div class="tip">
+        <div class="icon">02</div>
+        <h4>EV range &amp; battery plan</h4>
+        <ul>
+          <li><b>Car:</b> Model Y 2022, 75 kWh · ~280 km full-charge on non-motorway roads at ≤90 km/h.</li>
+          <li><b>Rule:</b> never below 20%, charge to 80% → ~168 km usable per cycle. Plan keeps the driving minimum ~24%.</li>
+          <li><b>Sleeping in the car drains ~15–20% overnight</b> (Camp-mode AC + Sentry in July heat). So the plan tops up near each overnight to <b>sleep at ~75%</b> and <b>wake at ~55%</b> — well above the 40% go-to-bed buffer, and never near the floor by morning. The Venice hotel night differs: the car sits ~2 days at your <b>Mira</b> spot while you bus in, and <b>Sentry mode (the security cameras) still draws ~7–14% per 24 h whenever the car is left unattended</b> — so it drops ~15% (~56% → ~41%); you top up on the Day-6 drive out (Padova → Garda). Turn Sentry off in a safe spot to keep more. (Sentry also nibbles a few % during long daytime stops — absorbed by the per-day buffer.)</li>
+          <li>No overnight charging is assumed (Park4Night spots rarely have a plug) — the evening fast-charge near each overnight is what carries you through the ~20% drain.</li>
+          <li>Mountain climbs burn ~1.5×; the long descents regen a big chunk back. <b>Charge to 80% before each pass</b> (Aosta side / Albertville side).</li>
+          <li>Verify the day-of status of the <b>Aosta</b>, <b>Cavaglia</b> and <b>Albertville</b> chargers (single points of failure on the two mountain days).</li>
+        </ul>
+      </div>
+      <div class="tip">
+        <div class="icon">03</div>
+        <h4>Free swims, no tourist traps</h4>
+        <ul>
+          <li><b>Maggiore:</b> the south shore around Angera / Ranco (by the Busto Arsizio Supercharger), not Stresa / Isola Bella.</li>
+          <li><b>Como (two days):</b> swim quiet at Lezzeno &amp; the Cernobbio lido; villas &amp; views at Villa del Balbianello and Bellagio's Punta Spartivento — go early, before the Bellagio / Varenna crush.</li>
+          <li><b>Garda:</b> Torri / Brenzone &amp; the north end, not Sirmione / Limone.</li>
+          <li>Most beaches are pebble — bring water shoes. Arrive before ~10:00 (free-beach parking fills on hot days).</li>
+        </ul>
+      </div>
+      <div class="tip">
+        <div class="icon">04</div>
+        <h4>Venice with a car (+ access fee)</h4>
+        <ul>
+          <li>No car enters Venice. From your <b>Mira</b> spot, leave the car parked (free) and take the <b>ACTV bus 53E</b> straight to <b>Venezia Piazzale Roma</b> (~45 min, ~€3.50–4.50 each way; daily, with a late night service), then a vaporetto to the San Polo hotel. Far cheaper than the island garages (Tronchetto / Piazzale Roma, ~€25–35/day) and no Mestre parking needed.</li>
+          <li>In the city, a <b>Venezia Unica</b> pass covers the vaporetti (incl. Burano / Murano); otherwise pay singles (vaporetto ~€9.50 a ride). The <b>53E</b> bus to/from Mira is a separate ACTV ticket (~€3.50–4.50 each way).</li>
+          <li><b>Access Fee:</b> in 2026 it applies on dated peak days (Apr 3 – Jul 26, 08:30–16:00, €5–10) — your dates are inside it.</li>
+          <li><b>You're exempt as overnight hotel guests</b>, but it isn't automatic: register the exemption and carry the QR voucher from Venezia Unica for your stay dates.</li>
+          <li>Booked: <b>Hotel Casa W</b>, San Polo (Calle Seconda del Cristo 2910/A) — central, steps from the Frari &amp; San Rocco, ~7 min to Rialto. Venice's magic is at dawn and after the day-trippers leave.</li>
+        </ul>
+      </div>
+      <div class="tip">
+        <div class="icon">05</div>
+        <h4>Budget anchors</h4>
+        <ul>
+          <li><b>Charging: ~€260</b> · ~460 kWh — mostly Tesla Superchargers (PAYG owner rate, no membership) + one CCS fast charge at Lecco (Como's east shore has no SC; pick the cheapest — Atlante / Enel X / Be Charge).</li>
+          <li><b>Hotel: €145</b> · Hotel Casa W, one night in Venice (booked — €220 less a €75 discount).</li>
+          <li><b>Food: ~€670</b> · every named sit-down is a vetted local pick (★≥4.5, ≤€30pp) — see each day; dinners ≈€30pp ≈ €420 for two, charge-stop &amp; on-the-road lunches ≈€15pp ≈ €250 — cook at the car-camp stops to cut it further.</li>
+          <li><b>Venice transit: ~€70</b> · the 53E bus (Mira ↔ Venice, ~€3.50–4.50 each way) + vaporetti / a Venezia Unica pass · the car parks free at the Mira spot.</li>
+          <li><b>Sightseeing: ~€90</b> · Balbianello, Orrido di Bellano (~€7pp), Frari &amp; San Rocco, Rocca di Angera (free viewpoint; interior €18pp optional). <b>Tolls / vignette: €0.</b></li>
+          <li><b>≈ €1,235 total for two</b> (~€620 each) · beaches &amp; most viewpoints free. Carry passport/ID (FR↔IT border at the pass).</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <h3>Three great lakes, one floating city, no tolls.</h3>
+  <p>Quiet free swims away from the honeypots, a toll-free Alpine pass at each end, and a single night in Venice at its best — dawn and dusk, when the day-trippers are gone.</p>
+  <p class="sig">Plan generated for Chambéry → Italian lakes + Venice · 7 days · Tesla Model Y · Mon 13 → Sun 19 July</p>
+</footer>
+
+<script>
+// =====================================================================
+//   TRIP DATA · waypoints per day (sleep, charges, passes, swims, visits)
+// =====================================================================
+// Each waypoint: { type, coords:[lat,lng], name, arrive?, leave?, battery?, p4n?, note?, hotel?, foot? }
+// foot:true  → the leg ARRIVING at this waypoint is done on foot / public transport (drawn dashed, not a driving route)
+// type: 'depart' | 'wake' | 'charge' | 'pass' | 'visit' | 'swim' | 'lunch' | 'city' | 'sleep' | 'home'
+const TRIP = {
+  startLabel: 'Chambéry',
+  startCoords: [45.5646, 5.9178],
+  startBattery: 80,
+  days: [
+    {
+      id: 'd1', label: '01', title: 'Chambéry → Angera · south Lago Maggiore',
+      waypoints: [
+        { type:'depart', coords:[45.5646, 5.9178], name:'Chambéry · départ',                 battery:80 },
+        { type:'charge', coords:[45.6554, 6.3657], name:'SC Albertville',                     arrive:62, leave:80 },
+        { type:'pass',   coords:[45.6806, 6.8836], name:'Col du Petit-Saint-Bernard · 2,188 m' },
+        { type:'charge', coords:[45.7281, 7.3622], name:'SC Aosta · Pollein',                 arrive:24, leave:80 },
+        { type:'charge', coords:[45.6110, 8.8510], name:'SC Busto Arsizio · Mizar Park',      arrive:33, leave:80 },
+        { type:'visit',  coords:[45.7783, 8.5775], name:'Rocca di Angera · castle viewpoint',
+          note:'Free lake panorama from the bluff &amp; the castle exterior · free parking at Via Rocca Castello, at the foot of the rocca. Going inside (frescoed halls + Doll &amp; Toy Museum + medieval-garden viewpoint) is €18pp · daily 10:00–18:00, last entry 17:00 — if you want it, do it Day 2 at the 10:00 opening (not rushed).' },
+        { type:'sleep',  coords:[45.8044, 8.6064], name:'Ispra · Via Luigi Cadorna (Park4Night)',       battery:72,
+          note:'Your chosen Park4Night spot — Via Luigi Cadorna 327, Ispra, ~4 km up the east shore from Angera (do the Rocca, swim &amp; dinner in Angera first, then hop here). Topped up at the Busto Arsizio SC so it sleeps ~72% and wakes ~52% (camp-mode AC ~−20% overnight; no plug assumed).' }
+      ]
+    },
+    {
+      id: 'd2', label: '02', title: 'Angera → Como · Lago di Como',
+      waypoints: [
+        { type:'wake',   coords:[45.8044, 8.6064], name:'Ispra · wake',                          battery:52 },
+        { type:'swim',   coords:[45.7765, 8.5745], name:'Spiaggia di Angera · morning swim (sand &amp; pebble)',
+          note:'Free lungolago town beach — sand &amp; pebble, gradual shallow entry (water shoes), shady trees, promenade and views across to Arona. Parking within ~300 m along the lungolago; ~4 km / 7 min south from your Ispra spot.' },
+        { type:'charge', coords:[45.7688, 9.0569], name:'SC Grandate · Como',                 arrive:34, leave:80 },
+        { type:'swim',   coords:[45.8400, 9.0850], name:'Lido di Cernobbio · Como swim',
+          note:'Heads-up: this is a paid lido (pool, sunbeds, lakefront restaurant) with lovely views across to Como — not a sand beach (Como is all pebble). For a free dip, use the public lakefront just up-shore.' },
+        { type:'sleep',  coords:[45.8387, 9.0392], name:'Como · Via San Giacomo (Park4Night)',  battery:77,
+          note:'Your chosen Park4Night spot — Via San Giacomo 31, Como, ~3.5 km SW of Cernobbio (do the Cernobbio lido swim, lakefront &amp; dinner first, then drop down here). Topped up at the Grandate SC so it sleeps ~77% and wakes ~57% (camp-mode AC ~−20% overnight; no plug assumed).' }
+      ]
+    },
+    {
+      id: 'd3', label: '03', title: 'Lake Como grand loop → Lecco',
+      waypoints: [
+        { type:'wake',   coords:[45.8387, 9.0392], name:'Como · Via San Giacomo · wake',        battery:57 },
+        { type:'charge', coords:[45.7688, 9.0569], name:'SC Grandate · Como',                 arrive:54, leave:80 },
+        { type:'visit',  coords:[45.9690, 9.2110], name:'Villa del Balbianello · Lenno (west shore)' },
+        { type:'visit',  coords:[46.1370, 9.3710], name:'Colico · the wild north tip' },
+        { type:'visit',  coords:[46.0426, 9.3050], name:'Orrido di Bellano · gorge walkway (€7pp)' },
+        { type:'visit',  coords:[46.0110, 9.2850], name:'Varenna · Vezio Castle (east shore)' },
+        { type:'swim',   coords:[45.9635, 9.3048], name:'Spiaggia di Lierna · Riva Bianca (white pebble)',
+          note:'Lierna&apos;s famous white-pebble + grass beach (Via Riva Bianca, by the old Castello di Lierna), free spiaggia libera with a kiosk bar — one of the best-rated swims on Lake Como, clear water. Park along the old lakeside road by Castello (~30 cars, €1.50/h or €10/day) — arrive early in summer. Water shoes for the pebbles.' },
+        { type:'charge', coords:[45.8560, 9.3970], name:'Lecco · CCS fast charge (no Tesla SC here)', arrive:34, leave:80 },
+        { type:'sleep',  coords:[45.8478, 9.3950], name:'Lecco · overnight by the CCS charge',  battery:78,
+          note:'Your chosen spot — an overnight spot right by the Lecco CCS charge (~0.9 km), so you charge then park a minute away. The Lecco CCS (Atlante / Enel X / Be Charge ~€0.55–0.79/kWh — the one non-Tesla stop, no SC on this shore) tops it up so it sleeps ~78% and wakes ~58% (camp-mode AC ~−20% overnight; no plug). Backup if it is full: the paid Via Provinciale car park ~0.8 km west — <a href="https://www.google.com/maps?q=45.8487,9.3847" target="_blank" rel="noopener">open on Maps</a>.' }
+      ]
+    },
+    {
+      id: 'd4', label: '04', title: 'Lecco → Garda swim → near Venice',
+      waypoints: [
+        { type:'wake',   coords:[45.8478, 9.3950], name:'Lecco · wake',                          battery:58 },
+        { type:'charge', coords:[45.6500, 9.5800], name:'SC Bergamo Dalmine · lunch',          arrive:42, leave:80 },
+        { type:'swim',   coords:[45.4525, 10.7180], name:'Pacengo · Spiaggia della Guglia (sandy)',
+          note:'A rare sand beach on Garda, free, right on your Peschiera line — no detour north. Free parking at the Breara lot at the start of Via Porto (paid lot nearer the sand, Mar–Sep). Quieter than Lazise; Lazise La Marra (474-space lot, €2/h) is the bigger sandy alternative.' },
+        { type:'charge', coords:[45.4231, 10.7110], name:'SC Castelnuovo · Peschiera',         arrive:42, leave:80 },
+        { type:'charge', coords:[45.4847, 12.2505], name:'SC Mestre · Porte di Mestre',        arrive:30, leave:80 },
+        { type:'sleep',  coords:[45.4548, 12.1780], name:'Mira · Via Romagna (Park4Night)', battery:76,
+          note:'Your chosen spot — Via Romagna 8–12, Mira (Riviera del Brenta). The ACTV bus 53E runs from a nearby stop straight to Venezia Piazzale Roma (~45 min, multiple Riviera stops), so you leave the car here and bus into Venice. Topped up at the Mestre SC so it sleeps ~76% and wakes ~56% (camp-mode AC ~−20% overnight; no plug); then it waits here ~2 days while you are in Venice (Sentry ~7–14%/24h).' }
+      ]
+    },
+    {
+      id: 'd5', label: '05', title: 'A full day in Venice · Hotel Casa W (San Polo)',
+      waypoints: [
+        { type:'wake',   coords:[45.4548, 12.1780], name:'Mira · Via Romagna · wake (in the car)', battery:56 },
+        { type:'city',   coords:[45.4380, 12.3185], name:'Venezia Piazzale Roma · arrive by bus 53E', foot:true },
+        { type:'city',   coords:[45.4342, 12.3378], name:'Piazza San Marco &amp; Basilica', foot:true },
+        { type:'city',   coords:[45.4397, 12.3358], name:'Rialto Bridge &amp; market lanes', foot:true },
+        { type:'visit',  coords:[45.4306, 12.3275], name:'Zattere &amp; Dorsoduro · Accademia', foot:true },
+        { type:'city',   coords:[45.4366, 12.3266], name:'Frari &amp; Scuola di San Rocco · San Polo', foot:true },
+        { type:'sleep',  coords:[45.4368, 12.3275], name:'Hotel Casa W · San Polo, Venice',   battery:56, hotel:true, foot:true,
+          note:'Booked: Hotel Casa W, Calle Seconda del Cristo 2910/A, San Polo — steps from the Frari &amp; Scuola di San Rocco, ~7 min from Rialto · the car waits at your Mira spot (you bussed in on the 53E) — Sentry draws ~7–14%/24h, so over the ~2-day park it slips from ~56% to ~41% by Day 6 (you top up on the Day-6 drive out) · overnight hotel guests are exempt from the day-tripper Access Fee (register the exemption QR via Venezia Unica)' }
+      ]
+    },
+    {
+      id: 'd6', label: '06', title: 'Venice (full day) → Peschiera (Garda)',
+      waypoints: [
+        { type:'wake',   coords:[45.4368, 12.3275], name:'Hotel Casa W · San Polo · wake',     battery:41 },
+        { type:'city',   coords:[45.4853, 12.4170], name:'Burano &amp; the lagoon · morning', foot:true },
+        { type:'city',   coords:[45.4450, 12.3260], name:'Cannaregio Ghetto &amp; Castello · afternoon', foot:true },
+        { type:'city',   coords:[45.4548, 12.1780], name:'Mira · Via Romagna · collect the car (bus 53E back)', foot:true },
+        { type:'charge', coords:[45.4280, 11.8800], name:'SC Padova North · Limena (en route)', arrive:32, leave:70 },
+        { type:'charge', coords:[45.4231, 10.7110], name:'SC Castelnuovo · Peschiera',         arrive:35, leave:80 },
+        { type:'sleep',  coords:[45.4498, 10.6704], name:'Peschiera del Garda · Strada Bergamini', battery:78,
+          note:'Your chosen spot — Strada Bergamini 64, Peschiera del Garda (south Lake Garda), lakeside and 25 km nearer home for Day 7. From the Padova charge you drive straight here (Verona skipped) and charge at the Castelnuovo/Peschiera SC (~4 km away) so it sleeps ~78% and wakes ~58% (camp-mode AC ~−20% overnight; no plug). Dinner is next door at Trattoria al Combattente.' }
+      ]
+    },
+    {
+      id: 'd7', label: '07', title: 'Garda → Chambéry · home (the long haul)',
+      waypoints: [
+        { type:'wake',   coords:[45.4498, 10.6704], name:'Peschiera del Garda · wake',          battery:58 },
+        { type:'charge', coords:[45.6500, 9.5800], name:'SC Bergamo Dalmine · lunch',          arrive:34, leave:80 },
+        { type:'charge', coords:[45.3934, 8.1283], name:'SC Cavaglia · Golf Club',            arrive:41, leave:80 },
+        { type:'charge', coords:[45.7281, 7.3622], name:'SC Aosta · Pollein',                 arrive:44, leave:80 },
+        { type:'pass',   coords:[45.6806, 6.8836], name:'Col du Petit-Saint-Bernard · 2,188 m' },
+        { type:'charge', coords:[45.6554, 6.3657], name:'SC Albertville',                     arrive:30, leave:60 },
+        { type:'home',   coords:[45.5646, 5.9178], name:'Chambéry · home',                    battery:42,
+          note:'Trip end · ~1,540 km · the Day-7 haul (~495 km + the pass) from Garda — arrive mid-evening · ready to plug in at home' }
+      ]
+    }
+  ]
+};
+
+const DAY_COLOR = '#1F8A8C';
+const DIM_COLOR = '#9fccce';
+
+// =====================================================================
+//   MAP
+// =====================================================================
+const map = L.map('map', { zoomControl:true, scrollWheelZoom:false }).setView([45.9, 8.9], 8);
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>',
+  subdomains: 'abcd', maxZoom: 19
+}).addTo(map);
+map.on('click', () => map.scrollWheelZoom.enable());
+
+const statusEl = document.createElement('div');
+statusEl.className = 'map-status';
+statusEl.textContent = 'Loading driving routes…';
+document.querySelector('.map-wrap').appendChild(statusEl);
+
+async function fetchOSRM(coords){
+  const path = coords.map(c => `${c[1]},${c[0]}`).join(';');
+  const url = `https://router.project-osrm.org/route/v1/driving/${path}?overview=full&geometries=geojson&continue_straight=false`;
+  const r = await fetch(url);
+  if (!r.ok) throw new Error('OSRM ' + r.status);
+  const data = await r.json();
+  if (data.code !== 'Ok' || !data.routes.length) throw new Error('OSRM no route');
+  return data.routes[0].geometry.coordinates.map(c => [c[1], c[0]]);
+}
+
+// SVG lightning bolt for charge markers
+const LIGHTNING_SVG = '<svg viewBox="0 0 24 24"><path d="M13 2L3 14h7l-1 8 11-12h-7z"/></svg>';
+// SVG fork & knife for lunch markers
+const FORK_SVG = '<svg viewBox="0 0 24 24"><path d="M11 2v8a3 3 0 0 1-2 2.83V22H7v-9.17A3 3 0 0 1 5 10V2h2v8h1V2h2v8h1V2h0Zm6 0a4 4 0 0 0-4 4v6a3 3 0 0 0 2 2.83V22h2v-7.17A3 3 0 0 0 19 12V2h-2Z"/></svg>';
+
+function makeIcon(wp){
+  if (wp.type === 'charge') {
+    return L.divIcon({ className: 'charge-marker', html: LIGHTNING_SVG, iconSize: [32, 32] });
+  }
+  if (wp.type === 'pass') {
+    return L.divIcon({ className: 'pass-marker', html: '', iconSize: [26, 22] });
+  }
+  if (wp.type === 'lunch') {
+    return L.divIcon({ className: 'lunch-marker', html: FORK_SVG, iconSize: [30, 30] });
+  }
+  if (wp.type === 'swim') {
+    return L.divIcon({ className: 'swim-marker', html: '≈', iconSize: [30, 30] });
+  }
+  if (wp.type === 'city') {
+    return L.divIcon({ className: 'city-marker', html: '★', iconSize: [34, 34] });
+  }
+  if (wp.type === 'sleep') {
+    return L.divIcon({ className: 'sleep-marker', html: '<span class="zz-big">Z</span><span class="zz-small">z</span>', iconSize: [34, 34] });
+  }
+  if (wp.type === 'home') {
+    return L.divIcon({ className: 'num-marker cap', html: 'End', iconSize: [36, 30] });
+  }
+  if (wp.type === 'depart') {
+    return L.divIcon({ className: 'num-marker cap', html: 'Start', iconSize: [40, 30] });
+  }
+  // visit / wake — small dot
+  return L.divIcon({ className: 'num-marker', html: '', iconSize: [12, 12] });
+}
+
+function batteryLabel(wp){
+  if (wp.type === 'charge') return `${wp.arrive}→${wp.leave}%`;
+  if (typeof wp.battery === 'number') return `${wp.battery}%`;
+  return null;
+}
+
+function tooltipClass(wp){
+  if (wp.type === 'charge') return 'battery-label charge-tooltip';
+  if (wp.type === 'pass')   return 'battery-label pass-tooltip';
+  if (wp.type === 'sleep')  return 'battery-label sleep-tooltip';
+  return 'battery-label';
+}
+
+function popupHtml(wp, dayIdx){
+  const meta = wp.type === 'charge' ? 'Charge stop' :
+               wp.type === 'pass'   ? 'Mountain pass' :
+               wp.type === 'swim'   ? `Day ${dayIdx + 1} · swim` :
+               wp.type === 'city'   ? `Day ${dayIdx + 1} · Venice` :
+               wp.type === 'sleep'  ? `Day ${dayIdx + 1} · sleep` :
+               wp.type === 'lunch'  ? `Day ${dayIdx + 1} · lunch` :
+               wp.type === 'depart' ? 'Trip start' :
+               wp.type === 'wake'   ? `Day ${dayIdx + 1} · wake` :
+               wp.type === 'home'   ? 'Trip end' :
+               'Stop';
+  let battery = '';
+  if (wp.type === 'charge') battery = `<span class="popup-batt">⚡ Arrive ${wp.arrive}% · Leave ${wp.leave}%</span>`;
+  else if (typeof wp.battery === 'number') battery = `<span class="popup-batt">Battery: ${wp.battery}%</span>`;
+  const p4nBtn = wp.hotel
+    ? '<span class="popup-note">🏨 Booked · Hotel Casa W, San Polo</span>'
+    : wp.p4n
+    ? `<a class="p4n-btn" href="${wp.p4n}" target="_blank" rel="noopener">Open this spot on Park4Night</a>`
+    : (wp.type === 'sleep' ? `<a class="p4n-btn" href="https://park4night.com/en/search?lat=${wp.coords[0]}&lng=${wp.coords[1]}&z=12" target="_blank" rel="noopener">Find a spot here on Park4Night</a>` : '');
+  const gmapsBtn = `<a class="gmaps-btn" href="https://www.google.com/maps?q=${wp.coords[0]},${wp.coords[1]}" target="_blank" rel="noopener">See on Google Maps</a>`;
+  const photoFrame = (wp.type === 'sleep' || wp.type === 'visit' || wp.type === 'pass' || wp.type === 'lunch' || wp.type === 'swim' || wp.type === 'city')
+    ? `<div class="popup-img-wrap"><img class="popup-img" data-query="${wp.name.replace(/&amp;/g,'and').replace(/"/g,'&quot;').replace(/\s*[·(].*$/,'').trim()}" alt="" /><div class="popup-img-loader">Loading photo…</div></div>`
+    : '';
+  return `<div class="popup-visit">${photoFrame}<b>${wp.name}</b><span class="popup-meta">${meta}</span>${wp.note ? `<span class="popup-note">${wp.note}</span>` : ''}${battery}${p4nBtn}${gmapsBtn}</div>`;
+}
+
+// Build per-day layer groups
+const dayLayers = {}; // { d1: { lines:[L.polyline...], markers, latlngs } }
+
+// Split a day's waypoints into solid driving runs (routed via OSRM) and dashed
+// on-foot segments (straight lines). A leg counts as "on foot" when its
+// destination waypoint has foot:true (walking / public transport — e.g. Venice).
+function splitLegs(wps){
+  const driveRuns = [], footSegs = [];
+  let run = [wps[0].coords];
+  for (let j = 1; j < wps.length; j++){
+    if (wps[j].foot){
+      if (run.length >= 2) driveRuns.push(run);
+      footSegs.push([wps[j-1].coords, wps[j].coords]);
+      run = [wps[j].coords];
+    } else {
+      run.push(wps[j].coords);
+    }
+  }
+  if (run.length >= 2) driveRuns.push(run);
+  return { driveRuns, footSegs };
+}
+
+async function buildDay(day){
+  const coords = day.waypoints.map(w => w.coords);
+  const { driveRuns, footSegs } = splitLegs(day.waypoints);
+  const lines = [];
+  // solid driving runs — real road geometry from OSRM (straight-line fallback)
+  for (const run of driveRuns){
+    let geom;
+    try { geom = await fetchOSRM(run); }
+    catch(e) { geom = run; }
+    lines.push(L.polyline(geom, { color: DAY_COLOR, weight: 4, opacity: .9, lineJoin: 'round' }));
+  }
+  // on-foot legs — dashed straight lines (no driving route applies)
+  for (const seg of footSegs){
+    lines.push(L.polyline(seg, { color: DAY_COLOR, weight: 3.5, opacity: .9, dashArray: '9, 8', lineCap: 'round' }));
+  }
+  const markers = [];
+  const dayIdx = TRIP.days.indexOf(day);
+  day.waypoints.forEach((wp) => {
+    const marker = L.marker(wp.coords, { icon: makeIcon(wp) });
+    marker.bindPopup(popupHtml(wp, dayIdx), { maxWidth: 280 });
+    const lbl = batteryLabel(wp);
+    if (lbl) {
+      marker.bindTooltip(lbl, {
+        permanent: true,
+        direction: 'right',
+        offset: [12, 0],
+        className: tooltipClass(wp)
+      });
+    }
+    markers.push(marker);
+  });
+  dayLayers[day.id] = { lines, markers, latlngs: coords };
+}
+
+async function buildAll(){
+  let count = 0;
+  for (const day of TRIP.days) {
+    await buildDay(day);
+    count++;
+    statusEl.textContent = `Loading routes… ${count} / ${TRIP.days.length}`;
+  }
+  setActiveDay('d1');
+  statusEl.textContent = 'Use arrows or pills to switch days';
+  setTimeout(() => { statusEl.style.opacity = '0'; }, 3500);
+  setTimeout(() => { statusEl.remove(); }, 5000);
+}
+
+// ---- Selectable sleep spots: user toggles, the map re-routes that day ----
+const SLEEP_OPTIONS = {
+  d3: [
+    { name:'Lecco · overnight by the CCS charge', coords:[45.8478, 9.3950],
+      note:'An overnight spot right by the Lecco CCS charge (~0.9 km) — charge, then park a minute away. The Lecco CCS (Atlante / Enel X / Be Charge ~€0.55–0.79/kWh — the one non-Tesla stop, no SC on this shore) tops it up so it sleeps ~78% and wakes ~58% (camp-mode AC ~−20% overnight; no plug). Backup: the paid Via Provinciale car park ~0.8 km west.' },
+    { name:'Lecco · Parcheggio Via Provinciale (paid)', coords:[45.8487, 9.3847],
+      note:'The paid Via Provinciale car park in Lecco, ~1.3 km from the CCS fast charge. Sleeps ~78% → wakes ~58% (camp-mode AC ~−20% overnight; no plug). Paid lot — check the overnight rate. Alternative: a spot ~0.8 km east, right by the CCS charge.' }
+  ]
+};
+// a day's sleep spot is mirrored by the next day's wake waypoint
+const WAKE_MIRROR = { d3: 'd4' };
+
+// show only this day's layers on the map (no card/scroll/zoom changes)
+function showDayLayers(dayId){
+  Object.entries(dayLayers).forEach(([id, d]) => {
+    if (id === dayId) {
+      d.lines.forEach(line => { line.setStyle({ color: DAY_COLOR, weight: line.options.dashArray ? 4 : 5, opacity: 1 }); line.addTo(map); });
+      d.markers.forEach(m => m.addTo(map));
+    } else {
+      d.lines.forEach(line => map.removeLayer(line));
+      d.markers.forEach(m => map.removeLayer(m));
+    }
+  });
+}
+
+async function rebuildDay(dayId){
+  const day = TRIP.days.find(d => d.id === dayId);
+  const old = dayLayers[dayId];
+  if (old){ old.lines.forEach(l => map.removeLayer(l)); old.markers.forEach(m => map.removeLayer(m)); }
+  await buildDay(day);
+}
+
+async function chooseSleep(dayId, idx){
+  const opt = (SLEEP_OPTIONS[dayId] || [])[idx];
+  if (!opt) return;
+  const day = TRIP.days.find(d => d.id === dayId);
+  const sleepWp = day && day.waypoints.find(w => w.type === 'sleep');
+  if (sleepWp){ sleepWp.coords = opt.coords.slice(); sleepWp.name = opt.name; if (opt.note) sleepWp.note = opt.note; }
+  const nextId = WAKE_MIRROR[dayId];
+  if (nextId){
+    const nd = TRIP.days.find(d => d.id === nextId);
+    const wakeWp = nd && nd.waypoints.find(w => w.type === 'wake');
+    if (wakeWp) wakeWp.coords = opt.coords.slice();
+  }
+  await rebuildDay(dayId);
+  if (nextId) await rebuildDay(nextId);
+  if (activeDayId === dayId || activeDayId === nextId) showDayLayers(activeDayId);
+}
+
+// wire the sleep-spot pick buttons (present in the day cards)
+document.querySelectorAll('.sleep-pick .sp-btn').forEach(btn => {
+  btn.addEventListener('click', async () => {
+    btn.parentElement.querySelectorAll('.sp-btn').forEach(b => b.classList.toggle('is-active', b === btn));
+    await chooseSleep(btn.dataset.day, +btn.dataset.idx);
+  });
+});
+
+const dayOrder = TRIP.days.map(d => d.id);
+let activeDayId = null;
+
+function setActiveDay(dayId){
+  // Hide everything, then show only this day
+  Object.entries(dayLayers).forEach(([id, d]) => {
+    if (id === dayId) {
+      d.lines.forEach(line => {
+        line.setStyle({ color: DAY_COLOR, weight: line.options.dashArray ? 4 : 5, opacity: 1 });
+        line.addTo(map);
+      });
+      d.markers.forEach(m => m.addTo(map));
+    } else {
+      d.lines.forEach(line => map.removeLayer(line));
+      d.markers.forEach(m => map.removeLayer(m));
+    }
+  });
+  // Fit to active day
+  const active = dayLayers[dayId];
+  if (active && active.latlngs.length) map.fitBounds(L.latLngBounds(active.latlngs).pad(0.15));
+
+  activeDayId = dayId;
+
+  // Card visibility (one phase at a time)
+  const dayIndex = dayOrder.indexOf(dayId);
+  document.querySelectorAll('.phase').forEach(p => p.classList.remove('active'));
+  const targetPhase = document.getElementById('phase-' + (dayIndex + 1));
+  if (targetPhase) {
+    targetPhase.classList.add('active');
+    // Reset to "Steps" tab on every day change
+    targetPhase.dataset.tab = 'steps';
+    targetPhase.querySelectorAll('.phase-tab').forEach(b => {
+      b.classList.toggle('active', b.dataset.tab === 'steps');
+    });
+    // Reset scroll position of timeline
+    const days = targetPhase.querySelector('.days');
+    if (days) days.scrollTop = 0;
+  }
+
+  // Pill state
+  document.querySelectorAll('.day-pill').forEach(p => {
+    p.classList.toggle('active', p.dataset.dayId === dayId);
+  });
+
+  // Arrow disabled state
+  const prev = document.getElementById('prev-day');
+  const next = document.getElementById('next-day');
+  if (prev) prev.disabled = dayIndex === 0;
+  if (next) next.disabled = dayIndex === dayOrder.length - 1;
+}
+
+// Inject "Steps / About the place" tabs into each phase
+function injectPhaseTabs(phase){
+  if (phase.querySelector('.phase-tabs')) return;
+  const tabs = document.createElement('div');
+  tabs.className = 'phase-tabs';
+  tabs.innerHTML = `
+    <button class="phase-tab active" data-tab="steps" type="button">Steps</button>
+    <button class="phase-tab" data-tab="about" type="button">About the place</button>
+  `;
+  phase.dataset.tab = 'steps';
+  const header = phase.querySelector('.phase-header');
+  header.insertAdjacentElement('afterend', tabs);
+  tabs.querySelectorAll('.phase-tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      phase.dataset.tab = btn.dataset.tab;
+      tabs.querySelectorAll('.phase-tab').forEach(b => {
+        b.classList.toggle('active', b === btn);
+      });
+    });
+  });
+}
+document.querySelectorAll('.phase').forEach(injectPhaseTabs);
+
+// Wire prev / next / pills
+document.getElementById('prev-day').addEventListener('click', () => {
+  const i = dayOrder.indexOf(activeDayId);
+  if (i > 0) setActiveDay(dayOrder[i - 1]);
+});
+document.getElementById('next-day').addEventListener('click', () => {
+  const i = dayOrder.indexOf(activeDayId);
+  if (i >= 0 && i < dayOrder.length - 1) setActiveDay(dayOrder[i + 1]);
+});
+document.querySelectorAll('.day-pill[data-day-id]').forEach(pill => {
+  pill.addEventListener('click', () => setActiveDay(pill.dataset.dayId));
+});
+
+// Keyboard shortcuts: ← / →  (and Esc to close drawer)
+document.addEventListener('keydown', (e) => {
+  if (e.target.matches('input, textarea')) return;
+  const drawer = document.getElementById('info-drawer');
+  if (e.key === 'Escape' && drawer.getAttribute('aria-hidden') === 'false') {
+    drawer.setAttribute('aria-hidden', 'true');
+    return;
+  }
+  const i = dayOrder.indexOf(activeDayId);
+  if (e.key === 'ArrowLeft' && i > 0) { setActiveDay(dayOrder[i - 1]); e.preventDefault(); }
+  if (e.key === 'ArrowRight' && i < dayOrder.length - 1) { setActiveDay(dayOrder[i + 1]); e.preventDefault(); }
+});
+
+// Move trip-info sections into the slide-in drawer
+(function buildInfoDrawer(){
+  const body = document.getElementById('info-drawer-body');
+  ['.hero', '.highlights', '.tips', 'footer'].forEach(sel => {
+    const el = document.querySelector(sel);
+    if (el) body.appendChild(el);
+  });
+  const drawer = document.getElementById('info-drawer');
+  document.getElementById('info-btn').addEventListener('click', () => drawer.setAttribute('aria-hidden', 'false'));
+  document.getElementById('info-close').addEventListener('click', () => drawer.setAttribute('aria-hidden', 'true'));
+  drawer.addEventListener('click', (e) => {
+    if (e.target === drawer) drawer.setAttribute('aria-hidden', 'true');
+  });
+})();
+
+// Recalculate map size whenever the viewport changes (orientation, drawer close)
+window.addEventListener('resize', () => map.invalidateSize());
+
+buildAll();
+// First invalidate after layout settles
+requestAnimationFrame(() => map.invalidateSize());
+
+// =====================================================================
+//   Image popover (Pexels via /api/images, fallback to Wikipedia/Commons)
+// =====================================================================
+(function(){
+  const popover = document.createElement('div');
+  popover.id = 'img-popover';
+  popover.innerHTML = `
+    <div class="ipop-head">
+      <span class="ipop-title"></span>
+      <span class="ipop-counter"></span>
+      <button class="ipop-close" aria-label="Close">&times;</button>
+    </div>
+    <div class="ipop-body">
+      <button class="ipop-btn ipop-prev" aria-label="Previous">‹</button>
+      <div class="ipop-frame">
+        <img class="ipop-img" alt="" />
+        <div class="ipop-loader">Loading…</div>
+      </div>
+      <button class="ipop-btn ipop-next" aria-label="Next">›</button>
+    </div>
+    <div class="ipop-attr">Photos via Pexels &amp; Wikimedia</div>
+  `;
+  document.body.appendChild(popover);
+
+  const elTitle = popover.querySelector('.ipop-title');
+  const elCounter = popover.querySelector('.ipop-counter');
+  const elImg = popover.querySelector('.ipop-img');
+  const elLoader = popover.querySelector('.ipop-loader');
+  const btnPrev = popover.querySelector('.ipop-prev');
+  const btnNext = popover.querySelector('.ipop-next');
+  const btnClose = popover.querySelector('.ipop-close');
+
+  const cache = new Map();
+  let images = [], idx = 0, currentTarget = null, brokenAttempts = 0;
+
+  btnPrev.onclick = (e) => { e.stopPropagation(); show(idx - 1); };
+  btnNext.onclick = (e) => { e.stopPropagation(); show(idx + 1); };
+  btnClose.onclick = (e) => { e.stopPropagation(); close(); };
+
+  function show(i){
+    if (!images.length) return;
+    idx = ((i % images.length) + images.length) % images.length;
+    elLoader.style.display = 'none';
+    elImg.style.opacity = '0';
+    elImg.onload = () => { elImg.style.opacity = '1'; brokenAttempts = 0; };
+    elImg.onerror = () => { brokenAttempts++; if (brokenAttempts > images.length) { brokenAttempts = 0; return; } show(idx + 1); };
+    elImg.src = images[idx];
+    elCounter.textContent = `${idx + 1} / ${images.length}`;
+    btnPrev.disabled = images.length < 2;
+    btnNext.disabled = images.length < 2;
+  }
+  function close(){ popover.classList.remove('show'); currentTarget = null; }
+  function position(target){
+    if (window.innerWidth < 680) return;
+    const rect = target.getBoundingClientRect();
+    const popH = popover.offsetHeight || 360;
+    const popW = Math.min(440, window.innerWidth - 24);
+    let top = rect.top + window.scrollY - popH - 14;
+    if (rect.top - popH - 20 < 0) top = rect.bottom + window.scrollY + 14;
+    let left = rect.left + window.scrollX + rect.width/2 - popW/2;
+    left = Math.max(window.scrollX + 12, Math.min(left, window.scrollX + window.innerWidth - popW - 12));
+    popover.style.top = top + 'px';
+    popover.style.left = left + 'px';
+  }
+  document.addEventListener('click', (e) => {
+    if (!popover.classList.contains('show')) return;
+    if (popover.contains(e.target)) return;
+    if (e.target.classList.contains('hoverable-place')) return;
+    close();
+  });
+
+  // Direct Wikimedia fallback — used when /api/images is unreachable (e.g. running
+  // locally off file:// or a non-Vercel server) or returns nothing. CORS-friendly.
+  const WIKI_LANGS = ['en', 'it'];
+  const PHOTO_NOISE = /(logo|flag|coat[_ ]?of[_ ]?arms|stemma|bandiera|locator|location[_ ]?map|map[_ ]?of|karte|\bicon\b|wappen|\bseal\b|blason|escudo|orthographic|\.svg(\?|$))/i;
+
+  async function wikiSummaryImg(query){
+    for (const lang of WIKI_LANGS){
+      try {
+        const r = await fetch(`https://${lang}.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(query)}`);
+        if (!r.ok) continue;
+        const d = await r.json();
+        const src = (d.originalimage && d.originalimage.source) || (d.thumbnail && d.thumbnail.source);
+        if (src && !PHOTO_NOISE.test(src)) return [src];
+      } catch(e) {}
+    }
+    return [];
+  }
+  async function commonsSearchImg(query){
+    try {
+      const url = `https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(query)}&gsrnamespace=6&gsrlimit=12&prop=imageinfo&iiprop=url&iiurlwidth=900&format=json&origin=*`;
+      const r = await fetch(url);
+      if (!r.ok) return [];
+      const d = await r.json();
+      const pages = (d.query && d.query.pages) || {};
+      const urls = [];
+      Object.keys(pages).forEach(k => {
+        const ii = pages[k].imageinfo && pages[k].imageinfo[0];
+        const u = ii && (ii.thumburl || ii.url);
+        const title = pages[k].title || '';
+        if (u && /\.(jpe?g|png)(\?|$)/i.test(u) && !PHOTO_NOISE.test(title) && !PHOTO_NOISE.test(u)) urls.push(u);
+      });
+      return urls;
+    } catch(e) { return []; }
+  }
+  async function fetchFromWikimedia(query){
+    const a = await wikiSummaryImg(query);
+    const b = await commonsSearchImg(query);
+    const urls = a.concat(b).filter((v, i, arr) => arr.indexOf(v) === i).slice(0, 12);
+    return { urls, error: urls.length ? null : 'No photos found' };
+  }
+
+  async function fetchPhotos(query){
+    if (cache.has(query)) return cache.get(query);
+    let result = { urls: [], error: null };
+    try {
+      const r = await fetch(`/api/images?q=${encodeURIComponent(query)}`);
+      const data = await r.json().catch(() => ({}));
+      if (!r.ok) result = { urls: [], error: data.error || ('HTTP ' + r.status) };
+      else if (data.error) result = { urls: [], error: data.error };
+      else {
+        const urls = (data.items || []).map(it => it.link).filter(Boolean);
+        result = { urls, error: urls.length ? null : 'No photos found' };
+      }
+    } catch(e) { result = { urls: [], error: 'Network: ' + e.message }; }
+    // If the serverless API gave nothing (or we're running locally), go straight to Wikimedia.
+    if (!result.urls.length) {
+      try {
+        const fb = await fetchFromWikimedia(query);
+        if (fb.urls.length) result = fb;
+      } catch(e) {}
+    }
+    cache.set(query, result);
+    return result;
+  }
+
+  function showError(loader, error){
+    if (!loader) return;
+    loader.style.display = 'flex';
+    loader.innerHTML = `<div style="font-size:.72rem">${error || 'No photo'}</div>`;
+  }
+
+  async function open(target){
+    const text = target.textContent.trim();
+    if (text.length < 3 || /[:#]$/.test(text)) return;
+    currentTarget = target;
+    elTitle.textContent = text;
+    elCounter.textContent = '';
+    elImg.removeAttribute('src');
+    elImg.style.opacity = '0';
+    elLoader.style.display = 'flex';
+    elLoader.textContent = 'Searching photos…';
+    images = []; idx = 0;
+    btnPrev.disabled = btnNext.disabled = true;
+    popover.classList.add('show');
+    position(target);
+    const result = await fetchPhotos(text);
+    if (currentTarget !== target) return;
+    if (!result.urls.length) {
+      showError(elLoader, result.error);
+      requestAnimationFrame(() => position(target));
+      return;
+    }
+    images = result.urls;
+    elLoader.style.display = 'none';
+    show(0);
+    requestAnimationFrame(() => position(target));
+  }
+
+  document.querySelectorAll('.day b').forEach(b => {
+    const text = b.textContent.trim();
+    if (text.length < 3 || /[:#]$/.test(text)) return;
+    b.classList.add('hoverable-place');
+    b.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (currentTarget === b && popover.classList.contains('show')) close(); else open(b);
+    });
+  });
+
+  if (typeof map !== 'undefined') {
+    map.on('popupopen', async (e) => {
+      const node = e.popup.getElement();
+      if (!node) return;
+      const imgs = node.querySelectorAll('.popup-img[data-query]');
+      for (const img of imgs) {
+        if (img.src) continue;
+        const query = img.dataset.query;
+        if (!query) continue;
+        const loader = img.parentElement.querySelector('.popup-img-loader');
+        const result = await fetchPhotos(query);
+        // Bail if popup was closed while we were fetching
+        if (!document.body.contains(img)) continue;
+        if (result.urls.length) {
+          img.onload = () => { img.style.opacity = '1'; if (loader) loader.style.display = 'none'; };
+          img.onerror = () => { if (loader) loader.textContent = 'Image URL failed'; };
+          img.src = result.urls[0];
+        } else if (loader) {
+          loader.textContent = result.error || 'No photo';
+        }
+      }
+    });
+  }
+})();
+</script>
+
+</body>
+</html>
