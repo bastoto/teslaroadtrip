@@ -446,6 +446,8 @@
   .sleep-pick .sp-btn{font-family:Inter,sans-serif;font-size:.72rem;cursor:pointer;border:1px solid var(--line);background:#fff;color:#2a2520;border-radius:99px;padding:.2rem .6rem;transition:background .15s,border-color .15s,color .15s}
   .sleep-pick .sp-btn:hover{border-color:var(--sea)}
   .sleep-pick .sp-btn.is-active{background:var(--sea-deep);color:#fff;border-color:var(--sea-deep)}
+  .gmaps-day-link{display:inline-flex;align-items:center;gap:.35rem;margin:.6rem 0 .1rem;font-family:Inter,sans-serif;font-size:.76rem;font-weight:500;text-decoration:none;color:#fff;background:var(--sea-deep);border:1px solid var(--sea-deep);border-radius:99px;padding:.4rem .85rem;transition:background .15s}
+  .gmaps-day-link:hover{background:var(--sea)}
   .leaflet-popup-content .p4n-btn{margin-top:.35rem;width:100%;justify-content:center}
 
   .gmaps-btn{display:inline-flex;align-items:center;gap:.3rem;padding:.22rem .6rem;background:rgba(31,138,140,.14);border:1px solid rgba(31,138,140,.4);border-radius:99px;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--sea-deep);text-decoration:none;margin-top:.35rem;white-space:nowrap;font-family:'Inter',sans-serif}
@@ -505,7 +507,7 @@
   <div class="hero-inner">
     <div class="kicker">Italian Lakes · Tesla Model Y · No tolls · Summer from Chambéry</div>
     <h1>Seven days, three great lakes,<br>and one <em>floating city</em>.</h1>
-    <p class="lede">A not-rushed 7-day loop from Chambéry over a toll-free Alpine pass to the great lakes of the north — <b>Maggiore</b>, two days on <b>Como</b>, and <b>Garda</b> — chasing quiet free swims and big lake views away from the honeypots, then <b>Venice</b> — the best part of two days in the city, a night at Hotel Casa W (San Polo), and a lakeside last night on Lake Garda. The map on the right tracks every stop and charge with battery forecasts; tap a day card to focus its segment. Mon 13 → Sun 19 July.</p>
+    <p class="lede">A not-rushed 7-day loop from Chambéry over a toll-free Alpine pass to the great lakes of the north — <b>Maggiore</b>, two days on <b>Como</b>, and <b>Garda</b> — chasing quiet free swims and big lake views away from the honeypots, then <b>Venice</b> — the best part of two days in the city, a night at the Hotel Carlton on the Grand Canal, and a lakeside last night on Lake Garda. The map on the right tracks every stop and charge with battery forecasts; tap a day card to focus its segment. Mon 13 → Sun 19 July.</p>
     <div class="hero-stats">
       <div class="stat"><div class="num">7</div><div class="lbl">days</div></div>
       <div class="stat"><div class="num">~1,540</div><div class="lbl">km</div></div>
@@ -524,7 +526,7 @@
 <div class="highlights">
   <div class="hl"><div class="num">01</div><div class="meta"><div class="lbl">Borromeo castle over south Maggiore</div><div class="name">Rocca di Angera</div></div></div>
   <div class="hl"><div class="num">02</div><div class="meta"><div class="lbl">Where the lake forks in three</div><div class="name">Bellagio · Punta Spartivento</div></div></div>
-  <div class="hl"><div class="num">03</div><div class="meta"><div class="lbl">Sleep in the city, not the car</div><div class="name">Venice · Hotel Casa W, San Polo</div></div></div>
+  <div class="hl"><div class="num">03</div><div class="meta"><div class="lbl">Sleep in the city, not the car</div><div class="name">Venice · Hotel Carlton, Grand Canal</div></div></div>
 </div>
 
 <section class="trip-section">
@@ -659,7 +661,7 @@
               <li class="step step-depart"><span class="t">08:30</span><span class="lbl">Depart</span><span class="desc">East across the foothills toward Bergamo (avoid the A4 toll)</span></li>
               <li class="step step-charge"><span class="t">10:00</span><span class="lbl">Charge</span><span class="desc">SC <b>Bergamo Dalmine</b> · lunch + charge · arrive 42%, leave 80% (the walled Città Alta is a short detour)</span></li>
               <li class="step step-drive"><span class="t">12:00</span><span class="lbl">Drive</span><span class="desc">Across to Brescia, then the SR249 Gardesana to the east shore</span></li>
-              <li class="step step-swim"><span class="t">13:30</span><span class="lbl">Swim</span><span class="desc"><b>Pacengo · Spiaggia della Guglia</b> · a rare <b>sandy</b> free beach on south Garda, right by Peschiera (no detour north)<br><small style="color:var(--ink-soft);font-size:.75rem">Free parking at the Breara lot (start of Via Porto) · Lazise La Marra (large lot, €2/h) is the bigger sandy alternative</small></span></li>
+              <li class="step step-swim"><span class="t">13:30</span><span class="lbl">Swim</span><span class="desc"><b>Pacengo · Sunset Bar Beach</b> · a <b>sandy</b> south-Garda beach right by Peschiera (no detour north)<br><small style="color:var(--ink-soft);font-size:.75rem">Park along the Pacengo lakefront · Lazise La Marra (large lot, €2/h) is the bigger sandy alternative</small></span></li>
               <li class="step step-charge"><span class="t">16:00</span><span class="lbl">Charge</span><span class="desc">SC <b>Castelnuovo del Garda</b> · Peschiera (V4) · arrive 42%, leave 80%</span></li>
               <li class="step step-drive"><span class="t">16:45</span><span class="lbl">Drive</span><span class="desc">SS11 across the Veneto via Verona &amp; Vicenza (no A4)</span></li>
               <li class="step step-charge"><span class="t">18:45</span><span class="lbl">Charge</span><span class="desc">SC <b>Mestre</b> · Porte di Mestre · arrive 30%, leave 80% (fill up for an AC night)</span></li>
@@ -672,25 +674,25 @@
 
       <!-- ===== PHASE 5 ===== -->
       <div class="phase" id="phase-5">
-        <div class="phase-header"><div class="num">05</div><h2>A full day in Venice</h2><div class="meta">Fri 17 Jul · car-free · Hotel Casa W, San Polo</div></div>
-        <p class="phase-intro">A whole fresh day in the city — and the car never moves. Leave it at your <b>Mira</b> spot and ride the <b>ACTV bus 53E</b> (~45 min, ~€3.50–4.50) straight to <b>Venezia Piazzale Roma</b>, then a vaporetto (Line 1/2) down the Grand Canal to <b>San Tomà</b> by your San Polo hotel, <b>Hotel Casa W</b>. Then the four key points unhurried — <b>Piazza San Marco</b>, the <b>Rialto</b>, the calm <b>Zattere / Dorsoduro</b>, and the <b>Frari &amp; San Rocco</b> right by the hotel — capped with a San Polo bacari crawl at dusk.</p>
+        <div class="phase-header"><div class="num">05</div><h2>A full day in Venice</h2><div class="meta">Fri 17 Jul · car-free · Hotel Carlton, Grand Canal</div></div>
+        <p class="phase-intro">A whole fresh day in the city — and the car never moves. Leave it at your <b>Mira</b> spot and ride the <b>ACTV bus 53E</b> (~45 min, ~€3.50–4.50) straight to <b>Venezia Piazzale Roma</b> — your <b>Hotel Carlton On The Grand Canal</b> (Santa Croce 578) is a 5-min walk away, right by the station on the Grand Canal, so drop bags first. Then the four key points unhurried — <b>Piazza San Marco</b>, the <b>Rialto</b>, the calm <b>Zattere / Dorsoduro</b>, and the <b>Frari &amp; San Rocco</b> — capped with a San Polo bacari crawl at dusk.</p>
         <p class="phase-intro battery-callout"><b>Battery plan</b> · wake at <b>~56%</b> in the car at <b>Mira</b> · you leave it parked here and bus in, so it doesn't charge today. <b>Sentry mode</b> (the security cameras) draws <b>~7–14% per 24 h</b>, so over the ~2-day Venice park it slips from ~56% to <b>~41%</b> by Day 6 — still well above the floor; you top up on the Day-6 drive out. <b>Transport:</b> the 53E bus (~€3.50–4.50 each way) + vaporetti — a Venezia Unica pass can cover the vaporetti (singles ~€9.50).</p>
         <div class="days">
           <div class="day" data-day-id="d5">
             <div class="day-tag tag-city">Venice · the full day</div>
-            <div class="day-top"><span class="day-num">D 05</span><h4>A full day in Venice · Hotel Casa W</h4></div>
+            <div class="day-top"><span class="day-num">D 05</span><h4>A full day in Venice · Hotel Carlton</h4></div>
             <div class="km">no driving — bus 53E from Mira, then car-free by vaporetto</div>
             <ol class="timeline">
               <li class="step step-wake"><span class="t">07:30</span><span class="lbl">Wake</span><span class="desc">In the car at <b>Mira</b> · Via Romagna · battery 56%</span></li>
               <li class="step step-drive"><span class="t">08:30</span><span class="lbl">Bus</span><span class="desc">Leave the car at the spot · walk to the nearby <b>53E</b> stop</span></li>
               <li class="step step-drive"><span class="t">08:45</span><span class="lbl">Bus</span><span class="desc"><b>ACTV 53E · Mira → Venezia Piazzale Roma</b> · ~45 min, ~€3.50–4.50 (buy on the AVM app / tabacchi, validate on board)</span></li>
-              <li class="step step-arrive"><span class="t">09:45</span><span class="lbl">Arrive</span><span class="desc"><b>Piazzale Roma</b> → vaporetto Line 1/2 down the Grand Canal to <b>San Tomà</b> → <b>Hotel Casa W</b> (San Polo), drop bags</span></li>
+              <li class="step step-arrive"><span class="t">09:45</span><span class="lbl">Arrive</span><span class="desc"><b>Piazzale Roma</b> → 5-min walk to the <b>Hotel Carlton On The Grand Canal</b> (Santa Croce, by the station), drop bags — a vaporetto stop is right outside</span></li>
               <li class="step step-visit"><span class="t">10:45</span><span class="lbl">Visit</span><span class="desc"><b>Piazza San Marco</b> &amp; Basilica · vaporetto Line 1/2 down the Grand Canal (skip the rip-off square cafés)</span></li>
               <li class="step step-visit"><span class="t">12:15</span><span class="lbl">Visit</span><span class="desc"><b>Rialto</b> Bridge &amp; market · 7 min from the hotel · cicchetti lunch at <b>All'Arco</b> (★4.6 TA, ~€15–20pp) behind the market<br><small style="color:var(--ink-soft);font-size:.75rem">Gold-standard bacaro, lunch-only — arrive ~11:30 to beat the queue (closed Wed) · all-day fallback: Ostaria dai Zemei (★4.5)</small></span></li>
-              <li class="step step-visit"><span class="t">14:30</span><span class="lbl">Walk</span><span class="desc"><b>Zattere</b> &amp; <b>Dorsoduro</b> · Accademia, Punta della Dogana, gelato at Nico — just south of San Polo</span></li>
-              <li class="step step-visit"><span class="t">16:30</span><span class="lbl">Visit</span><span class="desc"><b>Frari</b> (Titian's Assumption) &amp; <b>Scuola Grande di San Rocco</b> (Tintoretto) · steps from the hotel</span></li>
+              <li class="step step-visit"><span class="t">14:30</span><span class="lbl">Walk</span><span class="desc"><b>Zattere</b> &amp; <b>Dorsoduro</b> · Accademia, Punta della Dogana, gelato at Nico — Venice's calm southern quays</span></li>
+              <li class="step step-visit"><span class="t">16:30</span><span class="lbl">Visit</span><span class="desc"><b>Frari</b> (Titian's Assumption) &amp; <b>Scuola Grande di San Rocco</b> (Tintoretto) · ~10 min from the hotel</span></li>
               <li class="step step-eat"><span class="t">19:00</span><span class="lbl">Dinner</span><span class="desc"><b>Cantina Arnaldi</b> · Venetian bacaro — cicchetti + natural wine · ★4.7 (TA) / 4.8 (RG) · ~€20–28pp<br><small style="color:var(--ink-soft);font-size:.75rem">3–5 min from the Frari, off the tourist drag · open eve, closed Wed (your Fri is fine) · book ahead · classic crawl alt: Osteria al Squero (★4.6, cheap) — but it shuts ~20:30, go early</small></span></li>
-              <li class="step step-sleep"><span class="t">22:00</span><span class="lbl">Sleep</span><span class="desc"><b>Hotel Casa W</b> · San Polo · car parked at your Mira spot, ~56% &amp; slowly Sentry-draining (you bussed in — see Day 6)<br><small style="color:var(--ink-soft);font-size:.75rem">Overnight guests are exempt from the day-tripper Access Fee — register the exemption QR (see field manual)</small></span></li>
+              <li class="step step-sleep"><span class="t">22:00</span><span class="lbl">Sleep</span><span class="desc"><b>Hotel Carlton</b> · Grand Canal · car parked at your Mira spot, ~56% &amp; slowly Sentry-draining (you bussed in — see Day 6)<br><small style="color:var(--ink-soft);font-size:.75rem">Overnight guests are exempt from the day-tripper Access Fee — register the exemption QR (see field manual)</small></span></li>
             </ol>
           </div>
         </div>
@@ -707,15 +709,15 @@
             <div class="day-top"><span class="day-num">D 06</span><h4>Venice (full day) → Peschiera (Garda)</h4></div>
             <div class="km">car-free in Venice all day · then ~140 km to Peschiera (via Padova)</div>
             <ol class="timeline">
-              <li class="step step-wake"><span class="t">07:30</span><span class="lbl">Wake</span><span class="desc"><b>Hotel Casa W</b>, San Polo · car waiting at your Mira spot ~41% (Sentry drew ~15% over the 2-day park)</span></li>
+              <li class="step step-wake"><span class="t">07:30</span><span class="lbl">Wake</span><span class="desc"><b>Hotel Carlton</b>, Grand Canal · car waiting at your Mira spot ~41% (Sentry drew ~15% over the 2-day park)</span></li>
               <li class="step step-relax"><span class="t">08:00</span><span class="lbl">Dawn</span><span class="desc">The <b>Rialto market</b> (Pescheria) by the hotel — 7 min away, nearly empty</span></li>
               <li class="step step-visit"><span class="t">09:30</span><span class="lbl">Lagoon</span><span class="desc">Vaporetto to <b>Burano</b> (+ optional Torcello) · colourful houses, lace · seafood lunch at <b>Trattoria alla Maddalena</b> (★4.5 TA, ~€25pp)<br><small style="color:var(--ink-soft);font-size:.75rem">Over the footbridge on Mazzorbo — the locals' choice, cheaper than Burano (closed Thu; your Sat is fine) · order a single seafood course to stay ≤€30pp</small></span></li>
               <li class="step step-visit"><span class="t">13:30</span><span class="lbl">Walk</span><span class="desc"><b>Cannaregio Ghetto</b> (Europe's oldest) &amp; quiet <b>Castello</b> / via Garibaldi — the local Venice</span></li>
               <li class="step step-relax"><span class="t">16:30</span><span class="lbl">Bags</span><span class="desc">Collect luggage from the hotel · vaporetto to <b>Piazzale Roma</b></span></li>
               <li class="step step-drive"><span class="t">17:00</span><span class="lbl">Bus</span><span class="desc"><b>53E · Piazzale Roma → Mira</b> (~45 min) · pick up the car (~41%)</span></li>
-              <li class="step step-charge"><span class="t">18:10</span><span class="lbl">Charge</span><span class="desc">SC <b>Padova North</b> · Limena (en route, ~20 min W) · arrive 32%, leave 70% — enough to reach Garda</span></li>
+              <li class="step step-charge"><span class="t">18:10</span><span class="lbl">Charge</span><span class="desc">SC <b>Padova North</b> · Limena (en route, ~20 min W) · arrive 32%, leave 80% — a full top for the ~120 km to the lake</span></li>
               <li class="step step-drive"><span class="t">18:45</span><span class="lbl">Drive</span><span class="desc">SS11 west to <b>Peschiera del Garda</b> (past Verona, no A4) · ~1.5 h</span></li>
-              <li class="step step-charge"><span class="t">20:15</span><span class="lbl">Charge</span><span class="desc">SC <b>Castelnuovo</b> · Peschiera · arrive 35%, leave 80% — top up by the lake (~4 km from the spot)</span></li>
+              <li class="step step-charge"><span class="t">20:15</span><span class="lbl">Charge</span><span class="desc">SC <b>Castelnuovo</b> · Peschiera · arrive 38%, leave 80% — top up by the lake (~4 km from the spot)</span></li>
               <li class="step step-eat"><span class="t">21:00</span><span class="lbl">Eat</span><span class="desc">Dinner at <b>Trattoria al Combattente</b> · Str. Bergamini 60 — <b>right by your spot</b>, lake fish since 1977 · ★4.5 (RG) / 4.4 (TA) · ~€30–40pp<br><small style="color:var(--ink-soft);font-size:.75rem">Open Sat (closed Mon), kitchen to 22:30 — a relaxed evening now that Verona's skipped · one course + a glass keeps it near €30 · book ahead</small></span></li>
               <li class="step step-sleep"><span class="t">22:30</span><span class="lbl">Sleep</span><span class="desc"><b>Peschiera del Garda</b> · Strada Bergamini · sleep 78% → wake ~58% (−20% overnight)<br><small style="color:var(--ink-soft);font-size:.75rem">Your chosen lakeside spot — dinner is next door at Al Combattente</small></span></li>
             </ol>
@@ -726,8 +728,8 @@
       <!-- ===== PHASE 7 ===== -->
       <div class="phase" id="phase-7">
         <div class="phase-header"><div class="num">07</div><h2>The long way home · Garda → Chambéry</h2><div class="meta">Sun 19 Jul · ~495 km · pass · arrive ~20:30</div></div>
-        <p class="phase-intro">The big one — but it starts by the lake. A relaxed <b>Peschiera</b> morning (a lakefront stroll or a last Garda dip), then ~495 km west across the Po plain (no autostrada), up the Aosta valley, and back over the <b>Col du Petit-Saint-Bernard</b> before the long French descent into Savoie. Four charge stops; the earlier start from Garda gets you home <b>mid-evening</b> (~20:30).</p>
-        <p class="phase-intro battery-callout"><b>Battery plan</b> · wake at <b>~58%</b> at Garda · charge to 80% at <b>SC Bergamo Dalmine</b> (arrive ~34% — Peschiera is closer than Verona), again at <b>SC Cavaglia</b>, then <b>SC Aosta</b> before the climb (non-negotiable) · regen down the French side to <b>SC Albertville</b> · home at <b>~42%</b>. Lowest state ~30% at Albertville. Watch for storms on the pass.</p>
+        <p class="phase-intro">The big one — but it starts by the lake. A relaxed <b>Peschiera</b> morning (a lakefront stroll or a last Garda dip), then ~495 km west across the Po plain (no autostrada), up the Aosta valley, and back over the <b>Col du Petit-Saint-Bernard</b> before the long French descent into Savoie. A quick lakeside top-up (the camp night leaves you at ~58%, short of the first ~110 km leg) then four more charge stops; the earlier start from Garda still gets you home <b>mid-evening</b> (~20:30).</p>
+        <p class="phase-intro battery-callout"><b>Battery plan</b> · wake at <b>~58%</b> at Garda · top up at the <b>Castelnuovo</b> SC by your spot first (58% won't clear the ~110 km to Bergamo), then charge at <b>SC Bergamo Dalmine</b> (arrive ~42%), again at <b>SC Cavaglia</b>, then <b>SC Aosta</b> before the climb (non-negotiable) · regen down the French side to <b>SC Albertville</b> · home at <b>~42%</b>. Lowest state ~30% at Albertville. Watch for storms on the pass.</p>
         <div class="days">
           <div class="day" data-day-id="d7">
             <div class="day-tag tag-pass">Long return · Alpine pass</div>
@@ -736,8 +738,9 @@
             <ol class="timeline">
               <li class="step step-wake"><span class="t">08:00</span><span class="lbl">Wake</span><span class="desc"><b>Peschiera del Garda</b> · battery 58%</span></li>
               <li class="step step-relax"><span class="t">08:45</span><span class="lbl">Garda</span><span class="desc">A last <b>Garda morning</b> — the Peschiera lakefront, or a quiet dip on the south shore before the haul</span></li>
-              <li class="step step-depart"><span class="t">10:30</span><span class="lbl">Depart</span><span class="desc">West across the Po plain (no A4)</span></li>
-              <li class="step step-charge"><span class="t">11:30</span><span class="lbl">Charge</span><span class="desc">SC <b>Bergamo Dalmine</b> · lunch + charge · arrive 34%, leave 80% (a quick on-the-road lunch, ~€15pp)</span></li>
+              <li class="step step-charge"><span class="t">10:15</span><span class="lbl">Charge</span><span class="desc">SC <b>Castelnuovo</b> · Peschiera — top up before the haul (the camp night left you ~58%, not enough for the ~110 km to Bergamo; the SC is ~4 km from the spot) · arrive 57%, leave 80%</span></li>
+              <li class="step step-depart"><span class="t">10:45</span><span class="lbl">Depart</span><span class="desc">West across the Po plain (no A4)</span></li>
+              <li class="step step-charge"><span class="t">11:45</span><span class="lbl">Charge</span><span class="desc">SC <b>Bergamo Dalmine</b> · lunch + charge · arrive 42%, leave 80% (a quick on-the-road lunch, ~€15pp)</span></li>
               <li class="step step-charge"><span class="t">13:30</span><span class="lbl">Charge</span><span class="desc">SC <b>Cavaglia</b> · Golf Club · coffee · arrive 41%, leave 80%</span></li>
               <li class="step step-charge"><span class="t">15:30</span><span class="lbl">Charge</span><span class="desc">SC <b>Aosta</b> · Pollein · coffee/snack · arrive 44%, leave 80% — fill before the climb</span></li>
               <li class="step step-pass"><span class="t">17:00</span><span class="lbl">Pass</span><span class="desc"><b>Col du Petit-Saint-Bernard</b> (2,188 m) · afternoon at altitude · toll-free into France</span></li>
@@ -795,11 +798,11 @@
         <div class="icon">04</div>
         <h4>Venice with a car (+ access fee)</h4>
         <ul>
-          <li>No car enters Venice. From your <b>Mira</b> spot, leave the car parked (free) and take the <b>ACTV bus 53E</b> straight to <b>Venezia Piazzale Roma</b> (~45 min, ~€3.50–4.50 each way; daily, with a late night service), then a vaporetto to the San Polo hotel. Far cheaper than the island garages (Tronchetto / Piazzale Roma, ~€25–35/day) and no Mestre parking needed.</li>
+          <li>No car enters Venice. From your <b>Mira</b> spot, leave the car parked (free) and take the <b>ACTV bus 53E</b> straight to <b>Venezia Piazzale Roma</b> (~45 min, ~€3.50–4.50 each way; daily, with a late night service), then a 5-min walk to the Hotel Carlton by the station. Far cheaper than the island garages (Tronchetto / Piazzale Roma, ~€25–35/day) and no Mestre parking needed.</li>
           <li>In the city, a <b>Venezia Unica</b> pass covers the vaporetti (incl. Burano / Murano); otherwise pay singles (vaporetto ~€9.50 a ride). The <b>53E</b> bus to/from Mira is a separate ACTV ticket (~€3.50–4.50 each way).</li>
           <li><b>Access Fee:</b> in 2026 it applies on dated peak days (Apr 3 – Jul 26, 08:30–16:00, €5–10) — your dates are inside it.</li>
           <li><b>You're exempt as overnight hotel guests</b>, but it isn't automatic: register the exemption and carry the QR voucher from Venezia Unica for your stay dates.</li>
-          <li>Booked: <b>Hotel Casa W</b>, San Polo (Calle Seconda del Cristo 2910/A) — central, steps from the Frari &amp; San Rocco, ~7 min to Rialto. Venice's magic is at dawn and after the day-trippers leave.</li>
+          <li>Booked: <b>Hotel Carlton On The Grand Canal</b>, Santa Croce 578 — on the Grand Canal right by Santa Lucia station / Piazzale Roma (5-min walk from the 53E bus, vaporetto stop outside); ~10 min to the Frari, ~12 min to Rialto. Venice's magic is at dawn and after the day-trippers leave.</li>
         </ul>
       </div>
       <div class="tip">
@@ -807,7 +810,7 @@
         <h4>Budget anchors</h4>
         <ul>
           <li><b>Charging: ~€260</b> · ~460 kWh — mostly Tesla Superchargers (PAYG owner rate, no membership) + one CCS fast charge at Lecco (Como's east shore has no SC; pick the cheapest — Atlante / Enel X / Be Charge).</li>
-          <li><b>Hotel: €145</b> · Hotel Casa W, one night in Venice (booked — €220 less a €75 discount).</li>
+          <li><b>Hotel: €145</b> · Hotel Carlton On The Grand Canal, one night in Venice <em>(price is a placeholder — send me your booked Carlton rate to update the total)</em>.</li>
           <li><b>Food: ~€670</b> · every named sit-down is a vetted local pick (★≥4.5, ≤€30pp) — see each day; dinners ≈€30pp ≈ €420 for two, charge-stop &amp; on-the-road lunches ≈€15pp ≈ €250 — cook at the car-camp stops to cut it further.</li>
           <li><b>Venice transit: ~€70</b> · the 53E bus (Mira ↔ Venice, ~€3.50–4.50 each way) + vaporetti / a Venezia Unica pass · the car parks free at the Mira spot.</li>
           <li><b>Sightseeing: ~€90</b> · Balbianello, Orrido di Bellano (~€7pp), Frari &amp; San Rocco, Rocca di Angera (free viewpoint; interior €18pp optional). <b>Tolls / vignette: €0.</b></li>
@@ -884,8 +887,8 @@ const TRIP = {
       waypoints: [
         { type:'wake',   coords:[45.8478, 9.3950], name:'Lecco · wake',                          battery:58 },
         { type:'charge', coords:[45.6500, 9.5800], name:'SC Bergamo Dalmine · lunch',          arrive:42, leave:80 },
-        { type:'swim',   coords:[45.4525, 10.7180], name:'Pacengo · Spiaggia della Guglia (sandy)',
-          note:'A rare sand beach on Garda, free, right on your Peschiera line — no detour north. Free parking at the Breara lot at the start of Via Porto (paid lot nearer the sand, Mar–Sep). Quieter than Lazise; Lazise La Marra (474-space lot, €2/h) is the bigger sandy alternative.' },
+        { type:'swim',   coords:[45.4681, 10.7130], name:'Pacengo · Sunset Bar Beach (sandy)',
+          note:'A sandy south-Garda beach at Pacengo (by the Sunset Bar), right on your Peschiera line — no detour north. Park along the Pacengo lakefront nearby. Quieter than Lazise; Lazise La Marra (474-space lot, €2/h) is the bigger sandy alternative.' },
         { type:'charge', coords:[45.4231, 10.7110], name:'SC Castelnuovo · Peschiera',         arrive:42, leave:80 },
         { type:'charge', coords:[45.4847, 12.2505], name:'SC Mestre · Porte di Mestre',        arrive:30, leave:80 },
         { type:'sleep',  coords:[45.4548, 12.1780], name:'Mira · Via Romagna (Park4Night)', battery:76,
@@ -893,7 +896,7 @@ const TRIP = {
       ]
     },
     {
-      id: 'd5', label: '05', title: 'A full day in Venice · Hotel Casa W (San Polo)',
+      id: 'd5', label: '05', title: 'A full day in Venice · Hotel Carlton (Grand Canal)',
       waypoints: [
         { type:'wake',   coords:[45.4548, 12.1780], name:'Mira · Via Romagna · wake (in the car)', battery:56 },
         { type:'city',   coords:[45.4380, 12.3185], name:'Venezia Piazzale Roma · arrive by bus 53E', foot:true },
@@ -901,19 +904,19 @@ const TRIP = {
         { type:'city',   coords:[45.4397, 12.3358], name:'Rialto Bridge &amp; market lanes', foot:true },
         { type:'visit',  coords:[45.4306, 12.3275], name:'Zattere &amp; Dorsoduro · Accademia', foot:true },
         { type:'city',   coords:[45.4366, 12.3266], name:'Frari &amp; Scuola di San Rocco · San Polo', foot:true },
-        { type:'sleep',  coords:[45.4368, 12.3275], name:'Hotel Casa W · San Polo, Venice',   battery:56, hotel:true, foot:true,
-          note:'Booked: Hotel Casa W, Calle Seconda del Cristo 2910/A, San Polo — steps from the Frari &amp; Scuola di San Rocco, ~7 min from Rialto · the car waits at your Mira spot (you bussed in on the 53E) — Sentry draws ~7–14%/24h, so over the ~2-day park it slips from ~56% to ~41% by Day 6 (you top up on the Day-6 drive out) · overnight hotel guests are exempt from the day-tripper Access Fee (register the exemption QR via Venezia Unica)' }
+        { type:'sleep',  coords:[45.4405, 12.3195], name:'Hotel Carlton · Grand Canal, Venice',   battery:56, hotel:true, foot:true,
+          note:'Booked: Hotel Carlton On The Grand Canal, Santa Croce 578 — on the Grand Canal by Santa Lucia station / Piazzale Roma (5-min walk from the 53E bus, vaporetto stop outside); ~10 min to the Frari, ~12 min to Rialto · the car waits at your Mira spot (you bussed in on the 53E) — Sentry draws ~7–14%/24h, so over the ~2-day park it slips from ~56% to ~41% by Day 6 (you top up on the Day-6 drive out) · overnight hotel guests are exempt from the day-tripper Access Fee (register the exemption QR via Venezia Unica)' }
       ]
     },
     {
       id: 'd6', label: '06', title: 'Venice (full day) → Peschiera (Garda)',
       waypoints: [
-        { type:'wake',   coords:[45.4368, 12.3275], name:'Hotel Casa W · San Polo · wake',     battery:41 },
+        { type:'wake',   coords:[45.4405, 12.3195], name:'Hotel Carlton · Grand Canal · wake',   battery:41 },
         { type:'city',   coords:[45.4853, 12.4170], name:'Burano &amp; the lagoon · morning', foot:true },
         { type:'city',   coords:[45.4450, 12.3260], name:'Cannaregio Ghetto &amp; Castello · afternoon', foot:true },
         { type:'city',   coords:[45.4548, 12.1780], name:'Mira · Via Romagna · collect the car (bus 53E back)', foot:true },
-        { type:'charge', coords:[45.4280, 11.8800], name:'SC Padova North · Limena (en route)', arrive:32, leave:70 },
-        { type:'charge', coords:[45.4231, 10.7110], name:'SC Castelnuovo · Peschiera',         arrive:35, leave:80 },
+        { type:'charge', coords:[45.4280, 11.8800], name:'SC Padova North · Limena (en route)', arrive:32, leave:80 },
+        { type:'charge', coords:[45.4231, 10.7110], name:'SC Castelnuovo · Peschiera',         arrive:38, leave:80 },
         { type:'sleep',  coords:[45.4498, 10.6704], name:'Peschiera del Garda · Strada Bergamini', battery:78,
           note:'Your chosen spot — Strada Bergamini 64, Peschiera del Garda (south Lake Garda), lakeside and 25 km nearer home for Day 7. From the Padova charge you drive straight here (Verona skipped) and charge at the Castelnuovo/Peschiera SC (~4 km away) so it sleeps ~78% and wakes ~58% (camp-mode AC ~−20% overnight; no plug). Dinner is next door at Trattoria al Combattente.' }
       ]
@@ -922,7 +925,8 @@ const TRIP = {
       id: 'd7', label: '07', title: 'Garda → Chambéry · home (the long haul)',
       waypoints: [
         { type:'wake',   coords:[45.4498, 10.6704], name:'Peschiera del Garda · wake',          battery:58 },
-        { type:'charge', coords:[45.6500, 9.5800], name:'SC Bergamo Dalmine · lunch',          arrive:34, leave:80 },
+        { type:'charge', coords:[45.4231, 10.7110], name:'SC Castelnuovo · Peschiera (morning top-up)', arrive:57, leave:80 },
+        { type:'charge', coords:[45.6500, 9.5800], name:'SC Bergamo Dalmine · lunch',          arrive:42, leave:80 },
         { type:'charge', coords:[45.3934, 8.1283], name:'SC Cavaglia · Golf Club',            arrive:41, leave:80 },
         { type:'charge', coords:[45.7281, 7.3622], name:'SC Aosta · Pollein',                 arrive:44, leave:80 },
         { type:'pass',   coords:[45.6806, 6.8836], name:'Col du Petit-Saint-Bernard · 2,188 m' },
@@ -1024,7 +1028,7 @@ function popupHtml(wp, dayIdx){
   if (wp.type === 'charge') battery = `<span class="popup-batt">⚡ Arrive ${wp.arrive}% · Leave ${wp.leave}%</span>`;
   else if (typeof wp.battery === 'number') battery = `<span class="popup-batt">Battery: ${wp.battery}%</span>`;
   const p4nBtn = wp.hotel
-    ? '<span class="popup-note">🏨 Booked · Hotel Casa W, San Polo</span>'
+    ? '<span class="popup-note">🏨 Booked · Hotel Carlton, Grand Canal</span>'
     : wp.p4n
     ? `<a class="p4n-btn" href="${wp.p4n}" target="_blank" rel="noopener">Open this spot on Park4Night</a>`
     : (wp.type === 'sleep' ? `<a class="p4n-btn" href="https://park4night.com/en/search?lat=${wp.coords[0]}&lng=${wp.coords[1]}&z=12" target="_blank" rel="noopener">Find a spot here on Park4Night</a>` : '');
@@ -1159,6 +1163,37 @@ document.querySelectorAll('.sleep-pick .sp-btn').forEach(btn => {
     btn.parentElement.querySelectorAll('.sp-btn').forEach(b => b.classList.toggle('is-active', b === btn));
     await chooseSleep(btn.dataset.day, +btn.dataset.idx);
   });
+});
+
+// Per-day "open the full route in Google Maps" link (built from the day's coordinates)
+function gmapsDayRoute(day){
+  const c = w => w.coords[0].toFixed(5) + ',' + w.coords[1].toFixed(5);
+  let wps = day.waypoints, mode;
+  const footCount = wps.filter(w => w.foot).length;
+  if (footCount === 0) { mode = 'driving'; }                          // all-driving day → every stop
+  else if (footCount >= wps.length - 2) { wps = wps.filter(w => w.foot); mode = 'walking'; } // Venice on-foot day → the walking tour
+  else {                                                              // mixed day → the driving portion, from where the car is collected onward
+    const idx = wps.reduce((a, w, i) => (w.foot && /collect|Mira/i.test(w.name)) ? i : a, -1);
+    wps = idx >= 0 ? wps.slice(idx) : wps.filter(w => !w.foot);
+    mode = 'driving';
+  }
+  const pts = wps.map(c);
+  if (pts.length < 2) return null;
+  const mid = pts.slice(1, -1).join('|');
+  let url = 'https://www.google.com/maps/dir/?api=1&origin=' + pts[0] + '&destination=' + pts[pts.length - 1] + '&travelmode=' + mode;
+  if (mid) url += '&waypoints=' + encodeURIComponent(mid);
+  return { url, mode, count: pts.length };
+}
+TRIP.days.forEach(day => {
+  const card = document.querySelector('.day[data-day-id="' + day.id + '"]');
+  if (!card) return;
+  const g = gmapsDayRoute(day);
+  if (!g) return;
+  const a = document.createElement('a');
+  a.className = 'gmaps-day-link';
+  a.href = g.url; a.target = '_blank'; a.rel = 'noopener';
+  a.textContent = '🗺️ ' + (g.mode === 'walking' ? 'Walk' : 'Drive') + ' this day in Google Maps · ' + g.count + ' stops';
+  card.appendChild(a);
 });
 
 const dayOrder = TRIP.days.map(d => d.id);
