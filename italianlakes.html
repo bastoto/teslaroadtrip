@@ -307,6 +307,7 @@
   .step-depart .lbl{color:var(--terra)}
   .step-drive .lbl{color:var(--terra)}
   .step-charge .lbl{color:var(--sea);background:rgba(31,138,140,.1);border-radius:4px;padding:.15rem .35rem}
+  .charge-time{display:inline-block;margin-left:.4rem;padding:.1rem .45rem;border-radius:99px;background:rgba(31,138,140,.14);color:var(--sea-deep);font-family:Inter,sans-serif;font-size:.68rem;font-weight:600;white-space:nowrap}
   .step-arrive .lbl{color:var(--sea)}
   .step-visit .lbl{color:var(--plum)}
   .step-hike .lbl{color:var(--olive)}
@@ -716,7 +717,7 @@
             <ol class="timeline">
               <li class="step step-wake"><span class="t">07:30</span><span class="lbl">Wake</span><span class="desc"><b>Hotel Carlton</b>, Grand Canal · car waiting at your Mira spot ~41% (Sentry drew ~15% over the 2-day park)</span></li>
               <li class="step step-relax"><span class="t">08:00</span><span class="lbl">Dawn</span><span class="desc">The <b>Rialto market</b> (Pescheria) by the hotel — 7 min away, nearly empty</span></li>
-              <li class="step step-visit"><span class="t">09:30</span><span class="lbl">Lagoon</span><span class="desc">Vaporetto to <b>Burano</b> (+ optional Torcello) · colourful houses, lace · seafood lunch at <b>Trattoria alla Maddalena</b> (★4.5 TA, ~€25pp)<br><small style="color:var(--ink-soft);font-size:.75rem">Over the footbridge on Mazzorbo — the locals' choice, cheaper than Burano (closed Thu; your Sat is fine) · order a single seafood course to stay ≤€30pp</small></span></li>
+              <li class="step step-visit"><span class="t">08:45</span><span class="lbl">Lagoon</span><span class="desc">Early vaporetto to <b>Burano</b> (go before the ~10am crowds &amp; heat) · circle the whole island (there's more than Tre Ponti), then hop to <b>Torcello</b> (climb the bell tower for the lagoon view) &amp; <b>Mazzorbo</b> · seafood lunch at <b>Trattoria alla Maddalena</b> on Mazzorbo (★4.5 TA, ~€25pp)<br><small style="color:var(--ink-soft);font-size:.75rem">Maddalena is over the footbridge on Mazzorbo — the locals' choice, cheaper than Burano (closed Thu; your Sat is fine) · single seafood course to stay ≤€30pp</small></span></li>
               <li class="step step-visit"><span class="t">13:30</span><span class="lbl">Walk</span><span class="desc"><b>Cannaregio Ghetto</b> (Europe's oldest) &amp; quiet <b>Castello</b> / via Garibaldi — the local Venice</span></li>
               <li class="step step-relax"><span class="t">16:30</span><span class="lbl">Bags</span><span class="desc">Collect luggage from the hotel · vaporetto to <b>Piazzale Roma</b></span></li>
               <li class="step step-drive"><span class="t">17:00</span><span class="lbl">Bus</span><span class="desc"><b>53E · Piazzale Roma → Mira</b> (~45 min) · pick up the car (~41%)</span></li>
@@ -733,8 +734,8 @@
       <!-- ===== PHASE 7 ===== -->
       <div class="phase" id="phase-7">
         <div class="phase-header"><div class="num">07</div><h2>The long way home · Garda → Chambéry</h2><div class="meta">Sun 19 Jul · ~495 km · pass · arrive ~20:30</div></div>
-        <p class="phase-intro">The big one — but it starts by the lake. A relaxed <b>Peschiera</b> morning (a lakefront stroll or a last Garda dip), then ~495 km west across the Po plain (no autostrada), up the Aosta valley, and back over the <b>Col du Petit-Saint-Bernard</b> before the long French descent into Savoie. A quick lakeside top-up (the camp night leaves you at ~58%, short of the first ~110 km leg) then four more charge stops; the earlier start from Garda still gets you home <b>mid-evening</b> (~20:30).</p>
-        <p class="phase-intro battery-callout"><b>Battery plan</b> · wake at <b>~58%</b> at Garda · top up at the <b>Castelnuovo</b> SC by your spot first (58% won't clear the ~110 km to Bergamo), then charge at <b>SC Bergamo Dalmine</b> (arrive ~42%), again at <b>SC Cavaglia</b>, then <b>SC Aosta</b> before the climb (non-negotiable) · regen down the French side to <b>SC Albertville</b> · home at <b>~42%</b>. Lowest state ~30% at Albertville. Watch for storms on the pass.</p>
+        <p class="phase-intro">The big one — but it starts by the lake. A relaxed <b>Peschiera</b> morning (a lakefront stroll or a last Garda dip), then ~495 km west across the Po plain (no autostrada), up the Aosta valley, and back over the <b>Col du Petit-Saint-Bernard</b> before the long French descent into Savoie. Four charge stops; the earlier start from Garda gets you home <b>mid-evening</b> (~20:30).</p>
+        <p class="phase-intro battery-callout"><b>Battery plan</b> · wake at <b>~58%</b> at Garda · charge to 80% at <b>SC Bergamo Dalmine</b> (arrive ~20% — the trip's lowest, fine under your 10% charger floor), again at <b>SC Cavaglia</b>, then <b>SC Aosta</b> before the climb (non-negotiable) · regen down the French side to <b>SC Albertville</b> · home at <b>~42%</b>. Lowest state ~20% at Bergamo. Watch for storms on the pass.</p>
         <div class="days">
           <div class="day" data-day-id="d7">
             <div class="day-tag tag-pass">Long return · Alpine pass</div>
@@ -743,9 +744,8 @@
             <ol class="timeline">
               <li class="step step-wake"><span class="t">08:00</span><span class="lbl">Wake</span><span class="desc"><b>Peschiera del Garda</b> · battery 58%</span></li>
               <li class="step step-relax"><span class="t">08:45</span><span class="lbl">Garda</span><span class="desc">A last <b>Garda morning</b> — the Peschiera lakefront, or a quiet dip on the south shore before the haul</span></li>
-              <li class="step step-charge"><span class="t">10:15</span><span class="lbl">Charge</span><span class="desc">SC <b>Castelnuovo</b> · Peschiera — top up before the haul (the camp night left you ~58%, not enough for the ~110 km to Bergamo; the SC is ~4 km from the spot) · arrive 57%, leave 80%</span></li>
-              <li class="step step-depart"><span class="t">10:45</span><span class="lbl">Depart</span><span class="desc">West across the Po plain (no A4)</span></li>
-              <li class="step step-charge"><span class="t">11:45</span><span class="lbl">Charge</span><span class="desc">SC <b>Bergamo Dalmine</b> · lunch + charge · arrive 42%, leave 80% (a quick on-the-road lunch, ~€15pp)</span></li>
+              <li class="step step-depart"><span class="t">10:30</span><span class="lbl">Depart</span><span class="desc">West across the Po plain (no A4)</span></li>
+              <li class="step step-charge"><span class="t">11:30</span><span class="lbl">Charge</span><span class="desc">SC <b>Bergamo Dalmine</b> · lunch + charge · arrive ~20%, leave 80% — the trip's lowest, fine under the 10% charger floor (a quick on-the-road lunch, ~€15pp)</span></li>
               <li class="step step-charge"><span class="t">13:30</span><span class="lbl">Charge</span><span class="desc">SC <b>Cavaglia</b> · Golf Club · coffee · arrive 41%, leave 80%</span></li>
               <li class="step step-charge"><span class="t">15:30</span><span class="lbl">Charge</span><span class="desc">SC <b>Aosta</b> · Pollein · coffee/snack · arrive 44%, leave 80% — fill before the climb</span></li>
               <li class="step step-pass"><span class="t">17:00</span><span class="lbl">Pass</span><span class="desc"><b>Col du Petit-Saint-Bernard</b> (2,188 m) · afternoon at altitude · toll-free into France</span></li>
@@ -782,7 +782,8 @@
         <h4>EV range &amp; battery plan</h4>
         <ul>
           <li><b>Car:</b> Model Y 2022, 75 kWh · ~280 km full-charge on non-motorway roads at ≤90 km/h.</li>
-          <li><b>Rule:</b> never below 20%, charge to 80% → ~168 km usable per cycle. Plan keeps the driving minimum ~24%.</li>
+          <li><b>Rule:</b> charge to 80%; you may run down to <b>~10% arriving at a fast charger</b>, but <b>never below 20% overnight</b> (the car must not dip under 20% during a sleep). ~168–196 km usable per cycle.</li>
+          <li><b>Charging speed:</b> plan on <b>~85 kW real-world average</b>, not the charger's rated peak (the curve tapers) — so a <b>20→80% takes ~32 min</b>. Every charge step shows its true duration. <b>Total charging across the trip: ~5.5 h</b> (15 stops).</li>
           <li><b>Sleeping in the car drains ~15–20% overnight</b> (Camp-mode AC + Sentry in July heat). So the plan tops up near each overnight to <b>sleep at ~75%</b> and <b>wake at ~55%</b> — well above the 40% go-to-bed buffer, and never near the floor by morning. The Venice hotel night differs: the car sits ~2 days at your <b>Mira</b> spot while you bus in, and <b>Sentry mode (the security cameras) still draws ~7–14% per 24 h whenever the car is left unattended</b> — so it drops ~15% (~56% → ~41%); you top up on the Day-6 drive out (Padova → Garda). Turn Sentry off in a safe spot to keep more. (Sentry also nibbles a few % during long daytime stops — absorbed by the per-day buffer.)</li>
           <li>No overnight charging is assumed (Park4Night spots rarely have a plug) — the evening fast-charge near each overnight is what carries you through the ~20% drain.</li>
           <li>Mountain climbs burn ~1.5×; the long descents regen a big chunk back. <b>Charge to 80% before each pass</b> (Aosta side / Albertville side).</li>
@@ -804,9 +805,13 @@
         <h4>Venice with a car (+ access fee)</h4>
         <ul>
           <li>No car enters Venice. From your <b>Mira</b> spot, leave the car parked (free) and take the <b>ACTV bus 53E</b> straight to <b>Venezia Piazzale Roma</b> (~45 min, ~€3.50–4.50 each way; daily, with a late night service), then a 5-min walk to the Hotel Carlton by the station. Far cheaper than the island garages (Tronchetto / Piazzale Roma, ~€25–35/day) and no Mestre parking needed.</li>
-          <li>In the city, a <b>Venezia Unica</b> pass covers the vaporetti (incl. Burano / Murano); otherwise pay singles (vaporetto ~€9.50 a ride). The <b>53E</b> bus to/from Mira is a separate ACTV ticket (~€3.50–4.50 each way).</li>
+          <li>In the city, buy an ACTV <b>vaporetto pass</b> at the Piazzale Roma desk on arrival — <b>get the PAPER version</b> (the electronic one glitches and can charge you singles). It covers all vaporetti (incl. Burano / Murano). For getting around use the <b>fast lines</b> (4/5 circular, 2); save the slow <b>Line 1</b> for the scenic Grand Canal ride. (The <b>53E</b> bus to/from Mira is a separate ticket, ~€3.50–4.50.)</li>
           <li><b>Access Fee:</b> in 2026 it applies on dated peak days (Apr 3 – Jul 26, 08:30–16:00, €5–10) — your dates are inside it.</li>
           <li><b>You're exempt as overnight hotel guests</b>, but it isn't automatic: register the exemption and carry the QR voucher from Venezia Unica for your stay dates.</li>
+          <li><b>Beat the crowds &amp; heat:</b> do the big squares early — <b>San Marco &amp; Rialto before ~9am</b> (or late evening). The Rialto bridge is really just a bridge — the view's better from a passing vaporetto. <b>Burano/lagoon: go before ~9:30 or after 5pm</b>, never midday. Reserve anything ticketed <b>in advance</b> (peak summer).</li>
+          <li><b>Quieter than the Frari:</b> the marvels with little queue are the <b>Salute</b> (Dorsoduro, on your Day-5 Zattere walk), <b>Madonna dell'Orto</b> (Cannaregio, by your Day-6 Ghetto) and <b>Santi Giovanni e Paolo</b>.</li>
+          <li><b>Dinner, the local way:</b> best value is a wander through <b>Cannaregio</b> (off the main drag) or <b>Castello</b> — cosy trattorie, wine by the carafe (cheaper), rarely over ~€100 for two. Skip the San Polo / San Marco tourist strips (your booked bacari are the vetted exceptions). <b>Skip the gondola</b> — a stand-up <b>traghetto</b> across the Grand Canal is the ~€2 gondola moment.</li>
+          <li><b>Navigation:</b> distances deceive — a "100 m" alley can be 3–5× that round the canals, so use the vaporetto pass liberally. Google Maps is reliable for Venice's alleys and boat times (each day card has a Maps link).</li>
           <li>Booked: <b>Hotel Carlton On The Grand Canal</b>, Santa Croce 578 — on the Grand Canal right by Santa Lucia station / Piazzale Roma (5-min walk from the 53E bus, vaporetto stop outside); ~10 min to the Frari, ~12 min to Rialto. Venice's magic is at dawn and after the day-trippers leave.</li>
         </ul>
       </div>
@@ -930,8 +935,7 @@ const TRIP = {
       id: 'd7', label: '07', title: 'Garda → Chambéry · home (the long haul)',
       waypoints: [
         { type:'wake',   coords:[45.4498, 10.6704], name:'Peschiera del Garda · wake',          battery:58 },
-        { type:'charge', coords:[45.4231, 10.7110], name:'SC Castelnuovo · Peschiera (morning top-up)', arrive:57, leave:80 },
-        { type:'charge', coords:[45.6500, 9.5800], name:'SC Bergamo Dalmine · lunch',          arrive:42, leave:80 },
+        { type:'charge', coords:[45.6500, 9.5800], name:'SC Bergamo Dalmine · lunch',          arrive:20, leave:80 },
         { type:'charge', coords:[45.3934, 8.1283], name:'SC Cavaglia · Golf Club',            arrive:41, leave:80 },
         { type:'charge', coords:[45.7281, 7.3622], name:'SC Aosta · Pollein',                 arrive:44, leave:80 },
         { type:'pass',   coords:[45.6806, 6.8836], name:'Col du Petit-Saint-Bernard · 2,188 m' },
@@ -944,6 +948,13 @@ const TRIP = {
 };
 
 const DAY_COLOR = '#1F8A8C';
+
+// Real-world charging: the car averages ~85 kW on a fast charger — well under the rated peak,
+// because the curve tapers. So a stop takes (Δ% × 75 kWh / 100) ÷ 85 kW. A 20→80% ≈ 32 min.
+const PACK_KWH = 75, CHARGE_KW = 85;
+function chargeMinutes(wp){
+  return Math.round((wp.leave - wp.arrive) * PACK_KWH / 100 / CHARGE_KW * 60);
+}
 const DIM_COLOR = '#9fccce';
 
 // =====================================================================
@@ -1030,7 +1041,7 @@ function popupHtml(wp, dayIdx){
                wp.type === 'home'   ? 'Trip end' :
                'Stop';
   let battery = '';
-  if (wp.type === 'charge') battery = `<span class="popup-batt">⚡ Arrive ${wp.arrive}% · Leave ${wp.leave}%</span>`;
+  if (wp.type === 'charge') battery = `<span class="popup-batt">⚡ Arrive ${wp.arrive}% · Leave ${wp.leave}% · ~${chargeMinutes(wp)} min @ ~85 kW</span>`;
   else if (typeof wp.battery === 'number') battery = `<span class="popup-batt">Battery: ${wp.battery}%</span>`;
   const p4nBtn = wp.hotel
     ? '<span class="popup-note">🏨 Booked · Hotel Carlton, Grand Canal</span>'
@@ -1199,6 +1210,22 @@ TRIP.days.forEach(day => {
   a.href = g.url; a.target = '_blank'; a.rel = 'noopener';
   a.textContent = '🗺️ ' + (g.mode === 'walking' ? 'Walk' : 'Drive') + ' this day in Google Maps · ' + g.count + ' stops';
   card.appendChild(a);
+});
+
+// Tag each charge step with its real-world duration (~85 kW average, not the rated peak)
+TRIP.days.forEach(day => {
+  const card = document.querySelector('.day[data-day-id="' + day.id + '"]');
+  if (!card) return;
+  const steps = card.querySelectorAll('.step-charge .desc');
+  const charges = day.waypoints.filter(w => w.type === 'charge');
+  steps.forEach((el, i) => {
+    const c = charges[i];
+    if (!c) return;
+    const b = document.createElement('span');
+    b.className = 'charge-time';
+    b.textContent = '~' + chargeMinutes(c) + ' min';
+    el.appendChild(b);
+  });
 });
 
 const dayOrder = TRIP.days.map(d => d.id);
